@@ -114,7 +114,7 @@
                             </div>
                         </div>
 
-                        <button type="button" onclick="goToStep2()" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <button type="button" id="step1-next" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
                             <i class="fas fa-arrow-right"></i> Next Step
                         </button>
                     </div>
@@ -179,10 +179,10 @@
                         </div>
 
                         <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                            <button type="button" onclick="goToStep1()" class="btn btn-secondary" style="flex: 1;">
+                            <button type="button" id="step2-back" class="btn btn-secondary" style="flex: 1;">
                                 <i class="fas fa-arrow-left"></i> Back
                             </button>
-                            <button type="button" onclick="goToStep3()" class="btn btn-primary" style="flex: 1;">
+                            <button type="button" id="step2-next" class="btn btn-primary" style="flex: 1;">
                                 <i class="fas fa-arrow-right"></i> Next Step
                             </button>
                         </div>
@@ -194,13 +194,13 @@
 
                         <div class="form-group">
                             <label for="photo">Upload Photo (4x6 cm)</label>
-                            <input type="file" id="photo" name="photo" accept="image/*" required>
+                            <input type="file" id="photo" name="photo" accept="image/*">
                             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">JPG, PNG (Max 2MB)</p>
                         </div>
 
                         <div class="form-group">
                             <label for="educationDoc">Upload Education Certificate</label>
-                            <input type="file" id="educationDoc" name="educationDoc" accept=".pdf,.doc,.docx" required>
+                            <input type="file" id="educationDoc" name="educationDoc" accept=".pdf,.doc,.docx">
                             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">PDF, DOC (Max 5MB)</p>
                         </div>
 
@@ -219,7 +219,7 @@
                         </div>
 
                         <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                            <button type="button" onclick="goToStep2()" class="btn btn-secondary" style="flex: 1;">
+                            <button type="button" id="step3-back" class="btn btn-secondary" style="flex: 1;">
                                 <i class="fas fa-arrow-left"></i> Back
                             </button>
                             <button type="submit" class="btn btn-primary" style="flex: 1;">
@@ -299,6 +299,12 @@
                 scrollToForm();
             }
         }
+
+        // Setup event listeners for navigation buttons
+        document.getElementById('step1-next')?.addEventListener('click', goToStep2);
+        document.getElementById('step2-back')?.addEventListener('click', goToStep1);
+        document.getElementById('step2-next')?.addEventListener('click', goToStep3);
+        document.getElementById('step3-back')?.addEventListener('click', goToStep2);
 
         function validateStep1() {
             const fullName = document.getElementById('fullName').value;

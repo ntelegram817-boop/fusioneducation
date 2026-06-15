@@ -76,5 +76,20 @@
     "status": "Interview Scheduled",
     "admissionDate": "2026-04-12",
     "notes": "Interview appointment on 2026-06-20."
+  },
+  {
+    "id": 7,
+    "fullName": "Ahmed Karim",
+    "email": "ahmed.karim@example.com",
+    "phone": "+8801700000200",
+    "course": "n4",
+    "branch": "Bogura",
+    "visaType": "student",
+    "passportOrNid": "PENDING",
+    "documentPreview": "https://via.placeholder.com/320x220?text=Document+Pending",
+    "status": "Admitted - Pending Payment",
+    "admissionDate": "2026-06-15",
+    "notes": "",
+    "passwordHash": "$2b$12$mSoTCib/2xkiNmP2l0u0IOkMSJfjZ9iobxFE/WIr7nGn70ZZNjD0K"
   }
 ]
