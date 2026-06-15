@@ -5,6 +5,7 @@ const session = require('express-session');
 const helmet = require('helmet');
 const staffRoutes = require('./routes/staffRoutes');
 const studentRoutes = require('./routes/studentRoutes');
+const admissionRoutes = require('./routes/admissionRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,6 +44,7 @@ app.use(
 
 app.use('/api/staff', staffRoutes);
 app.use('/api/student', studentRoutes);
+app.use('/api/admission', admissionRoutes);
 app.use(express.static(path.join(__dirname)));
 
 app.use((req, res) => {

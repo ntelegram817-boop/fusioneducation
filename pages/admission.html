@@ -340,26 +340,43 @@
             const visaType = document.getElementById('visaType').value;
             const comment = document.getElementById('comment').value;
 
-            addAdmissionEntry({
-                fullName,
-                email,
-                phone,
-                course,
-                branch,
-                visaType,
-                comment,
-                submittedAt: new Date().toISOString()
-            });
+            try {
+                const response = await fetch('/api/admission/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fullName,
+                        email,
+                        phone,
+                        course,
+                        branch,
+                        visaType,
+                        comment
+                    })
+                });
 
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-success';
-            alert.innerHTML = '<i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i> Application submitted successfully! We\'ll contact you within 24 hours.';
-            document.querySelector('form').before(alert);
+                const result = await response.json();
 
-            setTimeout(() => {
-                document.getElementById('admissionForm').reset();
-                goToStep1();
-            }, 2000);
+                const alert = document.createElement('div');
+                if (response.ok) {
+                    alert.className = 'alert alert-success';
+                    alert.innerHTML = '<i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i> ' + result.message + ' Login credentials sent to ' + email;
+                    document.querySelector('form').before(alert);
+                    setTimeout(() => {
+                        document.getElementById('admissionForm').reset();
+                        goToStep1();
+                    }, 3000);
+                } else {
+                    alert.className = 'alert alert-error';
+                    alert.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i> ' + (result.error || 'Submission failed');
+                    document.querySelector('form').before(alert);
+                }
+            } catch (err) {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-error';
+                alert.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i> Unable to contact server. Please try again later.';
+                document.querySelector('form').before(alert);
+            }
         });
     </script>
 </body>
