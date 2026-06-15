@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fusion Education BD - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-shell {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .tab-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .tab-btn {
+            border: 2px solid var(--border-light);
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            background: var(--white);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        .tab-btn.active,
+        .tab-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .dashboard-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-row {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+        .block-row {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .image-preview {
+            width: 100%;
+            max-width: 400px;
+            min-height: 180px;
+            border: 2px dashed var(--border-light);
+            border-radius: 18px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            background: var(--background-light);
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 260px;
+            border-radius: 16px;
+            object-fit: cover;
+        }
+        .item-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 18px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .item-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 280px 1fr;
+            align-items: start;
+        }
+        .item-card img,
+        .author-avatar {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            border-radius: 16px;
+        }
+        .author-avatar {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 64px;
+            height: 64px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E60012, #FF3333);
+            color: white;
+            border-radius: 18px;
+            font-size: 1.2rem;
+        }
+        .item-meta {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .item-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .action-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .outline-btn,
+        .btn {
+            min-width: 140px;
+        }
+        .success-message {
+            display: none;
+            margin-bottom: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: 14px;
+            background: #e6ffed;
+            color: #1f5e2b;
+            border: 1px solid #b8f1c1;
+        }
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="../index.html" class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    Fusion <span>Education</span>
+                </a>
+                <div class="nav-actions">
+                    <a href="../index.html" class="btn btn-secondary"><i class="fas fa-home"></i> View Site</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-shell">
+        <div class="dashboard-header">
+            <div>
+                <h1>Admin Control Panel</h1>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem; max-width: 720px;">Complete website control: hero, posts, courses, testimonials, FAQ, contact leads, social links and admin login.</p>
+            </div>
+        </div>
+
+        <div class="success-message" id="successMessage"><i class="fas fa-check-circle"></i> <span id="successText"></span></div>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="settings-tab" onclick="switchTab('settings-tab')"><i class="fas fa-cogs"></i> Site Settings</button>
+            <button class="tab-btn" data-tab="posts-tab" onclick="switchTab('posts-tab')"><i class="fas fa-newspaper"></i> Home Posts</button>
+            <button class="tab-btn" data-tab="courses-tab" onclick="switchTab('courses-tab')"><i class="fas fa-book-open"></i> Courses</button>
+            <button class="tab-btn" data-tab="testimonials-tab" onclick="switchTab('testimonials-tab')"><i class="fas fa-user-check"></i> Testimonials</button>
+            <button class="tab-btn" data-tab="faqs-tab" onclick="switchTab('faqs-tab')"><i class="fas fa-question-circle"></i> FAQs</button>
+            <button class="tab-btn" data-tab="contacts-tab" onclick="switchTab('contacts-tab')"><i class="fas fa-envelope"></i> Messages</button>
+            <button class="tab-btn" data-tab="admissions-tab" onclick="switchTab('admissions-tab')"><i class="fas fa-user-graduate"></i> Admissions</button>
+            <button class="tab-btn" data-tab="users-tab" onclick="switchTab('users-tab')"><i class="fas fa-user-shield"></i> Admin User</button>
+        </div>
+
+        <section id="settings-tab" class="tab-pane active dashboard-card">
+            <h2><i class="fas fa-sliders-h"></i> Site Settings</h2>
+            <form id="settingsForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="heroTitleInput">Hero Title</label>
+                        <input id="heroTitleInput" type="text" placeholder="Hero title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="heroSubtitleInput">Hero Subtitle</label>
+                        <input id="heroSubtitleInput" type="text" placeholder="Hero subtitle" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="heroImageUrl">Hero Background Image URL</label>
+                        <input id="heroImageUrl" type="url" placeholder="https://example.com/banner.jpg" onchange="previewImage(event, 'heroPreview')">
+                    </div>
+                    <div class="form-group">
+                        <label for="heroImageFile">Upload Hero Image</label>
+                        <input id="heroImageFile" type="file" accept="image/*" onchange="previewImage(event, 'heroPreview')">
+                    </div>
+                </div>
+                <div id="heroPreview" class="image-preview">Upload or enter image URL to preview here.</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="heroCtaText">Primary CTA Text</label>
+                        <input id="heroCtaText" type="text" placeholder="Start Your Journey" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="heroCtaUrl">Primary CTA URL</label>
+                        <input id="heroCtaUrl" type="url" placeholder="pages/admission.html" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="heroSecondaryText">Secondary CTA Text</label>
+                        <input id="heroSecondaryText" type="text" placeholder="Free Consultation">
+                    </div>
+                    <div class="form-group">
+                        <label for="heroSecondaryUrl">Secondary CTA URL</label>
+                        <input id="heroSecondaryUrl" type="url" placeholder="pages/contact.html">
+                    </div>
+                </div>
+                <h3 style="margin-top: 2rem;">Contact Info</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contactAddress">Address</label>
+                        <input id="contactAddress" type="text" placeholder="Office address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactPhone">Phone</label>
+                        <input id="contactPhone" type="tel" placeholder="+8801302090286" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contactEmail">Email</label>
+                        <input id="contactEmail" type="email" placeholder="contact@fusioneducationbd.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactHours">Office Hours</label>
+                        <input id="contactHours" type="text" placeholder="Thursday - Saturday, 10:00 AM - 6:00 PM" required>
+                    </div>
+                </div>
+                <h3 style="margin-top: 2rem;">Social Links</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="socialFacebook">Facebook URL</label>
+                        <input id="socialFacebook" type="url" placeholder="https://facebook.com/fusioneducationbd">
+                    </div>
+                    <div class="form-group">
+                        <label for="socialInstagram">Instagram URL</label>
+                        <input id="socialInstagram" type="url" placeholder="https://instagram.com/fusioneducation2025">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="socialTwitter">Twitter URL</label>
+                        <input id="socialTwitter" type="url" placeholder="https://twitter.com/fusioneducationbd">
+                    </div>
+                    <div class="form-group">
+                        <label for="socialLinkedin">LinkedIn URL</label>
+                        <input id="socialLinkedin" type="url" placeholder="https://linkedin.com/company/fusioneducationbd">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="socialWhatsapp">WhatsApp URL</label>
+                        <input id="socialWhatsapp" type="url" placeholder="https://wa.me/8801302090286">
+                    </div>
+                    <div class="form-group">
+                        <label for="footerTextInput">Footer Text</label>
+                        <input id="footerTextInput" type="text" placeholder="© 2026 Fusion Education BD. All rights reserved.">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 1.5rem;"><i class="fas fa-save"></i> Save Site Settings</button>
+            </form>
+        </section>
+        <section id="posts-tab" class="tab-pane dashboard-card">
+            <h2><i class="fas fa-newspaper"></i> Home Posts</h2>
+            <form id="postForm" class="block-row">
+                <input type="hidden" id="postId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="postTitle">Post Title</label>
+                        <input id="postTitle" type="text" placeholder="Post heading" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="postText">Post Description</label>
+                        <textarea id="postText" placeholder="Write the message for your audience..." required></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="postImageUrl">Image URL</label>
+                        <input id="postImageUrl" type="url" placeholder="https://..." onchange="previewImage(event, 'postPreview')">
+                    </div>
+                    <div class="form-group">
+                        <label for="postImageFile">Upload Image</label>
+                        <input id="postImageFile" type="file" accept="image/*" onchange="previewImage(event, 'postPreview')">
+                    </div>
+                </div>
+                <div id="postPreview" class="image-preview">Preview image will appear here.</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="postPhotoLink">Photo Link</label>
+                        <input id="postPhotoLink" type="url" placeholder="http://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="postButtonText">Button Text</label>
+                        <input id="postButtonText" type="text" placeholder="View Story">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="postButtonUrl">Button URL</label>
+                        <input id="postButtonUrl" type="url" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="postLayout">Layout</label>
+                        <select id="postLayout" required>
+                            <option value="horizontal">Horizontal</option>
+                            <option value="vertical">Vertical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="postPhotoSize">Photo Size</label>
+                        <select id="postPhotoSize" required>
+                            <option value="medium">Medium</option>
+                            <option value="small">Small</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="action-row">
+                    <button type="submit" class="btn btn-primary" id="postSubmitBtn"><i class="fas fa-save"></i> Save Post</button>
+                    <button type="button" class="outline-btn" onclick="resetPostForm()"><i class="fas fa-ban"></i> Cancel</button>
+                </div>
+            </form>
+            <div id="postsList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
+        </section>
+        <section id="courses-tab" class="tab-pane dashboard-card">
+            <h2><i class="fas fa-book-open"></i> Courses</h2>
+            <form id="courseForm" class="block-row">
+                <input type="hidden" id="courseId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseTitle">Course Title</label>
+                        <input id="courseTitle" type="text" placeholder="JLPT N5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseLevel">Level</label>
+                        <input id="courseLevel" type="text" placeholder="Beginner" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseDuration">Duration</label>
+                        <input id="courseDuration" type="text" placeholder="3 Months" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseStudents">Students / Batch</label>
+                        <input id="courseStudents" type="text" placeholder="20 Students/Batch" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="courseFee">Fee</label>
+                        <input id="courseFee" type="text" placeholder="৳ 15,000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseLink">Course Link</label>
+                        <input id="courseLink" type="url" placeholder="pages/courses.html">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="courseDescription">Description</label>
+                    <textarea id="courseDescription" placeholder="Course benefits and learning outcomes..." required></textarea>
+                </div>
+                <div class="action-row">
+                    <button type="submit" class="btn btn-primary" id="courseSubmitBtn"><i class="fas fa-save"></i> Save Course</button>
+                    <button type="button" class="outline-btn" onclick="resetCourseForm()"><i class="fas fa-ban"></i> Cancel</button>
+                </div>
+            </form>
+            <div id="coursesList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
+        </section>
+        <section id="testimonials-tab" class="tab-pane dashboard-card">
+            <h2><i class="fas fa-user-check"></i> Testimonials</h2>
+            <form id="testimonialForm" class="block-row">
+                <input type="hidden" id="testimonialId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="testimonialName">Student Name</label>
+                        <input id="testimonialName" type="text" placeholder="Farhana Rahim" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonialRole">Role / Status</label>
+                        <input id="testimonialRole" type="text" placeholder="SSW Visa Approved" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="testimonialAvatar">Avatar Text</label>
+                        <input id="testimonialAvatar" type="text" placeholder="FR">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="testimonialText">Testimonial</label>
+                    <textarea id="testimonialText" placeholder="Write testimonial text..." required></textarea>
+                </div>
+                <div class="action-row">
+                    <button type="submit" class="btn btn-primary" id="testimonialSubmitBtn"><i class="fas fa-save"></i> Save Testimonial</button>
+                    <button type="button" class="outline-btn" onclick="resetTestimonialForm()"><i class="fas fa-ban"></i> Cancel</button>
+                </div>
+            </form>
+            <div id="testimonialsList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
+        </section>
+        <section id="faqs-tab" class="tab-pane dashboard-card">
+            <h2><i class="fas fa-question-circle"></i> FAQ Manager</h2>
+            <form id="faqForm" class="block-row">
+                <input type="hidden" id="faqId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="faqQuestion">Question</label>
+                        <input id="faqQuestion" type="text" placeholder="What is the course duration?" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="faqAnswer">Answer</label>
+                    <textarea id="faqAnswer" placeholder="Provide the answer here..." required></textarea>
+                </div>
+                <div class="action-row">
+                    <button type="submit" class="btn btn-primary" id="faqSubmitBtn"><i class="fas fa-save"></i> Save FAQ</button>
+                    <button type="button" class="outline-btn" onclick="resetFaqForm()"><i class="fas fa-ban"></i> Cancel</button>
+                </div>
+            </form>
+            <div id="faqsList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
+        </section>
+        <section id="contacts-tab" class="tab-pane dashboard-card">
+            <h2><i class="fas fa-envelope"></i> Contact Messages</h2>
+            <div id="messagesList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
+        </section>
+        <section id="admissions-tab" class="tab-pane dashboard-card">
+            <h2><i class="fas fa-user-graduate"></i> Student Admissions</h2>
+            <div id="admissionsList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
+        </section>
+        <section id="users-tab" class="tab-pane dashboard-card">
+            <h2><i class="fas fa-user-shield"></i> Admin Login Settings</h2>
+            <form id="userForm" class="block-row">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="adminEmail">Admin Email</label>
+                        <input id="adminEmail" type="email" placeholder="admin@fusioneducation.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">Admin Password</label>
+                        <input id="adminPassword" type="password" placeholder="Enter a secure password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Credentials</button>
+            </form>
+            <p style="margin-top:1rem; color: var(--text-secondary);">Use these credentials on the admin login page to access the dashboard.</p>
+        </section>
+    </main>
+
+    <script src="../assets/js/gallery.js"></script>
+    <script src="../assets/js/admin.js"></script>
+</body>
+</html>

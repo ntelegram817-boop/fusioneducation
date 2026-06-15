@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Admission Form - Fusion Education BD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="../index.html" class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    Fusion <span>Education</span>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="visa-support.html">Visa Support</a></li>
+                    <li><a href="success-stories.html">Success Stories</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="admission.html" class="btn btn-primary">Apply Now</a>
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Online Admission Form</h1>
+                <p>Complete this form to begin your application process</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admission Form Section -->
+    <section class="section">
+        <div class="container">
+            <div style="max-width: 700px; margin: 0 auto;">
+                <!-- Progress Bar -->
+                <div class="card mb-4" style="padding: 1rem;">
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div style="flex: 1; height: 4px; background: var(--primary); border-radius: 2px;"></div>
+                        <div style="flex: 1; height: 4px; background: var(--border-light); border-radius: 2px;"></div>
+                        <div style="flex: 1; height: 4px; background: var(--border-light); border-radius: 2px;"></div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">Step 1 of 3: Personal Information</p>
+                </div>
+
+                <form class="card" id="admissionForm">
+                    <!-- Step 1: Personal Information -->
+                    <div id="step1">
+                        <h3 style="margin-bottom: 1.5rem;">Personal Information</h3>
+
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" required placeholder="Your full name">
+                        </div>
+
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="+880 1XXX XXXXXX">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender" required>
+                                    <option value="">Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" id="address" name="address" required placeholder="Your residential address">
+                        </div>
+
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" name="city" required placeholder="City">
+                            </div>
+                            <div class="form-group">
+                                <label for="district">District</label>
+                                <input type="text" id="district" name="district" required placeholder="District">
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="goToStep2()" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                            <i class="fas fa-arrow-right"></i> Next Step
+                        </button>
+                    </div>
+
+                    <!-- Step 2: Educational Information -->
+                    <div id="step2" style="display: none;">
+                        <h3 style="margin-bottom: 1.5rem;">Educational Information</h3>
+
+                        <div class="form-group">
+                            <label for="highestEducation">Highest Level of Education</label>
+                            <select id="highestEducation" name="highestEducation" required>
+                                <option value="">Select education level</option>
+                                <option value="ssc">SSC / O-Level</option>
+                                <option value="hsc">HSC / A-Level</option>
+                                <option value="bachelor">Bachelor's Degree</option>
+                                <option value="master">Master's Degree</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="course">Select Course</label>
+                            <select id="course" name="course" required>
+                                <option value="">Choose a course</option>
+                                <option value="n5">JLPT N5 (Beginner)</option>
+                                <option value="n4">JLPT N4 (Intermediate)</option>
+                                <option value="n3">JLPT N3 (Advanced)</option>
+                                <option value="speaking">Conversation Kaiwa</option>
+                                <option value="combined">Combined Program</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="branch">Preferred Branch</label>
+                            <select id="branch" name="branch" required>
+                                <option value="">Choose a branch</option>
+                                <option value="dinajpur">Dinajpur Branch</option>
+                                <option value="bogura">Bogura Branch</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="japaneseExperience">Previous Japanese Learning Experience</label>
+                            <select id="japaneseExperience" name="japaneseExperience" required>
+                                <option value="">Select</option>
+                                <option value="none">None - Complete Beginner</option>
+                                <option value="self-study">Self-study (1-3 months)</option>
+                                <option value="formal">Formal Training (3-6 months)</option>
+                                <option value="certified">Certified (N5 or higher)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="visaType">Interested Visa Type</label>
+                            <select id="visaType" name="visaType" required>
+                                <option value="">Select visa type</option>
+                                <option value="student">Student Visa</option>
+                                <option value="ssw">SSW (Skilled Worker)</option>
+                                <option value="titp">TITP/Work Visa</option>
+                                <option value="undecided">Undecided</option>
+                            </select>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <button type="button" onclick="goToStep1()" class="btn btn-secondary" style="flex: 1;">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" onclick="goToStep3()" class="btn btn-primary" style="flex: 1;">
+                                <i class="fas fa-arrow-right"></i> Next Step
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Document Upload & Agreement -->
+                    <div id="step3" style="display: none;">
+                        <h3 style="margin-bottom: 1.5rem;">Documents & Agreement</h3>
+
+                        <div class="form-group">
+                            <label for="photo">Upload Photo (4x6 cm)</label>
+                            <input type="file" id="photo" name="photo" accept="image/*" required>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">JPG, PNG (Max 2MB)</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="educationDoc">Upload Education Certificate</label>
+                            <input type="file" id="educationDoc" name="educationDoc" accept=".pdf,.doc,.docx" required>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">PDF, DOC (Max 5MB)</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comment">Additional Comments/Questions</label>
+                            <textarea id="comment" name="comment" placeholder="Any additional information you'd like to share..."></textarea>
+                        </div>
+
+                        <div class="form-group" style="background: var(--background-light); padding: 1rem; border-radius: 12px; border-left: 4px solid var(--primary);">
+                            <label style="display: flex; gap: 1rem; cursor: pointer; margin: 0;">
+                                <input type="checkbox" id="terms" name="terms" required style="width: 20px; height: 20px; cursor: pointer; margin-top: 0.2rem;">
+                                <span>
+                                    I agree to the <a href="#" style="color: var(--primary); text-decoration: underline;">Terms & Conditions</a> and <a href="#" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <button type="button" onclick="goToStep2()" class="btn btn-secondary" style="flex: 1;">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                <i class="fas fa-check"></i> Submit Application
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About Us</h4>
+                    <p>Fusion Education BD is a leading Japanese language institute and visa consultation agency.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="courses.html">Courses</a></li>
+                        <li><a href="visa-support.html">Visa Support</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> +880 1302 090286</li>
+                        <li><i class="fas fa-envelope"></i> contact@fusioneducationbd.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Fusion Education BD. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="float-buttons">
+        <a href="https://wa.me/8801302090286" class="float-btn float-btn-whatsapp" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="#" class="float-btn scroll-top">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/gallery.js"></script>
+    <script>
+        function goToStep1() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            scrollToForm();
+        }
+
+        function goToStep2() {
+            if (validateStep1()) {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+                document.getElementById('step3').style.display = 'none';
+                scrollToForm();
+            }
+        }
+
+        function goToStep3() {
+            if (validateStep2()) {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('step3').style.display = 'block';
+                scrollToForm();
+            }
+        }
+
+        function validateStep1() {
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const dateOfBirth = document.getElementById('dateOfBirth').value;
+
+            if (!fullName || !email || !phone || !dateOfBirth) {
+                alert('Please fill in all required fields');
+                return false;
+            }
+            return true;
+        }
+
+        function validateStep2() {
+            const course = document.getElementById('course').value;
+            const branch = document.getElementById('branch').value;
+            const visaType = document.getElementById('visaType').value;
+
+            if (!course || !branch || !visaType) {
+                alert('Please select course, branch, and visa type');
+                return false;
+            }
+            return true;
+        }
+
+        function scrollToForm() {
+            document.querySelector('form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.getElementById('admissionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const course = document.getElementById('course').value;
+            const branch = document.getElementById('branch').value;
+            const visaType = document.getElementById('visaType').value;
+            const comment = document.getElementById('comment').value;
+
+            addAdmissionEntry({
+                fullName,
+                email,
+                phone,
+                course,
+                branch,
+                visaType,
+                comment,
+                submittedAt: new Date().toISOString()
+            });
+
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.innerHTML = '<i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i> Application submitted successfully! We\'ll contact you within 24 hours.';
+            document.querySelector('form').before(alert);
+
+            setTimeout(() => {
+                document.getElementById('admissionForm').reset();
+                goToStep1();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Fusion Education BD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="../index.html" class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    Fusion <span>Education</span>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="visa-support.html">Visa Support</a></li>
+                    <li><a href="success-stories.html">Success Stories</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="admission.html" class="btn btn-primary">Apply Now</a>
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Get In Touch</h1>
+                <p>Have questions? We're here to help and provide all the information you need</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section">
+        <div class="container">
+            <div class="grid grid-2">
+                <!-- Contact Form -->
+                <div>
+                    <h2 style="margin-bottom: 1rem;">Send us a Message</h2>
+                    <form id="contactForm" class="card">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required placeholder="Your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required placeholder="your@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+880 1XXX XXXXXX">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="course-inquiry">Course Inquiry</option>
+                                <option value="visa-inquiry">Visa Inquiry</option>
+                                <option value="general">General Question</option>
+                                <option value="admission">Admission Help</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" required placeholder="Tell us how we can help..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h2 style="margin-bottom: 1rem;">Contact Information</h2>
+                    
+                    <div class="card mb-3">
+                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                            <div style="background: linear-gradient(135deg, #E60012, #FF3333); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">📍</div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem;">Address</h4>
+                                <p id="contact-address">90/2, Fakirpara<br>100 Feet North from Fakirpara Masjid<br>Dinajpur 5200, Bangladesh</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                            <div style="background: linear-gradient(135deg, #E60012, #FF3333); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">📞</div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem;">Phone</h4>
+                                <p><a id="contact-phone" href="tel:+8801302090286" style="color: var(--text-secondary); text-decoration: none;">+880 1302 090286</a></p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Monday - Friday, 10am - 6pm</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                            <div style="background: linear-gradient(135deg, #E60012, #FF3333); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">✉️</div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem;">Email</h4>
+                                <p><a id="contact-email" href="mailto:contact@fusioneducationbd.com" style="color: var(--text-secondary); text-decoration: none;">contact@fusioneducationbd.com</a></p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">We'll respond within 24 hours</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                            <div style="background: linear-gradient(135deg, #E60012, #FF3333); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">🕐</div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem;">Office Hours</h4>
+                                <p id="contact-hours"><strong>Thursday - Saturday</strong><br>10:00 AM - 6:00 PM</p>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Closed on Sundays & National Holidays</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Links Section -->
+    <section class="section" style="background: var(--background-light);">
+        <div class="container">
+            <div class="text-center">
+                <h2 style="margin-bottom: 1rem;">Connect With Us</h2>
+                <p style="margin-bottom: 2rem; color: var(--text-secondary);">Follow us on social media for updates, tips, and success stories</p>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a id="social-facebook" href="https://facebook.com/fusioneducationbd" target="_blank" class="card" style="width: 150px; text-align: center; padding: 2rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">f</div>
+                        <h4 style="margin: 0;">Facebook</h4>
+                    </a>
+                    <a id="social-instagram" href="https://instagram.com/fusioneducation2025" target="_blank" class="card" style="width: 150px; text-align: center; padding: 2rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">📷</div>
+                        <h4 style="margin: 0;">Instagram</h4>
+                    </a>
+                    <a id="social-whatsapp" href="https://wa.me/8801302090286" target="_blank" class="card" style="width: 150px; text-align: center; padding: 2rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">💬</div>
+                        <h4 style="margin: 0;">WhatsApp</h4>
+                    </a>
+                    <a href="tel:+8801302090286" class="card" style="width: 150px; text-align: center; padding: 2rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">☎️</div>
+                        <h4 style="margin: 0;">Call Us</h4>
+                    </a>
+                    <a id="social-twitter" href="https://twitter.com/fusioneducationbd" target="_blank" class="card" style="width: 150px; text-align: center; padding: 2rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🐦</div>
+                        <h4 style="margin: 0;">Twitter</h4>
+                    </a>
+                    <a id="social-linkedin" href="https://linkedin.com/company/fusioneducationbd" target="_blank" class="card" style="width: 150px; text-align: center; padding: 2rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">in</div>
+                        <h4 style="margin: 0;">LinkedIn</h4>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section (Optional - add actual map API) -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-6">Find Us on Map</h2>
+            <div style="background: var(--background-light); border-radius: 16px; overflow: hidden; height: 400px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-light);">
+                <div class="text-center">
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">📍 Location: 90/2, Fakirpara, Dinajpur 5200, Bangladesh</p>
+                    <p style="color: var(--text-secondary);">Map integration can be added here</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About Us</h4>
+                    <p>Fusion Education BD is a leading Japanese language institute and visa consultation agency.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="courses.html">Courses</a></li>
+                        <li><a href="visa-support.html">Visa Support</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> +880 1302 090286</li>
+                        <li><i class="fas fa-envelope"></i> contact@fusioneducationbd.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Fusion Education BD. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="float-buttons">
+        <a href="https://wa.me/8801302090286" class="float-btn float-btn-whatsapp" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="#" class="float-btn scroll-top">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </div>
+
+    <script src="../assets/js/gallery.js"></script>
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Dashboard | Fusion Education</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #0b1120;
+      color: #f8fafc;
+    }
+
+    header {
+      background: #0f172a;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    header .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary,
+    .btn-primary {
+      border: none;
+      border-radius: 14px;
+      padding: 0.95rem 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn-secondary {
+      background: rgba(148, 163, 184, 0.12);
+      color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover,
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    .dashboard-shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-card {
+      background: #111827;
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 24px;
+      padding: 1.5rem;
+      min-height: 150px;
+    }
+
+    .summary-card h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      color: #94a3b8;
+    }
+
+    .summary-card p {
+      margin: 0;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      font-weight: 700;
+    }
+
+    .table-shell {
+      overflow-x: auto;
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      background: #020617;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    th,
+    td {
+      padding: 1rem 1.2rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    th {
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+      color: #94a3b8;
+      background: rgba(148, 163, 184, 0.04);
+    }
+
+    td {
+      color: #e2e8f0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .badge--dinajpur {
+      background: rgba(16, 185, 129, 0.12);
+      color: #a7f3d0;
+    }
+
+    .badge--bogura {
+      background: rgba(59, 130, 246, 0.12);
+      color: #a5b4fc;
+    }
+
+    .actions {
+      display: inline-flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .action-pill {
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(15, 23, 42, 0.92);
+      color: #cbd5e1;
+      padding: 0.65rem 0.9rem;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .action-pill:hover {
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    .empty-state {
+      padding: 2rem;
+      text-align: center;
+      color: #94a3b8;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 30;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: min(900px, 100%);
+      background: #0f172a;
+      border-radius: 28px;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+    }
+
+    .modal-header,
+    .modal-footer {
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .modal-body h3 {
+      margin: 0 0 0.75rem;
+      color: #ffffff;
+    }
+
+    .modal-body p {
+      margin: 0.35rem 0;
+      color: #cbd5e1;
+      line-height: 1.75;
+    }
+
+    .document-preview {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      background: #020617;
+    }
+
+    .document-preview img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #111827 !important;
+      }
+
+      header,
+      .actions,
+      .modal-footer,
+      .modal-header,
+      .action-pill,
+      .btn-primary,
+      .btn-secondary {
+        display: none !important;
+      }
+
+      .dashboard-shell,
+      .modal-body,
+      .printable-sheet {
+        width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+
+      .print-section {
+        display: block;
+      }
+    }
+
+    .print-section {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Staff Dashboard</h1>
+      <p style="margin: 0.35rem 0 0; color: #94a3b8;">Branch filtered student management for Fusion Education.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-secondary" id="refreshButton"><i class="fas fa-sync-alt"></i> Refresh</button>
+      <button class="btn-secondary" id="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <button class="btn-primary" id="printBranchButton"><i class="fas fa-print"></i> Print Branch Summary</button>
+    </div>
+  </header>
+
+  <main class="dashboard-shell">
+    <section class="summary-grid">
+      <article class="summary-card">
+        <h2>Staff</h2>
+        <p id="staffName">Loading...</p>
+      </article>
+      <article class="summary-card">
+        <h2>Active Branch</h2>
+        <p id="staffBranch">Loading...</p>
+      </article>
+      <article class="summary-card">
+        <h2>Student Count</h2>
+        <p id="studentCount">0</p>
+      </article>
+      <article class="summary-card">
+        <h2>Latest Status</h2>
+        <p id="latestStatus">Pending</p>
+      </article>
+    </section>
+
+    <div class="table-shell">
+      <table>
+        <thead>
+          <tr>
+            <th>SL</th>
+            <th>Student Name</th>
+            <th>Course</th>
+            <th>Passport / NID</th>
+            <th>Document Preview</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody"></tbody>
+      </table>
+    </div>
+
+    <div id="emptyMessage" class="empty-state">Loading students…</div>
+  </main>
+
+  <div class="modal-backdrop" id="studentModal">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">Student Profile</h2>
+          <p id="modalSubtitle" style="margin: 0; color: #94a3b8;"></p>
+        </div>
+        <button class="btn-secondary" id="modalCloseButton"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h3 id="modalName"></h3>
+          <p><strong>Course:</strong> <span id="modalCourse"></span></p>
+          <p><strong>Passport / NID:</strong> <span id="modalDocumentId"></span></p>
+          <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+          <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
+          <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+          <p><strong>Admission Date:</strong> <span id="modalAdmissionDate"></span></p>
+          <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
+          <p><strong>Notes:</strong></p>
+          <p id="modalNotes" style="margin-top: 0.5rem; color: #cbd5e1;"></p>
+        </div>
+        <div class="document-preview">
+          <img id="modalDocumentPreview" alt="Document preview" src="" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCloseFooter"><i class="fas fa-arrow-left"></i> Close</button>
+        <button class="btn-primary" id="printStudentButton"><i class="fas fa-print"></i> Print Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-section" id="printableSection"></div>
+
+  <script src="../assets/js/staff-dashboard.js"></script>
+</body>
+</html>

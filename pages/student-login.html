@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - Fusion Education BD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body style="background: linear-gradient(135deg, #0B1020 0%, #1F2937 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    
+    <div style="width: 100%; max-width: 450px; padding: 1.5rem;">
+        <!-- Logo -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <a href="../index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: 700; color: var(--white); text-decoration: none; margin-bottom: 1rem;">
+                <i class="fas fa-graduation-cap" style="color: var(--primary);"></i>
+                Fusion <span style="color: var(--text-secondary);">Student</span>
+            </a>
+            <p style="color: rgba(255, 255, 255, 0.7);">Access your learning portal</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="glass-dark card" style="padding: 2rem;">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--white);">Student Portal</h2>
+
+            <form id="studentLoginForm">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="color: var(--white);">Registration Number or Email</label>
+                    <input type="text" name="identifier" required placeholder="FE-2024-001 or student@email.com" style="background: rgba(255, 255, 255, 0.1); color: var(--white); border-color: rgba(255, 255, 255, 0.2);">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="color: var(--white);">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" name="password" id="password" required placeholder="••••••••" style="background: rgba(255, 255, 255, 0.1); color: var(--white); border-color: rgba(255, 255, 255, 0.2);">
+                        <button type="button" onclick="togglePassword()" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255, 255, 255, 0.7); cursor: pointer; font-size: 1.2rem;">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+                    <label style="display: flex; gap: 0.5rem; cursor: pointer; color: rgba(255, 255, 255, 0.7);">
+                        <input type="checkbox" style="cursor: pointer;">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" style="margin-left: auto; color: var(--primary); text-decoration: none; font-size: 0.9rem;">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div style="display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;">
+                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.2);"></div>
+                <span style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem;">OR</span>
+                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.2);"></div>
+            </div>
+
+            <!-- Features -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0;">
+                <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 12px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📚</div>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">Course Materials</p>
+                </div>
+                <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 12px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">Progress Tracking</p>
+                </div>
+                <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 12px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📝</div>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">Assignments</p>
+                </div>
+                <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 12px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">💬</div>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">Messaging</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Need Help -->
+        <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; margin-bottom: 0.75rem;">First time here?</p>
+            <a href="admission.html" style="display: inline-block; color: var(--primary); text-decoration: none; font-weight: 600;">Apply for a course</a>
+            <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-top: 1rem;">Questions? Contact <a href="mailto:support@fusioneducation.com" style="color: var(--accent); text-decoration: none;">support</a></p>
+        </div>
+
+        <!-- Footer Links -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
+                <a href="../index.html" style="color: var(--primary); text-decoration: none;">← Back to home</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+            
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                password.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        document.getElementById('studentLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const identifier = document.querySelector('input[name="identifier"]').value.trim();
+            const password = document.querySelector('input[name="password"]').value;
+
+            try {
+                const response = await fetch('/api/student/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identifier, password })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    alert(result.error || 'Login failed.');
+                    return;
+                }
+
+                window.location.href = result.redirect || '/pages/student-dashboard.html';
+            } catch (err) {
+                alert('Unable to contact server. Please try again later.');
+            }
+        });
+
+        // Add input styling for glass effect
+        document.querySelectorAll('input[type="text"], input[type="password"]').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                this.style.borderColor = 'rgba(37, 99, 235, 0.5)';
+                this.style.boxShadow = '0 0 15px rgba(37, 99, 235, 0.3)';
+            });
+            input.addEventListener('blur', function() {
+                this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

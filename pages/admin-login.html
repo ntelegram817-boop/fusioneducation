@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Fusion Education BD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body style="background: linear-gradient(135deg, #0B1020 0%, #1F2937 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    
+    <div style="width: 100%; max-width: 450px; padding: 1.5rem;">
+        <!-- Logo -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <a href="../index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: 700; color: var(--white); text-decoration: none; margin-bottom: 1rem;">
+                <i class="fas fa-graduation-cap" style="color: var(--primary);"></i>
+                Fusion <span style="color: var(--text-secondary);">Admin</span>
+            </a>
+            <p style="color: rgba(255, 255, 255, 0.7);">Manage your institution</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="glass-dark card" style="padding: 2rem;">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--white);">Admin Dashboard</h2>
+
+            <form id="adminLoginForm">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="color: var(--white);">Email Address</label>
+                    <input type="email" name="email" required placeholder="admin@fusioneducation.com" style="background: rgba(255, 255, 255, 0.1); color: var(--white); border-color: rgba(255, 255, 255, 0.2);">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="color: var(--white);">Password</label>
+                    <input type="password" name="password" required placeholder="••••••••" style="background: rgba(255, 255, 255, 0.1); color: var(--white); border-color: rgba(255, 255, 255, 0.2);">
+                </div>
+
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+                    <label style="display: flex; gap: 0.5rem; cursor: pointer; color: rgba(255, 255, 255, 0.7);">
+                        <input type="checkbox" style="cursor: pointer;">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" style="margin-left: auto; color: var(--primary); text-decoration: none; font-size: 0.9rem;">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div style="display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;">
+                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.2);"></div>
+                <span style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem;">OR</span>
+                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.2);"></div>
+            </div>
+
+            <!-- Support Info -->
+            <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 12px; padding: 1rem; margin-top: 1.5rem;">
+                <p style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem;">Need help?</p>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">Contact support: <a href="mailto:support@fusioneducation.com" style="color: var(--accent); text-decoration: none;">support@fusioneducation.com</a></p>
+            </div>
+        </div>
+
+        <!-- Footer Links -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
+                Not an admin? <a href="../index.html" style="color: var(--primary); text-decoration: none;">Back to home</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="../assets/js/gallery.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        const defaultAdminEmail = 'admin@fusioneducation.com';
+        const defaultAdminPassword = 'admin123';
+
+        async function getAdminCredentials() {
+            if (typeof getSiteData === 'function') {
+                const stored = getSiteData();
+                return stored?.adminUser || { email: defaultAdminEmail, password: defaultAdminPassword };
+            }
+            return { email: defaultAdminEmail, password: defaultAdminPassword };
+        }
+
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.querySelector('input[name="email"]').value;
+            const password = document.querySelector('input[name="password"]').value;
+            const credentials = await getAdminCredentials();
+
+            if (email === credentials.email && password === credentials.password) {
+                alert('Login successful! Redirecting to dashboard...');
+                window.location.href = '/admin/dashboard.html';
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        });
+
+        // Add input styling for glass effect
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                this.style.borderColor = 'rgba(37, 99, 235, 0.5)';
+                this.style.boxShadow = '0 0 15px rgba(37, 99, 235, 0.3)';
+            });
+            input.addEventListener('blur', function() {
+                this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
