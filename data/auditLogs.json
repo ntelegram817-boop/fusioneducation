@@ -1,5 +1,95 @@
 [
   {
+    "id": "log_1788357193284_a1wn",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_005",
+    "targetName": "Kamal Hossain",
+    "performedBy": {
+      "name": "Kamal Hossain",
+      "email": "rangpur.staff@fusion.com",
+      "role": "staff",
+      "branch": "Rangpur"
+    },
+    "timestamp": "2026-09-02T13:53:13.284Z"
+  },
+  {
+    "id": "log_1788357179892_gu5s",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_002",
+    "targetName": "Kenji Sato",
+    "performedBy": {
+      "name": "Kenji Sato",
+      "email": "dhaka.instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dhaka"
+    },
+    "timestamp": "2026-09-02T13:52:59.892Z"
+  },
+  {
+    "id": "log_1788357162370_7ti2",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_003",
+    "targetName": "Nusrat Jahan",
+    "performedBy": {
+      "name": "Nusrat Jahan",
+      "email": "bogura@fusion.com",
+      "role": "staff",
+      "branch": "Bogura"
+    },
+    "timestamp": "2026-09-02T13:52:42.370Z"
+  },
+  {
+    "id": "log_1788356826438_ivxn",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T13:47:06.438Z"
+  },
+  {
+    "id": "log_1788356760782_truv",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_003",
+    "targetName": "Nusrat Jahan",
+    "performedBy": {
+      "name": "Nusrat Jahan",
+      "email": "bogura@fusion.com",
+      "role": "staff",
+      "branch": "Bogura"
+    },
+    "timestamp": "2026-09-02T13:46:00.782Z"
+  },
+  {
+    "id": "log_1788356688436_9gas",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T13:44:48.436Z"
+  },
+  {
     "id": "log_1788347331097_08ko",
     "action": "user_updated",
     "details": "Updated user Mahmudul Hasan permissions & details",

@@ -148,23 +148,29 @@
         </div>
     </header>
 
-    <!-- NAV RAIL -->
-    <div class="nav-rail-container">
-        <nav class="nav-rail" aria-label="Admin Navigation">
-            <a href="dashboard.html" class="nav-pill"><i class="fas fa-sliders-h"></i> Site Settings</a>
-            <a href="posts.html" class="nav-pill"><i class="fas fa-newspaper"></i> Home Posts</a>
-            <a href="courses.html" class="nav-pill"><i class="fas fa-book-open"></i> Courses</a>
-            <a href="testimonials.html" class="nav-pill"><i class="fas fa-user-check"></i> Testimonials</a>
-            <a href="faqs.html" class="nav-pill"><i class="fas fa-question-circle"></i> FAQs</a>
-            <a href="messages.html" class="nav-pill"><i class="fas fa-envelope"></i> Messages <span class="badge" id="navMsgCount">0</span></a>
-            <a href="admissions.html?tab=pending" class="nav-pill"><i class="fas fa-user-clock"></i> Admission Pending <span class="badge" id="navPendingCount">0</span></a>
-            <a href="admissions.html?tab=admitted" class="nav-pill"><i class="fas fa-user-check"></i> Admitted Students <span class="badge" id="navAdmittedCount">0</span></a>
-            <a href="users.html" class="nav-pill active"><i class="fas fa-user-shield"></i> Users &amp; Permissions</a>
-        </nav>
-    </div>
+    <div class="admin-layout">
+        <!-- VERTICAL SIDEBAR -->
+        <aside class="nav-rail-container">
+            <nav class="nav-rail" aria-label="Admin Navigation">
+                <span class="sidebar-heading">Main Menu</span>
+                <a href="dashboard.html" class="nav-pill"><i class="fas fa-sliders-h"></i> <span>Site Settings</span></a>
+                <a href="posts.html" class="nav-pill"><i class="fas fa-newspaper"></i> <span>Home Posts</span></a>
+                <a href="courses.html" class="nav-pill"><i class="fas fa-book-open"></i> <span>Courses</span></a>
+                <a href="testimonials.html" class="nav-pill"><i class="fas fa-user-check"></i> <span>Testimonials</span></a>
+                <a href="faqs.html" class="nav-pill"><i class="fas fa-question-circle"></i> <span>FAQs</span></a>
+                <a href="messages.html" class="nav-pill"><i class="fas fa-envelope"></i> <span>Messages</span> <span class="badge" id="navMsgCount">0</span></a>
+                
+                <span class="sidebar-heading">Admissions & Students</span>
+                <a href="admissions.html?tab=pending" class="nav-pill"><i class="fas fa-user-clock"></i> <span>Admission Pending</span> <span class="badge" id="navPendingCount">0</span></a>
+                <a href="admissions.html?tab=admitted" class="nav-pill"><i class="fas fa-user-check"></i> <span>Admitted Students</span> <span class="badge" id="navAdmittedCount">0</span></a>
+                
+                <span class="sidebar-heading">Management</span>
+                <a href="users.html" class="nav-pill active"><i class="fas fa-user-shield"></i> <span>Users &amp; Permissions</span></a>
+            </nav>
+        </aside>
 
-    <!-- MAIN SHELL -->
-    <main class="shell">
+        <!-- MAIN SHELL -->
+        <main class="shell">
         <div class="page-header">
             <div class="page-title-block">
                 <h1>
@@ -336,6 +342,7 @@
         </div>
 
     </main>
+    </div>
 
     <!-- ── MODAL: ADD / EDIT USER & PERMISSIONS ── -->
     <div id="userModal" class="modal-backdrop-custom" style="display: none;">
