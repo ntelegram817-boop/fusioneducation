@@ -1,0 +1,38 @@
+[
+  {
+    "id": "usr_staff_001",
+    "name": "Mahmudul Hasan",
+    "email": "staff@fusioneducation.com",
+    "password": "staff123",
+    "role": "staff",
+    "branch": "Dinajpur",
+    "status": "active"
+  },
+  {
+    "id": "usr_staff_002",
+    "name": "Tariqul Islam",
+    "email": "dinajpur@fusion.com",
+    "password": "password123",
+    "role": "staff",
+    "branch": "Dinajpur",
+    "status": "active"
+  },
+  {
+    "id": "usr_staff_003",
+    "name": "Nusrat Jahan",
+    "email": "bogura@fusion.com",
+    "password": "password123",
+    "role": "staff",
+    "branch": "Bogura",
+    "status": "active"
+  },
+  {
+    "id": "usr_inst_001",
+    "name": "Rahim Sensei (Tanaka)",
+    "email": "instructor@fusion.com",
+    "password": "password123",
+    "role": "instructor",
+    "branch": "Dinajpur",
+    "status": "active"
+  }
+]

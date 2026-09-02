@@ -3,132 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Admission Form - Fusion Education BD</title>
+    <title>Online Admission Form – Fusion Education BD</title>
+    <meta name="description" content="Apply online for Japanese language courses and visa assistance at Fusion Education BD. Fill out our secure multi-step admission form.">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <script src="../assets/js/gallery.js"></script>
+    <link rel="stylesheet" href="../assets/css/admission.css">
+
+    <!-- Discount calculator loaded before admission.js -->
     <script src="../assets/js/discountCalculator.js"></script>
 </head>
 <body>
-    <!-- Header/Navigation -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="../index.html" class="logo">
-                    <i class="fas fa-graduation-cap"></i>
+
+<!-- ── Header ──────────────────────────────────────────────── -->
+<header>
+    <div class="container">
+        <nav>
+            <a href="../index.html" class="logo">
+                    <img src="../assets/images/logo.jpg" class="nav-logo-img" alt="Fusion Logo">
                     Fusion <span>Education</span>
-                </a>
-                <ul class="nav-menu">
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="courses.html">Courses</a></li>
-                    <li><a href="visa-support.html">Visa Support</a></li>
-                    <li><a href="success-stories.html">Success Stories</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-                <div class="nav-actions">
-                    <a href="admission.html" class="btn btn-primary">Apply Now</a>
-                    <div class="hamburger">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
+</a>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="visa-support.html">Visa Support</a></li>
+                <li><a href="success-stories.html">Success Stories</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="admission.html" class="btn btn-primary">Apply Now</a>
+                <div class="hamburger">
+                    <span></span><span></span><span></span>
                 </div>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Online Admission Form</h1>
-                <p>Complete this form to begin your application process</p>
             </div>
+        </nav>
+    </div>
+</header>
+
+<!-- ── Hero ────────────────────────────────────────────────── -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Online Admission Form</h1>
+            <p>Complete this secure 3-step form to begin your journey to Japan</p>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Admission Form Section -->
-    <section class="section">
-        <div class="container">
-            <div style="max-width: 700px; margin: 0 auto;">
-                <!-- Progress Bar -->
-                <div class="card mb-4" style="padding: 1rem;">
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <div style="flex: 1; height: 4px; background: var(--primary); border-radius: 2px;"></div>
-                        <div style="flex: 1; height: 4px; background: var(--border-light); border-radius: 2px;"></div>
-                        <div style="flex: 1; height: 4px; background: var(--border-light); border-radius: 2px;"></div>
-                    </div>
-                    <p style="font-size: 0.9rem; color: var(--text-secondary);">Step 1 of 3: Personal Information</p>
+<!-- ── Admission Form Section ──────────────────────────────── -->
+<section class="section" id="admission-form-section">
+    <div class="container">
+        <div style="max-width: 760px; margin: 0 auto;">
+
+            <!-- ── STEP PROGRESS BAR ─────────────────────────── -->
+            <div class="admission-stepper">
+                <div class="step-item" id="stepper-item-1">
+                    <div class="step-circle active" id="stepper-circle-1">1</div>
+                    <div class="step-label" id="stepper-label-1">Personal<br>Info</div>
                 </div>
+                <div class="step-connector" id="connector-1-2"></div>
+                <div class="step-item" id="stepper-item-2">
+                    <div class="step-circle" id="stepper-circle-2">2</div>
+                    <div class="step-label" id="stepper-label-2">Course &amp;<br>Emergency</div>
+                </div>
+                <div class="step-connector" id="connector-2-3"></div>
+                <div class="step-item" id="stepper-item-3">
+                    <div class="step-circle" id="stepper-circle-3">3</div>
+                    <div class="step-label" id="stepper-label-3">Documents<br>&amp; Review</div>
+                </div>
+            </div>
 
-                <form class="card" id="admissionForm" data-skip-generic-submit="true">
-                    <!-- Step 1: Personal Information -->
-                    <div id="step1">
-                        <h3 style="margin-bottom: 1.5rem;">Personal Information</h3>
+            <!-- ── FORM WRAPPER ───────────────────────────────── -->
+            <div id="admission-form-wrap">
+                <form id="admissionForm" enctype="multipart/form-data" data-skip-generic-submit="true" novalidate>
 
+                    <!-- ═══════════════════════════════════════ -->
+                    <!-- STEP 1: PERSONAL INFORMATION            -->
+                    <!-- ═══════════════════════════════════════ -->
+                    <div id="step-panel-1" class="admission-panel">
+                        <h3><i class="fas fa-user" style="color:var(--primary);margin-right:0.5rem;"></i>Personal Information</h3>
+                        <p class="step-subtitle">Tell us about yourself so we can get started</p>
+
+                        <!-- Full Name -->
                         <div class="form-group">
-                            <label for="fullName">Full Name</label>
-                            <input type="text" id="fullName" name="fullName" required placeholder="Your full name">
+                            <label for="fullName">Full Name <span style="color:var(--error);">*</span></label>
+                            <input type="text" id="fullName" name="fullName" placeholder="e.g. Rahman Al-Amin" autocomplete="name">
+                            <span class="field-error-msg" id="err-fullName"></span>
                         </div>
 
+                        <!-- Email + Phone -->
                         <div class="grid grid-2">
                             <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="email" id="email" name="email" required placeholder="your@email.com">
+                                <label for="email">Email Address <span style="color:var(--error);">*</span></label>
+                                <input type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email">
+                                <span class="field-error-msg" id="err-email"></span>
                             </div>
                             <div class="form-group">
-                                <label for="phone">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" required placeholder="+880 1XXX XXXXXX">
+                                <label for="phone">Phone Number <span style="color:var(--error);">*</span></label>
+                                <input type="tel" id="phone" name="phone" placeholder="01XXXXXXXXX" autocomplete="tel">
+                                <span class="field-error-msg" id="err-phone"></span>
                             </div>
                         </div>
 
+                        <!-- DOB + Gender -->
                         <div class="grid grid-2">
                             <div class="form-group">
-                                <label for="dateOfBirth">Date of Birth</label>
-                                <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                                <label for="dateOfBirth">Date of Birth <span style="color:var(--error);">*</span></label>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth" max="">
+                                <!-- Age auto-display -->
+                                <span class="age-badge" id="age-badge" style="display:none;"></span>
+                                <span class="field-error-msg" id="err-dateOfBirth"></span>
                             </div>
                             <div class="form-group">
-                                <label for="gender">Gender</label>
-                                <select id="gender" name="gender" required>
+                                <label for="gender">Gender <span style="color:var(--error);">*</span></label>
+                                <select id="gender" name="gender">
                                     <option value="">Select gender</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
-                                    <option value="other">Other</option>
+                                    <option value="other">Other / Prefer not to say</option>
                                 </select>
+                                <span class="field-error-msg" id="err-gender"></span>
                             </div>
                         </div>
 
-                        <!-- DISCOUNT SECTION - ON STEP 2 -->
+                        <!-- Address -->
                         <div class="form-group">
-                            <label for="address">Address</label>
-                            <input type="text" id="address" name="address" required placeholder="Your residential address">
+                            <label for="address">Residential Address <span style="color:var(--error);">*</span></label>
+                            <input type="text" id="address" name="address" placeholder="Village / Road / Area" autocomplete="street-address">
+                            <span class="field-error-msg" id="err-address"></span>
                         </div>
 
+                        <!-- City + District -->
                         <div class="grid grid-2">
                             <div class="form-group">
-                                <label for="city">City</label>
-                                <input type="text" id="city" name="city" required placeholder="City">
+                                <label for="city">City / Upazila <span style="color:var(--error);">*</span></label>
+                                <input type="text" id="city" name="city" placeholder="e.g. Dinajpur Sadar" autocomplete="address-level2">
+                                <span class="field-error-msg" id="err-city"></span>
                             </div>
                             <div class="form-group">
-                                <label for="district">District</label>
-                                <input type="text" id="district" name="district" required placeholder="District">
+                                <label for="district">District <span style="color:var(--error);">*</span></label>
+                                <input type="text" id="district" name="district" placeholder="e.g. Dinajpur" autocomplete="address-level1">
+                                <span class="field-error-msg" id="err-district"></span>
                             </div>
                         </div>
 
-                        <button type="button" id="step1-next" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-                            <i class="fas fa-arrow-right"></i> Next Step
-                        </button>
+                        <div class="step-nav">
+                            <button type="button" id="btn-step1-next" class="btn btn-primary">
+                                Next Step <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Step 2: Educational Information -->
-                    <div id="step2" style="display: none;">
-                        <h3 style="margin-bottom: 1.5rem;">Educational Information</h3>
+                    <!-- ═══════════════════════════════════════ -->
+                    <!-- STEP 2: COURSE & EMERGENCY CONTACT      -->
+                    <!-- ═══════════════════════════════════════ -->
+                    <div id="step-panel-2" class="admission-panel" style="display:none;">
+                        <h3><i class="fas fa-book-open" style="color:var(--primary);margin-right:0.5rem;"></i>Course &amp; Emergency Contact</h3>
+                        <p class="step-subtitle">Select your preferred course and provide an emergency contact</p>
 
+                        <!-- Education level -->
                         <div class="form-group">
-                            <label for="highestEducation">Highest Level of Education</label>
-                            <select id="highestEducation" name="highestEducation" required>
+                            <label for="highestEducation">Highest Level of Education <span style="color:var(--error);">*</span></label>
+                            <select id="highestEducation" name="highestEducation">
                                 <option value="">Select education level</option>
                                 <option value="ssc">SSC / O-Level</option>
                                 <option value="hsc">HSC / A-Level</option>
@@ -136,379 +174,372 @@
                                 <option value="master">Master's Degree</option>
                                 <option value="other">Other</option>
                             </select>
+                            <span class="field-error-msg" id="err-highestEducation"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="course">Select Course</label>
-                            <select id="course" name="course" required>
-                                <option value="">Choose a course</option>
-                            </select>
+                        <!-- Course + Course Level Grid -->
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="course">Select Course <span style="color:var(--error);">*</span></label>
+                                <select id="course" name="course">
+                                    <option value="">Choose a course</option>
+                                    <option value="JLPT N5 - Beginner">JLPT N5 - Beginner</option>
+                                    <option value="JLPT N4 - Intermediate">JLPT N4 - Intermediate</option>
+                                    <option value="JLPT N3 - Advanced">JLPT N3 - Advanced</option>
+                                    <option value="Conversation Kaiwa">Conversation Kaiwa</option>
+                                </select>
+                                <span class="field-error-msg" id="err-course"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="courseLevel">Course Level <span style="color:var(--error);">*</span></label>
+                                <select id="courseLevel" name="courseLevel">
+                                    <option value="">Select Level</option>
+                                    <option value="N5">N5 (Beginner)</option>
+                                    <option value="N4">N4 (Intermediate)</option>
+                                    <option value="N3">N3 (Advanced)</option>
+                                    <option value="Speaking">Speaking / Kaiwa</option>
+                                    <option value="NAT-TEST">NAT-TEST Preparation</option>
+                                </select>
+                                <span class="field-error-msg" id="err-courseLevel"></span>
+                            </div>
                         </div>
 
-                        <div id="courseFeeDisplay" style="display: none; background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(255, 51, 51, 0.1)); border-left: 4px solid var(--primary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;"><strong>Course Fee:</strong></p>
+                        <!-- Fee display (dynamic) -->
+                        <div id="courseFeeDisplay" style="display:none; background:linear-gradient(135deg,rgba(37,99,235,0.08),rgba(230,0,18,0.06)); border-left:4px solid var(--primary); padding:1rem; border-radius:12px; margin-bottom:1.25rem;">
+                            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.4rem;font-weight:600;">COURSE FEE</p>
                             <div id="courseFeeContent"></div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="branch">Preferred Branch</label>
-                            <select id="branch" name="branch" required>
-                                <option value="">Choose a branch</option>
-                                <option value="dinajpur">Dinajpur Branch</option>
-                                <option value="bogura">Bogura Branch</option>
-                            </select>
+                        <!-- Branch + Visa Type -->
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="branch">Preferred Branch <span style="color:var(--error);">*</span></label>
+                                <select id="branch" name="branch">
+                                    <option value="">Choose a branch</option>
+                                    <option value="dinajpur">Dinajpur Branch</option>
+                                    <option value="bogura">Bogura Branch</option>
+                                </select>
+                                <span class="field-error-msg" id="err-branch"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="visaType">Interested Visa Type <span style="color:var(--error);">*</span></label>
+                                <select id="visaType" name="visaType">
+                                    <option value="">Select visa type</option>
+                                    <option value="student">Student Visa</option>
+                                    <option value="ssw">SSW (Skilled Worker)</option>
+                                    <option value="titp">TITP / Work Visa</option>
+                                    <option value="undecided">Undecided</option>
+                                </select>
+                                <span class="field-error-msg" id="err-visaType"></span>
+                            </div>
                         </div>
 
+                        <!-- Japanese Experience -->
                         <div class="form-group">
-                            <label for="japaneseExperience">Previous Japanese Learning Experience</label>
-                            <select id="japaneseExperience" name="japaneseExperience" required>
-                                <option value="">Select</option>
-                                <option value="none">None - Complete Beginner</option>
-                                <option value="self-study">Self-study (1-3 months)</option>
-                                <option value="formal">Formal Training (3-6 months)</option>
+                            <label for="japaneseExperience">Previous Japanese Learning Experience <span style="color:var(--error);">*</span></label>
+                            <select id="japaneseExperience" name="japaneseExperience">
+                                <option value="">Select level</option>
+                                <option value="none">None — Complete Beginner</option>
+                                <option value="self-study">Self-study (1–3 months)</option>
+                                <option value="formal">Formal Training (3–6 months)</option>
                                 <option value="certified">Certified (N5 or higher)</option>
                             </select>
+                            <span class="field-error-msg" id="err-japaneseExperience"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="visaType">Interested Visa Type</label>
-                            <select id="visaType" name="visaType" required>
-                                <option value="">Select visa type</option>
-                                <option value="student">Student Visa</option>
-                                <option value="ssw">SSW (Skilled Worker)</option>
-                                <option value="titp">TITP/Work Visa</option>
-                                <option value="undecided">Undecided</option>
-                            </select>
+                        <!-- ── Emergency Contact ─────────────────── -->
+                        <div class="section-divider">
+                            <span class="section-divider-label"><i class="fas fa-phone-alt"></i>&nbsp; Emergency Contact</span>
                         </div>
 
-                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                            <button type="button" id="step2-back" class="btn btn-secondary" style="flex: 1;">
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="emergencyName">Contact Full Name <span style="color:var(--error);">*</span></label>
+                                <input type="text" id="emergencyName" name="emergencyName" placeholder="Parent / Guardian name">
+                                <span class="field-error-msg" id="err-emergencyName"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="emergencyPhone">Contact Phone <span style="color:var(--error);">*</span></label>
+                                <input type="tel" id="emergencyPhone" name="emergencyPhone" placeholder="01XXXXXXXXX">
+                                <span class="field-error-msg" id="err-emergencyPhone"></span>
+                            </div>
+                        </div>
+
+                        <div class="step-nav">
+                            <button type="button" id="btn-step2-back" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back
                             </button>
-                            <button type="button" id="step2-next" class="btn btn-primary" style="flex: 1;">
-                                <i class="fas fa-arrow-right"></i> Next Step
+                            <button type="button" id="btn-step2-next" class="btn btn-primary">
+                                Next Step <i class="fas fa-arrow-right"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Step 3: Document Upload & Agreement -->
-                    <div id="step3" style="display: none;">
-                        <h3 style="margin-bottom: 1.5rem;">Documents & Agreement</h3>
+                    <!-- ═══════════════════════════════════════ -->
+                    <!-- STEP 3: DOCUMENTS & REVIEW              -->
+                    <!-- ═══════════════════════════════════════ -->
+                    <div id="step-panel-3" class="admission-panel" style="display:none;">
+                        <h3><i class="fas fa-file-upload" style="color:var(--primary);margin-right:0.5rem;"></i>Documents &amp; Review</h3>
+                        <p class="step-subtitle">Upload your documents and verify your information before submitting</p>
 
-                        <div class="form-group">
-                            <label for="photo">Upload Photo (4x6 cm)</label>
-                            <input type="file" id="photo" name="photo" accept="image/*">
-                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">JPG, PNG (Max 2MB)</p>
+                        <!-- Photo Upload (Simplified & Easy) -->
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label for="photo" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span><i class="fas fa-camera" style="color:var(--primary);margin-right:0.35rem;"></i> Passport Size Photo <span style="color:var(--text-secondary);font-weight:400;font-size:0.82rem;">(Optional)</span></span>
+                                <span style="font-size:0.78rem; color:var(--text-secondary);">JPG, PNG, WebP • Max 10 MB</span>
+                            </label>
+                            
+                            <div style="display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; background: rgba(255,255,255,0.03); padding: 1.25rem; border-radius: 14px; border: 1px dashed var(--border-light);">
+                                <div id="photo-preview-box" style="width: 90px; height: 90px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; position: relative;">
+                                    <img id="photo-preview-img" src="" alt="Preview" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                                    <i id="photo-preview-placeholder" class="fas fa-user" style="font-size: 2.2rem; color: rgba(255,255,255,0.25);"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 200px;">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                                        <label for="photo" class="btn btn-outline" style="cursor: pointer; padding: 0.55rem 1rem; font-size: 0.85rem; margin: 0; display: inline-flex; align-items: center; gap: 0.4rem;">
+                                            <i class="fas fa-cloud-upload-alt"></i> Choose Photo
+                                        </label>
+                                        <button type="button" id="btn-remove-photo" style="display: none; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 0.55rem 0.85rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
+                                            <i class="fas fa-trash-alt"></i> Remove
+                                        </button>
+                                    </div>
+                                    <p id="photo-file-status" style="margin: 0; font-size: 0.82rem; color: var(--text-secondary);">No photo chosen yet. Click 'Choose Photo' to upload.</p>
+                                </div>
+                                <input type="file" id="photo" name="photo" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;">
+                            </div>
+                            <span class="field-error-msg" id="err-photo"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="educationDoc">Upload Education Certificate</label>
-                            <input type="file" id="educationDoc" name="educationDoc" accept=".pdf,.doc,.docx">
-                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">PDF, DOC (Max 5MB)</p>
+                        <!-- Multi-Document Upload (Up to 4-5 documents) -->
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                <span><i class="fas fa-file-alt" style="color:var(--primary);margin-right:0.35rem;"></i> Certificates &amp; Documents <span style="color:var(--text-secondary);font-weight:400;font-size:0.82rem;">(Upload up to 4 files)</span></span>
+                                <span id="doc-count-badge" style="font-size:0.78rem; background: rgba(37,99,235,0.15); color: #93c5fd; padding: 0.2rem 0.55rem; border-radius: 6px;">0 / 4 Selected</span>
+                            </label>
+                            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                                You can upload: <strong>1. Certificate</strong> (SSC/HSC/Degree), <strong>2. NID / Passport</strong>, <strong>3. Marksheet / Transcript</strong>, <strong>4. Other / Experience</strong> (PDF, JPG, PNG — max 10 MB per file).
+                            </p>
+
+                            <!-- Document Upload Box -->
+                            <div style="background: rgba(255,255,255,0.03); padding: 1.25rem; border-radius: 14px; border: 1px dashed var(--border-light);">
+                                <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;">
+                                    <label for="educationDoc" class="btn btn-outline" style="cursor: pointer; padding: 0.6rem 1.1rem; font-size: 0.88rem; margin: 0; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-file-medical"></i> + Add / Select Documents
+                                    </label>
+                                    <span style="font-size: 0.82rem; color: var(--text-secondary);">Select multiple files or add one by one</span>
+                                </div>
+                                <input type="file" id="educationDoc" name="educationDoc" multiple accept=".pdf,image/jpeg,image/jpg,image/png,image/webp,.doc,.docx" style="display: none;">
+
+                                <!-- Uploaded Documents Live List -->
+                                <div id="docs-list-container" style="display: grid; gap: 0.6rem;">
+                                    <div id="no-docs-hint" style="font-size: 0.85rem; color: var(--text-secondary); font-style: italic;">
+                                        No documents attached yet. Click '+ Add / Select Documents' to attach your certificates.
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="field-error-msg" id="err-educationDoc"></span>
                         </div>
 
+                        <!-- Additional Comments -->
                         <div class="form-group">
-                            <label for="comment">Additional Comments/Questions</label>
-                            <textarea id="comment" name="comment" placeholder="Any additional information you'd like to share..."></textarea>
+                            <label for="comment">Additional Comments <span style="color:var(--text-secondary);font-weight:400;font-size:0.82rem;">Optional</span></label>
+                            <textarea id="comment" name="comment" placeholder="Any questions or special requirements…" style="min-height:90px;"></textarea>
                         </div>
 
-                        <div class="form-group" style="background: var(--background-light); padding: 1rem; border-radius: 12px; border-left: 4px solid var(--primary);">
-                            <label style="display: flex; gap: 1rem; cursor: pointer; margin: 0;">
-                                <input type="checkbox" id="terms" name="terms" required style="width: 20px; height: 20px; cursor: pointer; margin-top: 0.2rem;">
-                                <span>
-                                    I agree to the <a href="#" style="color: var(--primary); text-decoration: underline;">Terms & Conditions</a> and <a href="#" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>
+                        <!-- ── Application Review Panel ──────────── -->
+                        <div class="review-panel">
+                            <h4><i class="fas fa-clipboard-list" style="color:var(--primary);"></i>&nbsp; Application Summary</h4>
+                            <div class="review-grid">
+                                <div class="review-item">
+                                    <div class="review-item-label">Full Name</div>
+                                    <div class="review-item-value" id="rev-fullName">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Email</div>
+                                    <div class="review-item-value" id="rev-email" style="word-break:break-all;">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Phone</div>
+                                    <div class="review-item-value" id="rev-phone">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Date of Birth</div>
+                                    <div class="review-item-value" id="rev-dob">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Gender</div>
+                                    <div class="review-item-value" id="rev-gender">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Location</div>
+                                    <div class="review-item-value" id="rev-city">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Education</div>
+                                    <div class="review-item-value" id="rev-education">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Course</div>
+                                    <div class="review-item-value" id="rev-course">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Course Level</div>
+                                    <div class="review-item-value" id="rev-courseLevel">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Branch</div>
+                                    <div class="review-item-value" id="rev-branch">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Visa Type</div>
+                                    <div class="review-item-value" id="rev-visa">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Emergency Contact</div>
+                                    <div class="review-item-value" id="rev-emergency">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Photo</div>
+                                    <div class="review-item-value" id="rev-photo">— (not uploaded)</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Document</div>
+                                    <div class="review-item-value" id="rev-doc">— (not uploaded)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms & Conditions -->
+                        <div class="form-group" style="background:var(--background-light); padding:1rem 1.25rem; border-radius:14px; border-left:4px solid var(--primary);">
+                            <label style="display:flex; gap:0.85rem; cursor:pointer; margin:0; align-items:flex-start;">
+                                <input type="checkbox" id="terms" name="terms" style="width:18px; height:18px; cursor:pointer; margin-top:0.2rem; flex-shrink:0;">
+                                <span style="font-weight:500; color:var(--text-secondary); font-size:0.9rem;">
+                                    I agree to the <a href="#" style="color:var(--primary);">Terms &amp; Conditions</a> and
+                                    <a href="#" style="color:var(--primary);">Privacy Policy</a> of Fusion Education BD.
+                                    I confirm that all information provided is accurate.
                                 </span>
                             </label>
+                            <span class="field-error-msg" id="err-terms" style="margin-top:0.5rem;"></span>
                         </div>
 
-                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                            <button type="button" id="step3-back" class="btn btn-secondary" style="flex: 1;">
+                        <div class="step-nav">
+                            <button type="button" id="btn-step3-back" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back
                             </button>
-                            <button type="submit" class="btn btn-primary" style="flex: 1;">
-                                <i class="fas fa-check"></i> Submit Application
+                            <button type="submit" id="submit-btn" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Application
                             </button>
                         </div>
                     </div>
-                </form>
-            </div>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>About Us</h4>
-                    <p>Fusion Education BD is a leading Japanese language institute and visa consultation agency.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="courses.html">Courses</a></li>
-                        <li><a href="visa-support.html">Visa Support</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Contact</h4>
-                    <ul>
-                        <li><i class="fas fa-phone"></i> +880 1302 090286</li>
-                        <li><i class="fas fa-envelope"></i> contact@fusioneducationbd.com</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Fusion Education BD. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+                </form><!-- end #admissionForm -->
+            </div><!-- end #admission-form-wrap -->
 
-    <div class="float-buttons">
-        <a href="https://wa.me/8801302090286" class="float-btn float-btn-whatsapp" target="_blank">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-        <a href="#" class="float-btn scroll-top">
-            <i class="fas fa-arrow-up"></i>
-        </a>
+            <!-- ── SUCCESS CARD (hidden until submitted) ──────── -->
+            <div id="admission-success-wrap" style="display:none;">
+                <div class="admission-panel">
+                    <div class="success-card">
+                        <div class="success-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+
+                        <h2 style="color:var(--text-primary); margin-bottom:0.5rem;">Application Submitted!</h2>
+                        <p style="font-size:1rem; margin-bottom:1rem;">
+                            Congratulations, <strong id="success-name"></strong>! Your admission application has been received.
+                        </p>
+
+                        <div style="margin: 1.25rem 0;">
+                            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.4rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Your Application Number</p>
+                            <div class="app-number-badge">
+                                <i class="fas fa-id-badge"></i>
+                                <span id="success-app-number">FEBD-2026-000</span>
+                            </div>
+                        </div>
+
+                        <p style="color:var(--text-secondary); font-size:0.9rem; max-width:440px; margin:0 auto 1.5rem;">
+                            Please save your application number. Our team will contact you within <strong>24–48 hours</strong> to confirm your enrollment.
+                        </p>
+
+                        <!-- Info cards -->
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin:1.5rem 0; text-align:left;">
+                            <div style="background:rgba(37,99,235,0.06); border-radius:12px; padding:1rem; border:1px solid rgba(37,99,235,0.15);">
+                                <i class="fas fa-clock" style="color:var(--accent); font-size:1.3rem; margin-bottom:0.5rem;"></i>
+                                <p style="font-size:0.8rem; color:var(--text-secondary); margin:0; font-weight:600;">Response Time</p>
+                                <p style="font-size:0.9rem; color:var(--text-primary); margin:0; font-weight:700;">24–48 hrs</p>
+                            </div>
+                            <div style="background:rgba(16,185,129,0.06); border-radius:12px; padding:1rem; border:1px solid rgba(16,185,129,0.15);">
+                                <i class="fas fa-envelope" style="color:var(--success); font-size:1.3rem; margin-bottom:0.5rem;"></i>
+                                <p style="font-size:0.8rem; color:var(--text-secondary); margin:0; font-weight:600;">Confirmation</p>
+                                <p style="font-size:0.9rem; color:var(--text-primary); margin:0; font-weight:700;">Via Email</p>
+                            </div>
+                            <div style="background:rgba(230,0,18,0.06); border-radius:12px; padding:1rem; border:1px solid rgba(230,0,18,0.12);">
+                                <i class="fas fa-phone" style="color:var(--primary); font-size:1.3rem; margin-bottom:0.5rem;"></i>
+                                <p style="font-size:0.8rem; color:var(--text-secondary); margin:0; font-weight:600;">Helpline</p>
+                                <p style="font-size:0.9rem; color:var(--text-primary); margin:0; font-weight:700;">+880 1302 090286</p>
+                            </div>
+                        </div>
+
+                        <div class="success-actions">
+                            <button id="btn-print" class="btn btn-outline" onclick="window.print()">
+                                <i class="fas fa-print"></i> Print Application
+                            </button>
+                            <a href="../index.html" class="btn btn-secondary">
+                                <i class="fas fa-home"></i> Back to Home
+                            </a>
+                            <a href="courses.html" class="btn btn-primary">
+                                <i class="fas fa-book"></i> View Courses
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end #admission-success-wrap -->
+
+        </div><!-- max-width container -->
     </div>
+</section>
 
-    <script src="../assets/js/main.js"></script>
-    <script>
-        let admissionCourseList = [];
+<!-- ── Footer ───────────────────────────────────────────────── -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Fusion Education BD is a leading Japanese language institute and visa consultation agency.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="visa-support.html">Visa Support</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <ul>
+                    <li><i class="fas fa-phone"></i> +880 1302 090286</li>
+                    <li><i class="fas fa-envelope"></i> contact@fusioneducationbd.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Fusion Education BD. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 
-        function populateCourseOptions() {
-            const courseSelect = document.getElementById('course');
-            if (!courseSelect) return;
+<div class="float-buttons">
+    <a href="https://wa.me/8801302090286" class="float-btn float-btn-whatsapp" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <a href="#" class="float-btn scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
 
-            fetch('/api/courses')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.courses) {
-                        admissionCourseList = data.courses;
-                        const existingValue = courseSelect.value;
-                        courseSelect.innerHTML = '<option value="">Choose a course</option>';
-
-                        admissionCourseList.forEach(course => {
-                            const option = document.createElement('option');
-                            option.value = course.title || course.level || `course-${course.id}`;
-                            option.textContent = course.title || course.level || 'Unnamed Course';
-                            courseSelect.appendChild(option);
-                        });
-
-                        if (existingValue) {
-                            courseSelect.value = existingValue;
-                        }
-                    }
-                })
-                .catch(err => console.error('Error loading courses:', err));
-        }
-
-        function goToStep1() {
-            document.getElementById('step1').style.display = 'block';
-            document.getElementById('step2').style.display = 'none';
-            document.getElementById('step3').style.display = 'none';
-            scrollToForm();
-        }
-
-        function goToStep2() {
-            if (validateStep1()) {
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'block';
-                document.getElementById('step3').style.display = 'none';
-                scrollToForm();
-            }
-        }
-
-        function goToStep3() {
-            if (validateStep2()) {
-                document.getElementById('step1').style.display = 'none';
-                document.getElementById('step2').style.display = 'none';
-                document.getElementById('step3').style.display = 'block';
-                scrollToForm();
-            }
-        }
-
-        // Setup event listeners for navigation buttons
-        document.getElementById('step1-next')?.addEventListener('click', goToStep2);
-        document.getElementById('step2-back')?.addEventListener('click', goToStep1);
-        document.getElementById('step2-next')?.addEventListener('click', goToStep3);
-        document.getElementById('step3-back')?.addEventListener('click', goToStep2);
-
-        function validateStep1() {
-            const fullName = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const dateOfBirth = document.getElementById('dateOfBirth').value;
-
-            if (!fullName || !email || !phone || !dateOfBirth) {
-                alert('Please fill in all required fields');
-                return false;
-            }
-            return true;
-        }
-
-        function validateStep2() {
-            const course = document.getElementById('course').value;
-            const branch = document.getElementById('branch').value;
-            const visaType = document.getElementById('visaType').value;
-
-            if (!course || !branch || !visaType) {
-                alert('Please select course, branch, and visa type');
-                return false;
-            }
-            return true;
-        }
-
-        function scrollToForm() {
-            document.querySelector('form').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        document.getElementById('admissionForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const fullName = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const course = document.getElementById('course').value;
-            const branch = document.getElementById('branch').value;
-            const visaType = document.getElementById('visaType').value;
-            const comment = document.getElementById('comment').value;
-            const courseFeeInfo = document.getElementById('courseFeeInfo')?.value || null;
-
-            try {
-                const response = await fetch('/api/admission/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        fullName,
-                        email,
-                        phone,
-                        course,
-                        branch,
-                        visaType,
-                        comment,
-                        feeInfo: courseFeeInfo
-                    })
-                });
-
-                const result = await response.json();
-
-                const alert = document.createElement('div');
-                if (response.ok) {
-                    alert.className = 'alert alert-success';
-                    alert.innerHTML = '<i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i> ' + result.message + ' Login credentials sent to ' + email;
-                    document.querySelector('form').before(alert);
-                    setTimeout(() => {
-                        document.getElementById('admissionForm').reset();
-                        goToStep1();
-                    }, 3000);
-                } else {
-                    alert.className = 'alert alert-error';
-                    alert.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i> ' + (result.error || 'Submission failed');
-                    document.querySelector('form').before(alert);
-                }
-            } catch (err) {
-                const alert = document.createElement('div');
-                alert.className = 'alert alert-error';
-                alert.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i> Unable to contact server. Please try again later.';
-                document.querySelector('form').before(alert);
-            }
-        });
-    </script>
-
-    <script>
-        function formatTaka(amount) {
-            return `${amount.toLocaleString('en-US')} Taka`;
-        }
-
-        function mapCourseValueToMatcher(courseValue) {
-            const normalized = courseValue.toLowerCase();
-            return (course) => {
-                const title = (course.title || '').toLowerCase();
-                const level = (course.level || '').toLowerCase();
-                const description = (course.description || '').toLowerCase();
-
-                if (normalized === 'n5') return title.includes('n5') || level.includes('n5');
-                if (normalized === 'n4') return title.includes('n4') || level.includes('n4');
-                if (normalized === 'n3') return title.includes('n3') || level.includes('n3');
-                if (normalized === 'speaking') return title.includes('kaiwa') || title.includes('conversation') || description.includes('kaiwa') || description.includes('conversation');
-                if (normalized === 'combined') return title.includes('combined') || description.includes('combined');
-                return title.includes(normalized) || level.includes(normalized) || description.includes(normalized);
-            };
-        }
-
-        function setCourseFeeInfo(feeInfo) {
-            let feeInput = document.getElementById('courseFeeInfo');
-            if (!feeInput) {
-                feeInput = document.createElement('input');
-                feeInput.type = 'hidden';
-                feeInput.id = 'courseFeeInfo';
-                feeInput.name = 'courseFeeInfo';
-                document.getElementById('admissionForm').appendChild(feeInput);
-            }
-            feeInput.value = JSON.stringify(feeInfo || {});
-        }
-
-        function getSelectedCourseData() {
-            const selectedVal = document.getElementById('course')?.value;
-            if (!selectedVal) return null;
-            return admissionCourseList.find(course => {
-                const key = course.title || course.level || `course-${course.id}`;
-                return key === selectedVal;
-            });
-        }
-
-        function updateFeeDisplay() {
-            const selectedCourse = getSelectedCourseData();
-            const feeDisplay = document.getElementById('courseFeeDisplay');
-            const feeContent = document.getElementById('courseFeeContent');
-
-            if (!selectedCourse) {
-                feeDisplay.style.display = 'none';
-                setCourseFeeInfo(null);
-                return;
-            }
-
-            const discountInfo = getCourseDiscountInfo(selectedCourse);
-            const baseFee = discountInfo.originalPrice;
-            const totalFee = discountInfo.finalPrice;
-            const discountText = discountInfo.hasDiscount ? `${discountInfo.discountPercent}% OFF` : 'No discount currently applied';
-            const badge = getDiscountBadgeHTML(discountInfo);
-            let html = `${badge}${getPriceHTML(discountInfo)}`;
-            html += `<p style="margin-top: 0.75rem; color: var(--text-secondary);">${discountText}</p>`;
-            if (discountInfo.hasDiscount) {
-                html += `<p style="margin-top: 0.5rem; color: var(--text-secondary);">You save ${formatTaka(discountInfo.discountAmount)} from the base fee.</p>`;
-            }
-            feeContent.innerHTML = html;
-            feeDisplay.style.display = 'block';
-
-            setCourseFeeInfo({
-                course: selectedCourse.title || selectedCourse.level || document.getElementById('course')?.value,
-                baseFee,
-                discountType: selectedCourse.discountType || 'none',
-                discountValue: selectedCourse.discountValue || 0,
-                discountAmount: discountInfo.discountAmount,
-                totalFee
-            });
-        }
-
-        document.getElementById('course')?.addEventListener('change', updateFeeDisplay);
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeSiteData();
-            populateCourseOptions();
-            updateFeeDisplay();
-        });
-    </script>
-
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <!-- Firebase Configuration -->
-    <script src="../assets/js/firebase-config.js"></script>
+<script src="../assets/js/dao.js"></script>
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/admission.js"></script>
 </body>
 </html>

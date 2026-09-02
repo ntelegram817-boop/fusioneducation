@@ -3,216 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fusion Education BD - Admissions</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Admissions & Students — Fusion Education BD Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
     <style>
-        .dashboard-shell {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 2rem 1rem 4rem;
+        .adm-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
-        .dashboard-header {
+        .adm-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .adm-tab-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        .adm-tab-btn.active {
+            background: rgba(37,99,235,0.18);
+            border-color: rgba(37,99,235,0.5);
+            color: #93c5fd;
+            box-shadow: 0 0 15px rgba(37,99,235,0.15);
+        }
+        .adm-tab-btn.active.tab-pending {
+            background: rgba(245,158,11,0.18);
+            border-color: rgba(245,158,11,0.5);
+            color: #fcd34d;
+        }
+        .adm-tab-btn.active.tab-admitted {
+            background: rgba(16,185,129,0.18);
+            border-color: rgba(16,185,129,0.5);
+            color: #6ee7b7;
+        }
+        .adm-filter-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            padding: 1rem 1.25rem;
+            border-radius: 14px;
+            border: 1px solid var(--border-light);
+        }
+        .adm-search-box {
+            position: relative;
+            flex: 1;
+            min-width: 240px;
+        }
+        .adm-search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .adm-search-box input {
+            width: 100%;
+            padding: 0.65rem 1rem 0.65rem 2.5rem;
+            background: rgba(15,23,42,0.6);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .adm-search-box input:focus {
+            border-color: var(--primary);
+        }
+        .adm-select {
+            padding: 0.65rem 1rem;
+            background: rgba(15,23,42,0.8);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.88rem;
+            outline: none;
+            cursor: pointer;
+        }
+        .read-only-banner {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(56,189,248,0.08);
+            border: 1px solid rgba(56,189,248,0.25);
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            color: #bae6fd;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+        /* Modal */
+        .admin-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .admin-modal-backdrop.open {
+            display: flex;
+        }
+        .admin-modal-card {
+            background: #0f172a;
+            border: 1px solid rgba(148,163,184,0.2);
+            border-radius: 20px;
+            max-width: 780px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+        }
+        .admin-modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            background: rgba(255,255,255,0.02);
         }
-        .tab-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .tab-btn {
-            border: 2px solid var(--border-light);
-            border-radius: 14px;
-            padding: 1rem 1.2rem;
-            background: var(--white);
-            color: var(--text-primary);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            text-decoration: none;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .tab-btn.active,
-        .tab-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .tab-pane {
-            display: none;
-        }
-        .tab-pane.active {
-            display: block;
-        }
-        .dashboard-card {
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            box-shadow: var(--shadow-md);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        .form-row {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        }
-        .block-row {
-            display: grid;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .image-preview {
-            width: 100%;
-            max-width: 400px;
-            min-height: 180px;
-            border: 2px dashed var(--border-light);
-            border-radius: 18px;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            background: var(--background-light);
-        }
-        .image-preview img {
-            max-width: 100%;
-            max-height: 260px;
-            border-radius: 16px;
-            object-fit: cover;
-        }
-        .item-card {
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            border-radius: 18px;
+        .admin-modal-body {
             padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
+            overflow-y: auto;
+            color: #e2e8f0;
         }
-        .item-grid {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: 280px 1fr;
-            align-items: start;
-        }
-        .item-card img,
-        .author-avatar {
-            width: 100%;
-            max-height: 220px;
-            object-fit: cover;
-            border-radius: 16px;
-        }
-        .author-avatar {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 64px;
-            height: 64px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #E60012, #FF3333);
-            color: white;
-            border-radius: 18px;
-            font-size: 1.2rem;
-        }
-        .item-meta {
+        .admin-modal-footer {
             display: flex;
+            justify-content: flex-end;
             gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: 0.75rem;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-        .item-meta span {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .action-row {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-        .outline-btn,
-        .btn {
-            min-width: 140px;
-        }
-        .success-message {
-            display: none;
-            margin-bottom: 1rem;
-            padding: 1rem 1.25rem;
-            border-radius: 14px;
-            background: #e6ffed;
-            color: #1f5e2b;
-            border: 1px solid #b8f1c1;
-        }
-        .success-message.show {
-            display: block;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-light);
+            background: rgba(255,255,255,0.02);
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav>
-                <a href="../index.html" class="logo">
-                    <i class="fas fa-graduation-cap"></i>
-                    Fusion <span>Education</span>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="../index.html" class="logo">
+                <img src="../assets/images/logo.jpg" alt="Fusion Logo">
+                Fusion <span>Education</span>
+                <span class="logo-badge">Admin</span>
+            </a>
+            <div class="topbar-right">
+                <a href="../index.html" class="topbar-btn outline" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> View Site
                 </a>
-                <div class="nav-actions">
-                    <a href="../index.html" class="btn btn-secondary"><i class="fas fa-home"></i> View Site</a>
-                </div>
-            </nav>
+                <a href="../pages/admin-login.html" class="topbar-btn danger" onclick="logoutAdmin(event)">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
         </div>
     </header>
 
-    <main class="dashboard-shell">
-        <div class="dashboard-header">
-            <div>
-                <h1>Admin Control Panel</h1>
-                <p style="color: var(--text-secondary); margin-top: 0.5rem; max-width: 720px;">Complete website control: hero, posts, courses, testimonials, FAQ, contact leads, social links and admin login.</p>
+    <!-- NAV RAIL -->
+    <div class="nav-rail-container">
+        <nav class="nav-rail" aria-label="Admin Navigation">
+            <a href="dashboard.html" class="nav-pill"><i class="fas fa-sliders-h"></i> Site Settings</a>
+            <a href="posts.html" class="nav-pill"><i class="fas fa-newspaper"></i> Home Posts</a>
+            <a href="courses.html" class="nav-pill"><i class="fas fa-book-open"></i> Courses</a>
+            <a href="testimonials.html" class="nav-pill"><i class="fas fa-user-check"></i> Testimonials</a>
+            <a href="faqs.html" class="nav-pill"><i class="fas fa-question-circle"></i> FAQs</a>
+            <a href="messages.html" class="nav-pill"><i class="fas fa-envelope"></i> Messages <span class="badge" id="navMsgCount">0</span></a>
+            <a href="admissions.html?tab=pending" class="nav-pill" id="navPendingPill"><i class="fas fa-user-clock"></i> Admission Pending <span class="badge" id="navPendingCount">0</span></a>
+            <a href="admissions.html?tab=admitted" class="nav-pill" id="navAdmittedPill"><i class="fas fa-user-check"></i> Admitted Students <span class="badge" id="navAdmittedCount">0</span></a>
+            <a href="users.html" class="nav-pill"><i class="fas fa-user-shield"></i> Admin User</a>
+        </nav>
+    </div>
+
+    <!-- MAIN -->
+    <main class="shell">
+        <div class="page-header">
+            <div class="page-title-block">
+                <h1>
+                    <span class="icon-wrap"><i class="fas fa-user-graduate"></i></span>
+                    Student Admissions &amp; Applications
+                </h1>
+                <p>Review submitted online applications and admitted student profiles. (Admin Read-Only Mode)</p>
             </div>
         </div>
 
-        <div class="success-message" id="successMessage"><i class="fas fa-check-circle"></i> <span id="successText"></span></div>
-
-        <div class="tab-buttons">
-            <a href="dashboard.html" class="tab-btn"><i class="fas fa-cogs"></i> Site Settings</a>
-            <a href="posts.html" class="tab-btn"><i class="fas fa-newspaper"></i> Home Posts</a>
-            <a href="courses.html" class="tab-btn"><i class="fas fa-book-open"></i> Courses</a>
-            <a href="testimonials.html" class="tab-btn"><i class="fas fa-user-check"></i> Testimonials</a>
-            <a href="faqs.html" class="tab-btn"><i class="fas fa-question-circle"></i> FAQs</a>
-            <a href="messages.html" class="tab-btn"><i class="fas fa-envelope"></i> Messages</a>
-            <a href="admissions.html" class="tab-btn active"><i class="fas fa-user-graduate"></i> Admissions</a>
-            <a href="users.html" class="tab-btn"><i class="fas fa-user-shield"></i> Admin User</a>
+        <div class="read-only-banner">
+            <i class="fas fa-info-circle" style="font-size: 1.25rem; color: #38bdf8; flex-shrink: 0;"></i>
+            <div>
+                <strong>Admin Read-Only Access:</strong> You can view student profiles, download documents, and print application sheets. Editing, changing course/batch, and admitting students is managed by authorized staff in the <strong>Staff Dashboard</strong>.
+            </div>
         </div>
 
-        <section id="admissions-tab" class="tab-pane active dashboard-card">
-            <h2><i class="fas fa-user-graduate"></i> Student Admissions</h2>
-            <div id="admissionsList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
-        </section>
+        <!-- ── TAB BUTTONS (Admission Pending vs Admitted Students) ── -->
+        <div class="adm-tabs">
+            <button type="button" class="adm-tab-btn tab-pending active" id="tabBtnPending" onclick="switchAdmissionTab('pending')">
+                <i class="fas fa-user-clock"></i>
+                Admission Pending
+                <span class="badge" id="tabPendingBadge" style="background: rgba(245,158,11,0.3); color: #fde68a;">0</span>
+            </button>
+
+            <button type="button" class="adm-tab-btn tab-admitted" id="tabBtnAdmitted" onclick="switchAdmissionTab('admitted')">
+                <i class="fas fa-user-check"></i>
+                Admitted Students
+                <span class="badge" id="tabAdmittedBadge" style="background: rgba(16,185,129,0.3); color: #a7f3d0;">0</span>
+            </button>
+
+            <button type="button" class="adm-tab-btn" id="tabBtnAll" onclick="switchAdmissionTab('all')">
+                <i class="fas fa-list-ul"></i>
+                All Records
+                <span class="badge" id="tabAllBadge">0</span>
+            </button>
+        </div>
+
+        <!-- ── FILTER & SEARCH BAR ── -->
+        <div class="adm-filter-bar">
+            <div class="adm-search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="admSearchInput" placeholder="Search by name, ID, phone, email, course..." oninput="handleAdmissionSearch()">
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <select id="admBranchFilter" class="adm-select" onchange="handleAdmissionSearch()">
+                    <option value="all">All Branches</option>
+                    <option value="dinajpur">Dinajpur Branch</option>
+                    <option value="bogura">Bogura Branch</option>
+                </select>
+                <button type="button" class="btn outline" onclick="loadAdmissions()" style="font-size: 0.85rem; padding: 0.65rem 1rem;">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        <div class="layout-single">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title" id="admissionsViewTitle">
+                        <i class="fas fa-user-clock" style="color: #f59e0b;"></i> Admission Pending Applications
+                    </div>
+                    <span class="count-badge" id="admissionsCountBadge">
+                        <i class="fas fa-user-graduate"></i> 0 applications
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="items-list" id="admissionsList">
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <script src="../assets/js/gallery.js"></script>
-    <script src="../assets/js/discountCalculator.js"></script>
-    <script src="../assets/js/admin.js"></script>
+    <!-- ── ADMIN READ-ONLY VIEW PROFILE MODAL ── -->
+    <div class="admin-modal-backdrop" id="adminViewModal">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span id="modalHeaderStatusBadge" class="badge" style="font-size: 0.78rem;">Status</span>
+                    <h2 id="modalStudentName" style="margin: 0; font-size: 1.25rem; color: #fff;">Student Details</h2>
+                </div>
+                <button type="button" onclick="closeAdminModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal-body" id="adminModalBody">
+                <!-- Injected via JS -->
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn outline" onclick="printModalContent()">
+                    <i class="fas fa-print"></i> Print Sheet
+                </button>
+                <button type="button" class="btn secondary" onclick="closeAdminModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
 
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <!-- Firebase Configuration -->
-    <script src="../assets/js/firebase-config.js"></script>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="../assets/js/dao.js"></script>
+    <script src="../assets/js/admin.js"></script>
 </body>
 </html>
+

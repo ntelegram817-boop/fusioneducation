@@ -1,0 +1,42 @@
+[
+  {
+    "id": "branch_dinajpur",
+    "name": "Dinajpur",
+    "displayName": "Dinajpur Branch",
+    "city": "Dinajpur",
+    "address": "90/2, Fakirpara, Dinajpur 5200",
+    "phone": "+880 1302 090286",
+    "email": "dinajpur@fusioneducationbd.com",
+    "status": "active"
+  },
+  {
+    "id": "branch_dhaka",
+    "name": "Dhaka",
+    "displayName": "Dhaka Branch",
+    "city": "Dhaka",
+    "address": "House 45, Road 11, Banani, Dhaka 1213",
+    "phone": "+880 1711 000111",
+    "email": "dhaka@fusioneducationbd.com",
+    "status": "active"
+  },
+  {
+    "id": "branch_bogura",
+    "name": "Bogura",
+    "displayName": "Bogura Branch",
+    "city": "Bogura",
+    "address": "Jaleshwaritola, Bogura 5800",
+    "phone": "+880 1722 000222",
+    "email": "bogura@fusioneducationbd.com",
+    "status": "active"
+  },
+  {
+    "id": "branch_rangpur",
+    "name": "Rangpur",
+    "displayName": "Rangpur Branch",
+    "city": "Rangpur",
+    "address": "Station Road, Rangpur 5400",
+    "phone": "+880 1733 000333",
+    "email": "rangpur@fusioneducationbd.com",
+    "status": "active"
+  }
+]

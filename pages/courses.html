@@ -16,9 +16,9 @@
         <div class="container">
             <nav>
                 <a href="../index.html" class="logo">
-                    <i class="fas fa-graduation-cap"></i>
+                    <img src="../assets/images/logo.jpg" class="nav-logo-img" alt="Fusion Logo">
                     Fusion <span>Education</span>
-                </a>
+</a>
                 <ul class="nav-menu">
                     <li><a href="../index.html">Home</a></li>
                     <li><a href="about.html">About</a></li>
@@ -264,98 +264,97 @@
         </a>
     </div>
 
+    <script src="../assets/js/dao.js"></script>
+    <script src="../assets/js/discountCalculator.js"></script>
     <script src="../assets/js/main.js"></script>
     <script>
         // Load courses from server API and update prices with discounts
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('/api/courses')
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.success || !data.courses) return;
-                    const courseData = data.courses;
-            
-            // Update N5 course
-            const n5 = courseData.find(c => c.title.includes('N5'));
-            if (n5) {
-                const n5Section = document.getElementById('n5');
-                if (n5Section) {
-                    const priceDiv = n5Section.querySelector('div[style*="margin-bottom: 1.5rem"]');
-                    if (priceDiv) {
-                        priceDiv.innerHTML = getCoursePriceSection(n5);
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                let courseData = [];
+                if (window.DAO && window.DAO.Courses) {
+                    courseData = await window.DAO.Courses.getAll();
+                } else {
+                    const res = await fetch('/api/courses');
+                    const data = await res.json();
+                    courseData = data.courses || [];
+                }
+                if (!courseData || !courseData.length) return;
+                
+                // Update N5 course
+                const n5 = courseData.find(c => (c.title || '').includes('N5'));
+                if (n5 && typeof getCoursePriceSection === 'function') {
+                    const n5Section = document.getElementById('n5');
+                    if (n5Section) {
+                        const priceDiv = n5Section.querySelector('div[style*="margin-bottom: 1.5rem"]');
+                        if (priceDiv) {
+                            priceDiv.innerHTML = getCoursePriceSection(n5);
+                        }
                     }
                 }
-            }
-            
-            // Update N4 course
-            const n4 = courseData.find(c => c.title.includes('N4'));
-            if (n4) {
-                const n4Section = document.getElementById('n4');
-                if (n4Section) {
-                    const priceDiv = n4Section.querySelector('div[style*="margin-bottom: 1.5rem"]');
-                    if (priceDiv) {
-                        priceDiv.innerHTML = getCoursePriceSection(n4);
+                
+                // Update N4 course
+                const n4 = courseData.find(c => (c.title || '').includes('N4'));
+                if (n4 && typeof getCoursePriceSection === 'function') {
+                    const n4Section = document.getElementById('n4');
+                    if (n4Section) {
+                        const priceDiv = n4Section.querySelector('div[style*="margin-bottom: 1.5rem"]');
+                        if (priceDiv) {
+                            priceDiv.innerHTML = getCoursePriceSection(n4);
+                        }
                     }
                 }
-            }
-            
-            // Update N3 course
-            const n3 = courseData.find(c => c.title.includes('N3'));
-            if (n3) {
-                const n3Section = document.getElementById('n3');
-                if (n3Section) {
-                    const priceDiv = n3Section.querySelector('div[style*="margin-bottom: 1.5rem"]');
-                    if (priceDiv) {
-                        priceDiv.innerHTML = getCoursePriceSection(n3);
+                
+                // Update N3 course
+                const n3 = courseData.find(c => (c.title || '').includes('N3'));
+                if (n3 && typeof getCoursePriceSection === 'function') {
+                    const n3Section = document.getElementById('n3');
+                    if (n3Section) {
+                        const priceDiv = n3Section.querySelector('div[style*="margin-bottom: 1.5rem"]');
+                        if (priceDiv) {
+                            priceDiv.innerHTML = getCoursePriceSection(n3);
+                        }
                     }
                 }
-            }
-            
-            // Update Speaking course (if exists)
-            const speaking = courseData.find(c => c.title && c.title.toLowerCase().includes('speaking'));
-            if (speaking) {
-                const speakingSection = document.getElementById('speaking');
-                if (speakingSection) {
-                    const priceDiv = speakingSection.querySelector('div[style*="margin-bottom: 1.5rem"]');
-                    if (priceDiv) {
-                        priceDiv.innerHTML = getCoursePriceSection(speaking);
+                
+                // Update Speaking course (if exists)
+                const speaking = courseData.find(c => (c.title || '').toLowerCase().includes('speaking'));
+                if (speaking && typeof getCoursePriceSection === 'function') {
+                    const speakingSection = document.getElementById('speaking');
+                    if (speakingSection) {
+                        const priceDiv = speakingSection.querySelector('div[style*="margin-bottom: 1.5rem"]');
+                        if (priceDiv) {
+                            priceDiv.innerHTML = getCoursePriceSection(speaking);
+                        }
                     }
                 }
-            }
-            
-            // Update comparison table fees
-            const rows = document.querySelectorAll('table tbody tr');
-            const feeRow = Array.from(rows).find(row => 
-                row.querySelector('td')?.textContent.includes('Fee')
-            );
-            if (feeRow) {
-                const cells = feeRow.querySelectorAll('td');
-                if (cells.length >= 4) {
-                    // Update N5 fee
-                    if (n5) {
-                        const discount = getCourseDiscountInfo(n5);
-                        cells[1].textContent = formatCurrency(discount.finalPrice);
-                    }
-                    // Update N4 fee
-                    if (n4) {
-                        const discount = getCourseDiscountInfo(n4);
-                        cells[2].textContent = formatCurrency(discount.finalPrice);
-                    }
-                    // Update N3 fee
-                    if (n3) {
-                        const discount = getCourseDiscountInfo(n3);
-                        cells[3].textContent = formatCurrency(discount.finalPrice);
+                
+                // Update comparison table fees
+                const rows = document.querySelectorAll('table tbody tr');
+                const feeRow = Array.from(rows).find(row => 
+                    row.querySelector('td')?.textContent.includes('Fee')
+                );
+                if (feeRow && typeof getCourseDiscountInfo === 'function' && typeof formatCurrency === 'function') {
+                    const cells = feeRow.querySelectorAll('td');
+                    if (cells.length >= 4) {
+                        if (n5) {
+                            const discount = getCourseDiscountInfo(n5);
+                            cells[1].textContent = formatCurrency(discount.finalPrice);
+                        }
+                        if (n4) {
+                            const discount = getCourseDiscountInfo(n4);
+                            cells[2].textContent = formatCurrency(discount.finalPrice);
+                        }
+                        if (n3) {
+                            const discount = getCourseDiscountInfo(n3);
+                            cells[3].textContent = formatCurrency(discount.finalPrice);
+                        }
                     }
                 }
+            } catch (e) {
+                console.warn('Could not update dynamic courses on courses.html:', e.message);
             }
         });
     </script>
-
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <!-- Firebase Configuration -->
-    <script src="../assets/js/firebase-config.js"></script>
 </body>
 </html>

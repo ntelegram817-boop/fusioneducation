@@ -3,379 +3,1113 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Staff Dashboard | Fusion Education</title>
+  <title>Staff Portal — Student Admissions & Management | Fusion Education BD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css">
   <style>
     :root {
-      color-scheme: dark;
+      --bg-dark: #090e17;
+      --card-dark: #0f172a;
+      --card-border: rgba(148, 163, 184, 0.16);
+      --primary: #2563eb;
+      --accent: #38bdf8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
     }
 
     body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #0b1120;
+      background: radial-gradient(circle at top left, #0f172a, #030712 70%);
       color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
     }
 
-    header {
-      background: #0f172a;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-      padding: 1rem 1.5rem;
+    /* ── Header ── */
+    .staff-topbar {
+      background: rgba(15, 23, 42, 0.94) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky !important;
+      top: 0 !important;
+      left: 0;
+      width: 100% !important;
+      z-index: 1000 !important;
+      padding: 0.85rem 1.5rem;
+    }
+    .staff-topbar-inner {
+      max-width: 1400px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 1rem;
     }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-
-    header .header-actions {
+    .staff-brand {
       display: flex;
-      gap: 0.75rem;
+      align-items: center;
+      gap: 1rem;
+    }
+    .staff-brand a {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+    }
+    .staff-brand img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .staff-brand .logo-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .staff-portal-tag {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #7dd3fc;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .staff-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
       flex-wrap: wrap;
     }
-
-    .btn-secondary,
-    .btn-primary {
-      border: none;
-      border-radius: 14px;
-      padding: 0.95rem 1.3rem;
+    .staff-user-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
+      padding: 0.4rem 0.85rem;
+      border-radius: 10px;
+    }
+    .staff-user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2563eb, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.2s ease, filter 0.2s ease;
+      font-size: 0.85rem;
+      color: #fff;
     }
 
-    .btn-secondary {
-      background: rgba(148, 163, 184, 0.12);
-      color: #cbd5e1;
-    }
-
-    .btn-primary {
-      background: #2563eb;
-      color: #ffffff;
-    }
-
-    .btn-secondary:hover,
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.08);
-    }
-
-    .dashboard-shell {
-      max-width: 1280px;
+    /* ── Main Shell ── */
+    .staff-shell {
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 2rem 1.5rem 3rem;
+      padding: 1.75rem 1.5rem 3rem;
     }
 
-    .summary-grid {
+    /* ── Metric Cards ── */
+    .metric-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
       margin-bottom: 2rem;
     }
-
-    .summary-card {
-      background: #111827;
-      border: 1px solid rgba(148, 163, 184, 0.1);
-      border-radius: 24px;
-      padding: 1.5rem;
-      min-height: 150px;
+    .metric-card {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+      transition: transform 0.2s, border-color 0.2s;
     }
-
-    .summary-card h2 {
-      margin: 0 0 0.5rem;
-      font-size: 1.1rem;
+    .metric-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .metric-info h4 {
+      margin: 0 0 0.35rem;
+      font-size: 0.82rem;
+      font-weight: 600;
       color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
-
-    .summary-card p {
+    .metric-info .metric-num {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #fff;
       margin: 0;
-      font-size: clamp(1.5rem, 2.5vw, 2rem);
-      font-weight: 700;
+      line-height: 1.1;
     }
-
-    .table-shell {
-      overflow-x: auto;
-      border-radius: 24px;
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      background: #020617;
+    .metric-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
     }
+    .metric-icon.blue   { background: rgba(37,99,235,0.18); color: #60a5fa; }
+    .metric-icon.yellow { background: rgba(245,158,11,0.18); color: #fbbf24; }
+    .metric-icon.green  { background: rgba(16,185,129,0.18); color: #34d399; }
+    .metric-icon.purple { background: rgba(168,85,247,0.18); color: #c084fc; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 980px;
+    /* ── Controls & Filter Bar ── */
+    .staff-controls-panel {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-
-    th,
-    td {
-      padding: 1rem 1.2rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+    .staff-tab-group {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
     }
-
-    th {
-      font-size: 0.95rem;
-      letter-spacing: 0.03em;
+    .staff-tab-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--card-border);
       color: #94a3b8;
-      background: rgba(148, 163, 184, 0.04);
-    }
-
-    td {
-      color: #e2e8f0;
-    }
-
-    .badge {
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.65rem 1.15rem;
+      border-radius: 10px;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.4rem 0.75rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 700;
+      transition: all 0.2s;
     }
-
-    .badge--dinajpur {
-      background: rgba(16, 185, 129, 0.12);
+    .staff-tab-btn:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+    .staff-tab-btn.active {
+      background: rgba(37,99,235,0.22);
+      border-color: rgba(37,99,235,0.55);
+      color: #93c5fd;
+    }
+    .staff-tab-btn.active.pending {
+      background: rgba(245,158,11,0.22);
+      border-color: rgba(245,158,11,0.55);
+      color: #fde68a;
+    }
+    .staff-tab-btn.active.admitted {
+      background: rgba(16,185,129,0.22);
+      border-color: rgba(16,185,129,0.55);
       color: #a7f3d0;
     }
 
-    .badge--bogura {
-      background: rgba(59, 130, 246, 0.12);
-      color: #a5b4fc;
-    }
-
-    .actions {
-      display: inline-flex;
-      gap: 0.5rem;
+    .staff-search-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       flex-wrap: wrap;
+      flex: 1;
+      justify-content: flex-end;
+      min-width: 280px;
     }
-
-    .action-pill {
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      background: rgba(15, 23, 42, 0.92);
-      color: #cbd5e1;
-      padding: 0.65rem 0.9rem;
-      border-radius: 14px;
-      cursor: pointer;
+    .staff-search-input-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 320px;
+      min-width: 180px;
+    }
+    .staff-search-input-wrap i {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
       font-size: 0.85rem;
     }
-
-    .action-pill:hover {
-      background: rgba(37, 99, 235, 0.12);
+    .staff-search-input-wrap input {
+      width: 100%;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.85rem;
+      padding: 0.6rem 0.85rem 0.6rem 2.2rem;
+      outline: none;
+    }
+    .staff-search-input-wrap input:focus {
+      border-color: #38bdf8;
     }
 
-    .empty-state {
-      padding: 2rem;
-      text-align: center;
+    .staff-select {
+      background: rgba(15,23,42,0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.85rem;
+      padding: 0.6rem 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* ── Table Shell ── */
+    .table-container {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+    }
+    .staff-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+    .staff-table thead {
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--card-border);
+    }
+    .staff-table th {
+      padding: 1rem 1.25rem;
+      font-size: 0.78rem;
+      font-weight: 700;
       color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .staff-table td {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+      color: #cbd5e1;
+      vertical-align: middle;
+    }
+    .staff-table tbody tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+    .staff-table tbody tr:last-child td {
+      border-bottom: none;
     }
 
-    .modal-backdrop {
+    .student-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .student-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid var(--card-border);
+      background: #1e293b;
+      flex-shrink: 0;
+    }
+    .student-cell-name {
+      font-weight: 700;
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 0.15rem;
+    }
+    .student-cell-id {
+      font-size: 0.75rem;
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    /* Badges */
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .status-tag.pending {
+      background: rgba(245,158,11,0.18);
+      border: 1px solid rgba(245,158,11,0.4);
+      color: #fde68a;
+    }
+    .status-tag.admitted {
+      background: rgba(16,185,129,0.18);
+      border: 1px solid rgba(16,185,129,0.4);
+      color: #6ee7b7;
+    }
+    .status-tag.rejected {
+      background: rgba(239,68,68,0.18);
+      border: 1px solid rgba(239,68,68,0.4);
+      color: #fca5a5;
+    }
+
+    /* Action buttons in rows */
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .act-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      color: #e2e8f0;
+      padding: 0.35rem 0.65rem;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .act-btn:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+    .act-btn.primary {
+      background: rgba(37,99,235,0.2);
+      border-color: rgba(37,99,235,0.4);
+      color: #93c5fd;
+    }
+    .act-btn.primary:hover {
+      background: rgba(37,99,235,0.35);
+      color: #fff;
+    }
+    .act-btn.edit {
+      background: rgba(168,85,247,0.18);
+      border-color: rgba(168,85,247,0.4);
+      color: #d8b4fe;
+    }
+    .act-btn.edit:hover {
+      background: rgba(168,85,247,0.32);
+      color: #fff;
+    }
+    .act-btn.admit-quick {
+      background: rgba(16,185,129,0.2);
+      border-color: rgba(16,185,129,0.4);
+      color: #6ee7b7;
+    }
+    .act-btn.admit-quick:hover {
+      background: rgba(16,185,129,0.35);
+      color: #fff;
+    }
+
+    /* ── Modals ── */
+    .staff-modal-backdrop {
+      display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: none;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
-      z-index: 30;
     }
-
-    .modal-backdrop.open {
+    .staff-modal-backdrop.open {
       display: flex;
     }
-
-    .modal-panel {
-      width: min(900px, 100%);
+    .staff-modal-card {
       background: #0f172a;
-      border-radius: 28px;
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.4);
-      overflow: hidden;
-    }
-
-    .modal-header,
-    .modal-footer {
-      padding: 1.2rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .modal-header {
-      border-bottom: 1px solid rgba(148, 163, 184, 0.08);
-    }
-
-    .modal-body {
-      padding: 1.5rem;
-      display: grid;
-      gap: 1.5rem;
-      grid-template-columns: 1.15fr 0.85fr;
-    }
-
-    .modal-body h3 {
-      margin: 0 0 0.75rem;
-      color: #ffffff;
-    }
-
-    .modal-body p {
-      margin: 0.35rem 0;
-      color: #cbd5e1;
-      line-height: 1.75;
-    }
-
-    .document-preview {
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      background: #020617;
-    }
-
-    .document-preview img {
-      display: block;
+      border: 1px solid rgba(148,163,184,0.22);
+      border-radius: 20px;
+      max-width: 820px;
       width: 100%;
-      height: auto;
-      object-fit: cover;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.75);
+    }
+    .staff-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.02);
+    }
+    .staff-modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      color: #e2e8f0;
+    }
+    .staff-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1.1rem 1.5rem;
+      border-top: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.02);
     }
 
+    /* Modal Form Styles */
+    .modal-form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .modal-form-group {
+      margin-bottom: 1rem;
+    }
+    .modal-form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .modal-form-group input,
+    .modal-form-group select,
+    .modal-form-group textarea {
+      width: 100%;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+      color: #fff;
+      font-size: 0.88rem;
+      padding: 0.65rem 0.85rem;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .modal-form-group input:focus,
+    .modal-form-group select:focus,
+    .modal-form-group textarea:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      padding: 0.65rem 1.35rem;
+      border-radius: 9px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+    .btn-save:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    /* Print styling */
     @media print {
-      body {
-        background: #ffffff !important;
-        color: #111827 !important;
-      }
-
-      header,
-      .actions,
-      .modal-footer,
-      .modal-header,
-      .action-pill,
-      .btn-primary,
-      .btn-secondary {
-        display: none !important;
-      }
-
-      .dashboard-shell,
-      .modal-body,
-      .printable-sheet {
-        width: 100% !important;
-        box-shadow: none !important;
-        border: none !important;
-      }
-
-      .print-section {
-        display: block;
-      }
-    }
-
-    .print-section {
-      display: none;
+      body * { visibility: hidden; }
+      #printableSection, #printableSection * { visibility: visible; }
+      #printableSection { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div>
-      <h1>Staff Dashboard</h1>
-      <p style="margin: 0.35rem 0 0; color: #94a3b8;">Branch filtered student management for Fusion Education.</p>
-    </div>
 
-    <div class="header-actions">
-      <button class="btn-secondary" id="refreshButton"><i class="fas fa-sync-alt"></i> Refresh</button>
-      <button class="btn-secondary" id="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
-      <button class="btn-primary" id="printBranchButton"><i class="fas fa-print"></i> Print Branch Summary</button>
+  <!-- ── TOPBAR ── -->
+  <header class="staff-topbar">
+    <div class="staff-topbar-inner">
+      <div class="staff-brand">
+        <a href="../index.html">
+          <img src="../assets/images/logo.jpg" alt="Fusion Logo">
+          <div class="logo-text">Fusion <span style="color:#e60012;">Education</span></div>
+        </a>
+        <span class="staff-portal-tag"><i class="fas fa-shield-alt"></i> Staff Portal</span>
+      </div>
+
+      <div class="staff-header-right">
+        <!-- Live Branch Switcher -->
+        <div style="display: flex; align-items: center; gap: 0.45rem;">
+          <span style="font-size: 0.8rem; color: #94a3b8;"><i class="fas fa-map-marker-alt" style="color: #38bdf8;"></i> Branch:</span>
+          <select id="staffBranchSelector" class="staff-select" onchange="changeActiveBranch(this.value)">
+            <option value="all">All Branches</option>
+            <option value="Dinajpur">Dinajpur Branch</option>
+            <option value="Bogura">Bogura Branch</option>
+          </select>
+        </div>
+
+        <div class="staff-user-chip">
+          <div class="staff-user-avatar" id="staffAvatar">S</div>
+          <div>
+            <div id="staffName" style="font-weight:700; font-size:0.85rem; color:#fff;">Staff Member</div>
+            <div id="staffRole" style="font-size:0.72rem; color:#94a3b8;">Branch Counselor</div>
+          </div>
+        </div>
+
+        <button type="button" class="act-btn primary" onclick="openNewStudentModal()">
+          <i class="fas fa-user-plus"></i> Add Student
+        </button>
+
+        <button type="button" class="act-btn" id="refreshButton" onclick="loadStudents()">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+
+        <button type="button" class="act-btn" id="printBranchButton" onclick="printBranchSummary()">
+          <i class="fas fa-print"></i> Report
+        </button>
+
+        <button type="button" class="act-btn" id="logoutButton" onclick="logoutStaff()" style="color:#fca5a5;">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="dashboard-shell">
-    <section class="summary-grid">
-      <article class="summary-card">
-        <h2>Staff</h2>
-        <p id="staffName">Loading...</p>
+  <!-- ── MAIN CONTENT ── -->
+  <main class="staff-shell">
+    
+    <!-- ── METRICS BAR ── -->
+    <section class="metric-grid">
+      <article class="metric-card">
+        <div class="metric-info">
+          <h4>Total Applicants</h4>
+          <p class="metric-num" id="totalCount">0</p>
+        </div>
+        <div class="metric-icon blue"><i class="fas fa-users"></i></div>
       </article>
-      <article class="summary-card">
-        <h2>Active Branch</h2>
-        <p id="staffBranch">Loading...</p>
+
+      <article class="metric-card">
+        <div class="metric-info">
+          <h4>Admission Pending</h4>
+          <p class="metric-num" id="pendingCount" style="color:#fbbf24;">0</p>
+        </div>
+        <div class="metric-icon yellow"><i class="fas fa-user-clock"></i></div>
       </article>
-      <article class="summary-card">
-        <h2>Student Count</h2>
-        <p id="studentCount">0</p>
+
+      <article class="metric-card">
+        <div class="metric-info">
+          <h4>Admitted Students</h4>
+          <p class="metric-num" id="admittedCount" style="color:#34d399;">0</p>
+        </div>
+        <div class="metric-icon green"><i class="fas fa-user-check"></i></div>
       </article>
-      <article class="summary-card">
-        <h2>Latest Status</h2>
-        <p id="latestStatus">Pending</p>
+
+      <article class="metric-card">
+        <div class="metric-info">
+          <h4>Active Branch</h4>
+          <p class="metric-num" id="activeBranchText" style="font-size: 1.25rem; color:#38bdf8;">All</p>
+        </div>
+        <div class="metric-icon purple"><i class="fas fa-building"></i></div>
       </article>
     </section>
 
-    <div class="table-shell">
-      <table>
-        <thead>
-          <tr>
-            <th>SL</th>
-            <th>Student Name</th>
-            <th>Course</th>
-            <th>Passport / NID</th>
-            <th>Document Preview</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="studentTableBody"></tbody>
-      </table>
+    <!-- ── CONTROLS & FILTER TABS ── -->
+    <div class="staff-controls-panel">
+      <div class="staff-tab-group">
+        <button type="button" class="staff-tab-btn active" id="tabAll" onclick="setStaffFilterTab('all')">
+          <i class="fas fa-users"></i> All Students
+          <span id="badgeAll" style="background:rgba(255,255,255,0.1); padding:0.15rem 0.45rem; border-radius:6px; font-size:0.75rem;">0</span>
+        </button>
+
+        <button type="button" class="staff-tab-btn pending" id="tabPending" onclick="setStaffFilterTab('pending')">
+          <i class="fas fa-user-clock"></i> Admission Pending
+          <span id="badgePending" style="background:rgba(245,158,11,0.25); color:#fde68a; padding:0.15rem 0.45rem; border-radius:6px; font-size:0.75rem;">0</span>
+        </button>
+
+        <button type="button" class="staff-tab-btn admitted" id="tabAdmitted" onclick="setStaffFilterTab('admitted')">
+          <i class="fas fa-user-check"></i> Admitted Students
+          <span id="badgeAdmitted" style="background:rgba(16,185,129,0.25); color:#a7f3d0; padding:0.15rem 0.45rem; border-radius:6px; font-size:0.75rem;">0</span>
+        </button>
+      </div>
+
+      <div class="staff-search-filter">
+        <div class="staff-search-input-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" id="staffSearchInput" placeholder="Search by name, ID, phone, course..." oninput="handleStaffSearch()">
+        </div>
+      </div>
     </div>
 
-    <div id="emptyMessage" class="empty-state">Loading students…</div>
+    <!-- ── STUDENT / ADMISSION DATA TABLE ── -->
+    <div class="table-container">
+      <table class="staff-table">
+        <thead>
+          <tr>
+            <th style="width: 50px;">SL</th>
+            <th>Applicant / Student</th>
+            <th>Course &amp; Level</th>
+            <th>Branch &amp; Visa</th>
+            <th>Batch</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th style="text-align: right;">Staff Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody">
+          <!-- Injected via JS -->
+        </tbody>
+      </table>
+
+      <div id="emptyMessage" style="display:none; text-align:center; padding:3.5rem 1rem; color:#94a3b8;">
+        <i class="fas fa-folder-open" style="font-size:2.5rem; margin-bottom:1rem; opacity:0.4;"></i>
+        <p style="margin:0; font-size:1rem;">No student records found.</p>
+      </div>
+    </div>
+
   </main>
 
-  <div class="modal-backdrop" id="studentModal">
-    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-header">
-        <div>
-          <h2 id="modalTitle">Student Profile</h2>
-          <p id="modalSubtitle" style="margin: 0; color: #94a3b8;"></p>
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- 1. VIEW PROFILE MODAL                                       -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div class="staff-modal-backdrop" id="viewModal">
+    <div class="staff-modal-card">
+      <div class="staff-modal-header">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <span id="viewStatusBadge" class="status-tag">Status</span>
+          <h3 id="viewModalTitle" style="margin:0; font-size:1.25rem; color:#fff;">Student Profile</h3>
         </div>
-        <button class="btn-secondary" id="modalCloseButton"><i class="fas fa-times"></i></button>
+        <button type="button" onclick="closeViewModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-      <div class="modal-body">
+
+      <div class="staff-modal-body" id="viewModalBody">
+        <!-- Injected via JS -->
+      </div>
+
+      <div class="staff-modal-footer">
+        <button type="button" class="act-btn" onclick="printCurrentStudentProfile()">
+          <i class="fas fa-print"></i> Print Sheet
+        </button>
+        <button type="button" class="act-btn edit" onclick="openEditFromView()">
+          <i class="fas fa-edit"></i> Edit &amp; Manage
+        </button>
+        <button type="button" class="act-btn" onclick="closeViewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- 2. EDIT & MANAGE MODAL (Staff Edit Feature)                  -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div class="staff-modal-backdrop" id="editModal">
+    <div class="staff-modal-card">
+      <div class="staff-modal-header">
         <div>
-          <h3 id="modalName"></h3>
-          <p><strong>Course:</strong> <span id="modalCourse"></span></p>
-          <p><strong>Passport / NID:</strong> <span id="modalDocumentId"></span></p>
-          <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-          <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
-          <p><strong>Status:</strong> <span id="modalStatus"></span></p>
-          <p><strong>Admission Date:</strong> <span id="modalAdmissionDate"></span></p>
-          <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
-          <p><strong>Notes:</strong></p>
-          <p id="modalNotes" style="margin-top: 0.5rem; color: #cbd5e1;"></p>
+          <h3 style="margin:0; font-size:1.25rem; color:#fff;"><i class="fas fa-user-edit" style="color:#a855f7; margin-right:0.4rem;"></i> Edit &amp; Manage Student</h3>
+          <p id="editModalSubtitle" style="margin:0.2rem 0 0; font-size:0.8rem; color:#94a3b8;">Update admission status, course, batch and counseling notes</p>
         </div>
-        <div class="document-preview">
-          <img id="modalDocumentPreview" alt="Document preview" src="" />
+        <button type="button" onclick="closeEditModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="editStudentForm" onsubmit="saveStudentEdit(event)">
+        <div class="staff-modal-body">
+          <input type="hidden" id="editId">
+
+          <!-- Status & Batch Assignment Banner -->
+          <div style="background: rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-radius:12px; padding:1rem; margin-bottom:1.25rem;">
+            <div class="modal-form-grid">
+              <div class="modal-form-group" style="margin:0;">
+                <label for="editStatus" style="color:#93c5fd;">Admission Status *</label>
+                <select id="editStatus" required style="border-color:rgba(37,99,235,0.4); font-weight:700;">
+                  <option value="pending">🟡 Admission Pending (Under Review)</option>
+                  <option value="admitted">🟢 Admitted Student (Enrolled &amp; Active)</option>
+                  <option value="rejected">🔴 Rejected</option>
+                </select>
+              </div>
+
+              <div class="modal-form-group" style="margin:0;">
+                <label for="editBatch" style="color:#93c5fd;">Assigned Batch</label>
+                <input type="text" id="editBatch" placeholder="e.g. Batch 14 - JLPT N5 Morning">
+              </div>
+            </div>
+          </div>
+
+          <!-- Student Core Details -->
+          <div class="modal-form-grid">
+            <div class="modal-form-group">
+              <label for="editFullName">Full Name *</label>
+              <input type="text" id="editFullName" required>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editEmail">Email Address</label>
+              <input type="email" id="editEmail">
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editPhone">Phone Number *</label>
+              <input type="tel" id="editPhone" required>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editCourse">Course *</label>
+              <select id="editCourse" required>
+                <option value="JLPT N5 - Beginner">JLPT N5 - Beginner</option>
+                <option value="JLPT N4 - Intermediate">JLPT N4 - Intermediate</option>
+                <option value="JLPT N3 - Advanced">JLPT N3 - Advanced</option>
+                <option value="Conversation Kaiwa">Conversation Kaiwa</option>
+                <option value="NAT-TEST Preparation">NAT-TEST Preparation</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editCourseLevel">Course Level</label>
+              <select id="editCourseLevel">
+                <option value="N5">N5</option>
+                <option value="N4">N4</option>
+                <option value="N3">N3</option>
+                <option value="Speaking">Speaking</option>
+                <option value="NAT-TEST">NAT-TEST</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editBranch">Branch *</label>
+              <select id="editBranch" required>
+                <option value="Dinajpur">Dinajpur Branch</option>
+                <option value="Bogura">Bogura Branch</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editVisaType">Visa Type</label>
+              <select id="editVisaType">
+                <option value="student">Student Visa</option>
+                <option value="ssw">SSW (Skilled Worker)</option>
+                <option value="titp">TITP / Work Visa</option>
+                <option value="undecided">Undecided</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editDob">Date of Birth</label>
+              <input type="date" id="editDob">
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editCity">City / Location</label>
+              <input type="text" id="editCity" placeholder="City or Upazila">
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editEmergencyName">Emergency Contact Name</label>
+              <input type="text" id="editEmergencyName">
+            </div>
+
+            <div class="modal-form-group">
+              <label for="editEmergencyPhone">Emergency Phone</label>
+              <input type="tel" id="editEmergencyPhone">
+            </div>
+          </div>
+
+          <!-- Counselor Notes -->
+          <div class="modal-form-group" style="margin-top:0.5rem;">
+            <label for="editNotes">Staff &amp; Counselor Notes</label>
+            <textarea id="editNotes" rows="3" placeholder="Add counseling notes, fee payment info, batch timing, document verification remarks..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="staff-modal-footer">
+          <button type="button" class="act-btn" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn-save">
+            <i class="fas fa-check"></i> Save Student Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- 3. NEW STUDENT WALK-IN MODAL                                -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div class="staff-modal-backdrop" id="newStudentModal">
+    <div class="staff-modal-card">
+      <div class="staff-modal-header">
+        <div>
+          <h3 style="margin:0; font-size:1.25rem; color:#fff;"><i class="fas fa-user-plus" style="color:#38bdf8; margin-right:0.4rem;"></i> Register New Student (Walk-in)</h3>
+          <p style="margin:0.2rem 0 0; font-size:0.8rem; color:#94a3b8;">Create a new student enrollment directly from staff portal</p>
+        </div>
+        <button type="button" onclick="closeNewStudentModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="newStudentForm" onsubmit="saveNewStudent(event)">
+        <div class="staff-modal-body">
+          <div class="modal-form-grid">
+            <div class="modal-form-group">
+              <label for="newFullName">Full Name *</label>
+              <input type="text" id="newFullName" required placeholder="e.g. Tanvir Hasan">
+            </div>
+
+            <div class="modal-form-group">
+              <label for="newPhone">Phone Number *</label>
+              <input type="tel" id="newPhone" required placeholder="01XXXXXXXXX">
+            </div>
+
+            <div class="modal-form-group">
+              <label for="newEmail">Email Address</label>
+              <input type="email" id="newEmail" placeholder="student@email.com">
+            </div>
+
+            <div class="modal-form-group">
+              <label for="newCourse">Course *</label>
+              <select id="newCourse" required>
+                <option value="JLPT N5 - Beginner">JLPT N5 - Beginner</option>
+                <option value="JLPT N4 - Intermediate">JLPT N4 - Intermediate</option>
+                <option value="JLPT N3 - Advanced">JLPT N3 - Advanced</option>
+                <option value="Conversation Kaiwa">Conversation Kaiwa</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="newBranch">Branch *</label>
+              <select id="newBranch" required>
+                <option value="Dinajpur">Dinajpur Branch</option>
+                <option value="Bogura">Bogura Branch</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="newStatus">Initial Status *</label>
+              <select id="newStatus" required>
+                <option value="admitted">🟢 Admitted Student (Immediate Enrollment)</option>
+                <option value="pending">🟡 Admission Pending</option>
+              </select>
+            </div>
+
+            <div class="modal-form-group">
+              <label for="newBatch">Assigned Batch</label>
+              <input type="text" id="newBatch" placeholder="e.g. Batch 01">
+            </div>
+
+            <div class="modal-form-group">
+              <label for="newCity">City / Upazila</label>
+              <input type="text" id="newCity" placeholder="e.g. Dinajpur Sadar">
+            </div>
+          </div>
+
+          <div class="modal-form-group" style="margin-top:0.5rem;">
+            <label for="newNotes">Counselor Notes / Fee info</label>
+            <textarea id="newNotes" rows="2" placeholder="Fee paid, deposit details, class schedule preference..."></textarea>
+          </div>
+        </div>
+
+        <div class="staff-modal-footer">
+          <button type="button" class="act-btn" onclick="closeNewStudentModal()">Cancel</button>
+          <button type="submit" class="btn-save">
+            <i class="fas fa-plus-circle"></i> Create Enrollment
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- 4. FEE & PAYMENT MANAGEMENT MODAL                           -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div class="staff-modal-backdrop" id="feeModal" style="display: none;">
+    <div class="staff-modal-card" style="max-width: 860px;">
+      <div class="staff-modal-header">
+        <div>
+          <h3 style="margin:0; font-size:1.25rem; color:#fff;" id="feeModalTitle">
+            <i class="fas fa-credit-card" style="color:#10b981; margin-right:0.4rem;"></i> Tuition, Fees &amp; Partial Payment
+          </h3>
+          <p id="feeModalSubtitle" style="margin:0.2rem 0 0; font-size:0.8rem; color:#94a3b8;">
+            Track recurring monthly billing, customize student rates, and record payments
+          </p>
+        </div>
+        <button type="button" onclick="closeFeeModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="staff-modal-body" style="padding: 1.5rem; max-height: 75vh; overflow-y: auto;">
+        <input type="hidden" id="feeStudentId">
+
+        <!-- Fee Summary Overview Card -->
+        <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid var(--card-border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; text-align: center;">
+            <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Active Period</div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: #38bdf8; margin-top: 0.2rem;" id="feeActiveMonths">1 Month</div>
+              <div style="font-size: 0.72rem; color: #64748b;" id="feeInitialDuration">Init: 3 Months</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Effective Rate</div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-top: 0.2rem;" id="feeMonthlyRate">৳ 1,000 / mo</div>
+              <div style="font-size: 0.72rem; color: #10b981;" id="feeRateType">Standard Course Rate</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Total Accrued Fee</div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: #fbbf24; margin-top: 0.2rem;" id="feeTotalAccrued">৳ 2,000</div>
+              <div style="font-size: 0.72rem; color: #64748b;" id="feeAdmissionPart">Inc. Admission: ৳1,000</div>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.08); padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.25);">
+              <div style="font-size: 0.75rem; color: #34d399; text-transform: uppercase;">Total Paid</div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: #34d399; margin-top: 0.2rem;" id="feeTotalPaid">৳ 1,000</div>
+              <div style="font-size: 0.72rem; color: #94a3b8;" id="feePaymentCount">1 receipt(s)</div>
+            </div>
+            <div style="background: rgba(239, 68, 68, 0.08); padding: 0.75rem; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.25);">
+              <div style="font-size: 0.75rem; color: #f87171; text-transform: uppercase;">Remaining Due</div>
+              <div style="font-size: 1.25rem; font-weight: 700; color: #f87171; margin-top: 0.2rem;" id="feeBalanceDue">৳ 1,000</div>
+              <div style="font-size: 0.72rem; color: #f87171; font-weight:600;" id="feeStatusPill">Partially Paid</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Column Action Panels: [Record Payment] + [Customize Monthly Rate] -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+          
+          <!-- PANEL A: Record Partial / Full Payment -->
+          <div style="background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 1.25rem;">
+            <div style="font-weight: 700; color: #34d399; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-hand-holding-usd"></i> Record Payment Receipt
+            </div>
+            <form id="recordPaymentForm" onsubmit="handleRecordPayment(event)">
+              <div class="modal-form-group">
+                <label for="payAmount" style="color: #cbd5e1;">Payment Amount (৳) *</label>
+                <input type="number" id="payAmount" min="1" step="any" required placeholder="e.g. 1000" style="background: #0f172a; border-color: rgba(16,185,129,0.3); font-weight: 700; color: #34d399;">
+              </div>
+              <div class="modal-form-group">
+                <label for="payNote" style="color: #cbd5e1;">Payment Note / Installment Ref</label>
+                <input type="text" id="payNote" placeholder="e.g. Month 2 Tuition installment" style="background: #0f172a;">
+              </div>
+              <div class="modal-form-group">
+                <label for="payDate" style="color: #cbd5e1;">Receipt Date</label>
+                <input type="date" id="payDate" style="background: #0f172a;">
+              </div>
+              <button type="submit" class="btn-save" id="btnRecordPay" style="background: #10b981; width: 100%; justify-content: center; margin-top: 0.5rem;">
+                <i class="fas fa-check"></i> Submit Payment Receipt
+              </button>
+            </form>
+          </div>
+
+          <!-- PANEL B: Student-Specific Rate Customization -->
+          <div style="background: rgba(56, 189, 248, 0.04); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; padding: 1.25rem;">
+            <div style="font-weight: 700; color: #38bdf8; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-sliders-h"></i> Student-Specific Pricing
+            </div>
+            <form id="customFeeForm" onsubmit="handleSaveCustomFee(event)">
+              <div class="modal-form-group">
+                <label for="customRateInput" style="color: #cbd5e1;">Custom Monthly Fee (৳)</label>
+                <input type="number" id="customRateInput" min="0" placeholder="e.g. 700 (leave blank for standard)" style="background: #0f172a;">
+                <span style="font-size: 0.72rem; color: #94a3b8; display: block; margin-top: 0.2rem;">Overriding will calculate ongoing months at this special rate.</span>
+              </div>
+              <div class="modal-form-group">
+                <label for="specialDiscountInput" style="color: #cbd5e1;">Special One-Time Discount (৳)</label>
+                <input type="number" id="specialDiscountInput" min="0" placeholder="e.g. 500" style="background: #0f172a;">
+              </div>
+              <div class="modal-form-group">
+                <label for="customReasonInput" style="color: #cbd5e1;">Reason / Admin Reference</label>
+                <input type="text" id="customReasonInput" placeholder="e.g. Meritorious student scholarship" style="background: #0f172a;">
+              </div>
+              <button type="submit" class="btn-save" id="btnSaveCustomRate" style="background: #2563eb; width: 100%; justify-content: center; margin-top: 0.5rem;">
+                <i class="fas fa-save"></i> Apply Custom Pricing
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Payment History Ledger -->
+        <div>
+          <div style="font-weight: 700; color: #fff; font-size: 0.95rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-receipt" style="color: #38bdf8;"></i> Payment History &amp; Receipts
+          </div>
+          <div style="background: rgba(15,23,42,0.6); border: 1px solid var(--card-border); border-radius: 12px; overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+              <thead>
+                <tr style="border-bottom: 1px solid var(--card-border); background: rgba(255,255,255,0.02); text-align: left; color: #94a3b8;">
+                  <th style="padding: 0.65rem 1rem;">Date</th>
+                  <th style="padding: 0.65rem 1rem;">Receipt ID</th>
+                  <th style="padding: 0.65rem 1rem;">Amount</th>
+                  <th style="padding: 0.65rem 1rem;">Note / Description</th>
+                  <th style="padding: 0.65rem 1rem;">Recorded By</th>
+                </tr>
+              </thead>
+              <tbody id="feePaymentHistoryBody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="staff-modal-footer">
+        <button type="button" class="act-btn" onclick="closeFeeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- 5. INSTRUCTOR BRANCH STAFF CONTROL MODAL                    -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div class="staff-modal-backdrop" id="branchStaffModal" style="display: none;">
+    <div class="staff-modal-card" style="max-width: 780px;">
+      <div class="staff-modal-header">
+        <div>
+          <h3 style="margin:0; font-size:1.25rem; color:#fff;">
+            <i class="fas fa-users-cog" style="color:#c084fc; margin-right:0.4rem;"></i> Branch Staff &amp; Counselors
+          </h3>
+          <p style="margin:0.2rem 0 0; font-size:0.8rem; color:#94a3b8;">
+            Oversee staff members and coordinators within your branch
+          </p>
+        </div>
+        <button type="button" onclick="closeBranchStaffModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="staff-modal-body" style="padding: 1.5rem;">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--card-border); color: #94a3b8; text-align: left;">
+                <th style="padding: 0.65rem 1rem;">Staff Name</th>
+                <th style="padding: 0.65rem 1rem;">Email</th>
+                <th style="padding: 0.65rem 1rem;">Branch</th>
+                <th style="padding: 0.65rem 1rem;">Role</th>
+                <th style="padding: 0.65rem 1rem; text-align: center;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="branchStaffTableBody">
+              <!-- Dynamic Staff -->
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" id="modalCloseFooter"><i class="fas fa-arrow-left"></i> Close</button>
-        <button class="btn-primary" id="printStudentButton"><i class="fas fa-print"></i> Print Profile</button>
+      <div class="staff-modal-footer">
+        <button type="button" class="act-btn" onclick="closeBranchStaffModal()">Close</button>
       </div>
     </div>
   </div>
 
   <div class="print-section" id="printableSection"></div>
+  <div class="toast-container" id="toastContainer" style="position:fixed; bottom:1.5rem; right:1.5rem; z-index:99999; display:flex; flex-direction:column; gap:0.5rem;"></div>
 
+  <script src="../assets/js/dao.js"></script>
   <script src="../assets/js/staff-dashboard.js"></script>
-
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <!-- Firebase Configuration -->
-    <script src="../assets/js/firebase-config.js"></script>
 </body>
 </html>
+

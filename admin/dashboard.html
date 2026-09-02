@@ -3,311 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fusion Education BD - Site Settings</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Site Settings — Fusion Education BD Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .dashboard-shell {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 2rem 1rem 4rem;
-        }
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .tab-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .tab-btn {
-            border: 2px solid var(--border-light);
-            border-radius: 14px;
-            padding: 1rem 1.2rem;
-            background: var(--white);
-            color: var(--text-primary);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            text-decoration: none;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .tab-btn.active,
-        .tab-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .tab-pane {
-            display: none;
-        }
-        .tab-pane.active {
-            display: block;
-        }
-        .dashboard-card {
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            box-shadow: var(--shadow-md);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        .form-row {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        }
-        .block-row {
-            display: grid;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .image-preview {
-            width: 100%;
-            max-width: 400px;
-            min-height: 180px;
-            border: 2px dashed var(--border-light);
-            border-radius: 18px;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            background: var(--background-light);
-        }
-        .image-preview img {
-            max-width: 100%;
-            max-height: 260px;
-            border-radius: 16px;
-            object-fit: cover;
-        }
-        .item-card {
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            border-radius: 18px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-        .item-grid {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: 280px 1fr;
-            align-items: start;
-        }
-        .item-card img,
-        .author-avatar {
-            width: 100%;
-            max-height: 220px;
-            object-fit: cover;
-            border-radius: 16px;
-        }
-        .author-avatar {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 64px;
-            height: 64px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #E60012, #FF3333);
-            color: white;
-            border-radius: 18px;
-            font-size: 1.2rem;
-        }
-        .item-meta {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: 0.75rem;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-        .item-meta span {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .action-row {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-        .outline-btn,
-        .btn {
-            min-width: 140px;
-        }
-        .success-message {
-            display: none;
-            margin-bottom: 1rem;
-            padding: 1rem 1.25rem;
-            border-radius: 14px;
-            background: #e6ffed;
-            color: #1f5e2b;
-            border: 1px solid #b8f1c1;
-        }
-        .success-message.show {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav>
-                <a href="../index.html" class="logo">
-                    <i class="fas fa-graduation-cap"></i>
-                    Fusion <span>Education</span>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="../index.html" class="logo">
+                <img src="../assets/images/logo.jpg" alt="Fusion Logo">
+                Fusion <span>Education</span>
+                <span class="logo-badge">Admin</span>
+            </a>
+            <div class="topbar-right">
+                <a href="../index.html" class="topbar-btn outline" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> View Site
                 </a>
-                <div class="nav-actions">
-                    <a href="../index.html" class="btn btn-secondary"><i class="fas fa-home"></i> View Site</a>
-                </div>
-            </nav>
+                <a href="../pages/admin-login.html" class="topbar-btn danger" onclick="logoutAdmin(event)">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
         </div>
     </header>
 
-    <main class="dashboard-shell">
-        <div class="dashboard-header">
-            <div>
-                <h1>Admin Control Panel</h1>
-                <p style="color: var(--text-secondary); margin-top: 0.5rem; max-width: 720px;">Complete website control: hero, posts, courses, testimonials, FAQ, contact leads, social links and admin login.</p>
+    <!-- NAV RAIL -->
+    <div class="nav-rail-container">
+        <nav class="nav-rail" aria-label="Admin Navigation">
+            <a href="dashboard.html" class="nav-pill active"><i class="fas fa-sliders-h"></i> Site Settings</a>
+            <a href="posts.html" class="nav-pill"><i class="fas fa-newspaper"></i> Home Posts</a>
+            <a href="courses.html" class="nav-pill"><i class="fas fa-book-open"></i> Courses</a>
+            <a href="testimonials.html" class="nav-pill"><i class="fas fa-user-check"></i> Testimonials</a>
+            <a href="faqs.html" class="nav-pill"><i class="fas fa-question-circle"></i> FAQs</a>
+            <a href="messages.html" class="nav-pill"><i class="fas fa-envelope"></i> Messages <span class="badge" id="navMsgCount">0</span></a>
+            <a href="admissions.html?tab=pending" class="nav-pill"><i class="fas fa-user-clock"></i> Admission Pending <span class="badge" id="navPendingCount">0</span></a>
+            <a href="admissions.html?tab=admitted" class="nav-pill"><i class="fas fa-user-check"></i> Admitted Students <span class="badge" id="navAdmittedCount">0</span></a>
+            <a href="users.html" class="nav-pill"><i class="fas fa-user-shield"></i> Admin User</a>
+        </nav>
+    </div>
+
+    <!-- MAIN -->
+    <main class="shell">
+        <div class="page-header">
+            <div class="page-title-block">
+                <h1>
+                    <span class="icon-wrap"><i class="fas fa-sliders-h"></i></span>
+                    Site Settings & Configuration
+                </h1>
+                <p>Customize hero banner, contact information, social links and footer credits across the entire website.</p>
             </div>
         </div>
 
-        <div class="success-message" id="successMessage"><i class="fas fa-check-circle"></i> <span id="successText"></span></div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-globe"></i> Global Website Content
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="settingsForm" class="form-stack">
+                    
+                    <!-- BRAND COLORS -->
+                    <div class="form-section-title"><i class="fas fa-palette"></i> Brand & Logo Name Colors</div>
+                    <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:-0.5rem;margin-bottom:0.75rem;">
+                        Customize separate colors for <strong>"Fusion"</strong> and <strong>"Education"</strong> across all website headers and pages.
+                    </p>
 
-        <div class="tab-buttons">
-            <a href="dashboard.html" class="tab-btn active"><i class="fas fa-cogs"></i> Site Settings</a>
-            <a href="posts.html" class="tab-btn"><i class="fas fa-newspaper"></i> Home Posts</a>
-            <a href="courses.html" class="tab-btn"><i class="fas fa-book-open"></i> Courses</a>
-            <a href="testimonials.html" class="tab-btn"><i class="fas fa-user-check"></i> Testimonials</a>
-            <a href="faqs.html" class="tab-btn"><i class="fas fa-question-circle"></i> FAQs</a>
-            <a href="messages.html" class="tab-btn"><i class="fas fa-envelope"></i> Messages</a>
-            <a href="admissions.html" class="tab-btn"><i class="fas fa-user-graduate"></i> Admissions</a>
-            <a href="users.html" class="tab-btn"><i class="fas fa-user-shield"></i> Admin User</a>
+                    <div class="color-picker-card" style="margin-bottom:2rem;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fusionColorInput">"Fusion" Text Color</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="fusionColorInput" class="color-picker-input" value="#FFFFFF" oninput="syncColorInput('fusion', this.value)">
+                                    <input type="text" id="fusionColorHex" class="color-hex-input" value="#FFFFFF" placeholder="#FFFFFF" maxlength="7" oninput="syncColorPicker('fusion', this.value)">
+                                </div>
+                                <div class="preset-colors-row">
+                                    <button type="button" class="preset-chip" onclick="setColor('fusion', '#FFFFFF')"><span class="preset-dot" style="background:#FFFFFF;"></span> White</button>
+                                    <button type="button" class="preset-chip" onclick="setColor('fusion', '#00AEEF')"><span class="preset-dot" style="background:#00AEEF;"></span> Sky Blue</button>
+                                    <button type="button" class="preset-chip" onclick="setColor('fusion', '#006FA9')"><span class="preset-dot" style="background:#006FA9;"></span> Navy Blue</button>
+                                    <button type="button" class="preset-chip" onclick="setColor('fusion', '#E60012')"><span class="preset-dot" style="background:#E60012;"></span> Crimson</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="educationColorInput">"Education" Text Color</label>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="educationColorInput" class="color-picker-input" value="#00AEEF" oninput="syncColorInput('education', this.value)">
+                                    <input type="text" id="educationColorHex" class="color-hex-input" value="#00AEEF" placeholder="#00AEEF" maxlength="7" oninput="syncColorPicker('education', this.value)">
+                                </div>
+                                <div class="preset-colors-row">
+                                    <button type="button" class="preset-chip" onclick="setColor('education', '#00AEEF')"><span class="preset-dot" style="background:#00AEEF;"></span> Sky Blue</button>
+                                    <button type="button" class="preset-chip" onclick="setColor('education', '#006FA9')"><span class="preset-dot" style="background:#006FA9;"></span> Navy Blue</button>
+                                    <button type="button" class="preset-chip" onclick="setColor('education', '#E60012')"><span class="preset-dot" style="background:#E60012;"></span> Crimson</button>
+                                    <button type="button" class="preset-chip" onclick="setColor('education', '#10B981')"><span class="preset-dot" style="background:#10B981;"></span> Emerald</button>
+                                    <button type="button" class="preset-chip" onclick="setColor('education', '#F59E0B')"><span class="preset-dot" style="background:#F59E0B;"></span> Amber</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="brand-preview-box">
+                            <div>
+                                <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.6);font-weight:700;">Live Brand Name Preview</span>
+                                <div class="brand-preview-display" style="margin-top:0.35rem;">
+                                    <img src="../assets/images/logo.jpg" alt="Logo">
+                                    <span id="previewFusionText" style="color:#FFFFFF;">Fusion</span>
+                                    <span id="previewEducationText" style="color:#00AEEF;">Education</span>
+                                </div>
+                            </div>
+                            <span class="badge-status green"><i class="fas fa-eye"></i> Realtime Preview</span>
+                        </div>
+                    </div>
+
+                    <!-- HERO SECTION -->
+                    <div class="form-section-title"><i class="fas fa-tv"></i> Hero Banner Settings</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="heroTitleInput">Hero Heading Title *</label>
+                            <input id="heroTitleInput" type="text" placeholder="e.g. Learn Japanese, Build Your Future" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="heroSubtitleInput">Hero Subtitle *</label>
+                            <input id="heroSubtitleInput" type="text" placeholder="e.g. Master the Japanese language..." required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="heroImageUrl">Hero Background Image URL</label>
+                            <input id="heroImageUrl" type="text" placeholder="https://example.com/banner.jpg" oninput="previewImage(event, 'heroPreview')">
+                        </div>
+                        <div class="form-group">
+                            <label for="heroImageFile">Or Upload New Image</label>
+                            <input id="heroImageFile" type="file" accept="image/*" onchange="previewImage(event, 'heroPreview')">
+                        </div>
+                    </div>
+
+                    <div id="heroPreview" class="image-preview">
+                        Upload or enter an image URL to preview here.
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="heroCtaText">Primary Call-to-Action Text</label>
+                            <input id="heroCtaText" type="text" placeholder="e.g. Start Your Journey" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="heroCtaUrl">Primary Call-to-Action Link</label>
+                            <input id="heroCtaUrl" type="text" placeholder="pages/admission.html" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="heroSecondaryText">Secondary CTA Text</label>
+                            <input id="heroSecondaryText" type="text" placeholder="e.g. Free Consultation">
+                        </div>
+                        <div class="form-group">
+                            <label for="heroSecondaryUrl">Secondary CTA Link</label>
+                            <input id="heroSecondaryUrl" type="text" placeholder="pages/contact.html">
+                        </div>
+                    </div>
+
+                    <!-- CONTACT INFO -->
+                    <div class="form-section-title"><i class="fas fa-address-book"></i> Office & Contact Details</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactAddress">Physical Address *</label>
+                            <input id="contactAddress" type="text" placeholder="90/2, Fakirpara, Dinajpur 5200" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactPhone">Phone Number *</label>
+                            <input id="contactPhone" type="tel" placeholder="+880 1302 090286" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactEmail">Official Email *</label>
+                            <input id="contactEmail" type="email" placeholder="contact@fusioneducationbd.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactHours">Office Hours *</label>
+                            <input id="contactHours" type="text" placeholder="Thursday - Saturday, 10:00 AM - 6:00 PM" required>
+                        </div>
+                    </div>
+
+                    <!-- SOCIAL LINKS -->
+                    <div class="form-section-title"><i class="fas fa-share-alt"></i> Social Media Profiles</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="socialFacebook"><i class="fab fa-facebook"></i> Facebook Page URL</label>
+                            <input id="socialFacebook" type="url" placeholder="https://facebook.com/fusioneducationbd">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialInstagram"><i class="fab fa-instagram"></i> Instagram URL</label>
+                            <input id="socialInstagram" type="url" placeholder="https://instagram.com/fusioneducationbd">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="socialTwitter"><i class="fab fa-twitter"></i> Twitter URL</label>
+                            <input id="socialTwitter" type="url" placeholder="https://twitter.com/fusioneducationbd">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialLinkedin"><i class="fab fa-linkedin"></i> LinkedIn Company URL</label>
+                            <input id="socialLinkedin" type="url" placeholder="https://linkedin.com/company/fusioneducationbd">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="socialWhatsapp"><i class="fab fa-whatsapp"></i> WhatsApp Direct Link</label>
+                            <input id="socialWhatsapp" type="url" placeholder="https://wa.me/8801302090286">
+                        </div>
+                        <div class="form-group">
+                            <label for="footerTextInput"><i class="fas fa-copyright"></i> Footer Copyright Text</label>
+                            <input id="footerTextInput" type="text" placeholder="© 2026 Fusion Education BD. All rights reserved.">
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Site Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <section id="settings-tab" class="tab-pane active dashboard-card">
-            <h2><i class="fas fa-sliders-h"></i> Site Settings</h2>
-            <form id="settingsForm" data-skip-generic-submit="true">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="heroTitleInput">Hero Title</label>
-                        <input id="heroTitleInput" type="text" placeholder="Hero title" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="heroSubtitleInput">Hero Subtitle</label>
-                        <input id="heroSubtitleInput" type="text" placeholder="Hero subtitle" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="heroImageUrl">Hero Background Image URL</label>
-                        <input id="heroImageUrl" type="text" placeholder="https://example.com/banner.jpg" onchange="previewImage(event, 'heroPreview')">
-                    </div>
-                    <div class="form-group">
-                        <label for="heroImageFile">Upload Hero Image</label>
-                        <input id="heroImageFile" type="file" accept="image/*" onchange="previewImage(event, 'heroPreview')">
-                    </div>
-                </div>
-                <div id="heroPreview" class="image-preview">Upload or enter image URL to preview here.</div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="heroCtaText">Primary CTA Text</label>
-                        <input id="heroCtaText" type="text" placeholder="Start Your Journey" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="heroCtaUrl">Primary CTA URL</label>
-                        <input id="heroCtaUrl" type="text" placeholder="pages/admission.html" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="heroSecondaryText">Secondary CTA Text</label>
-                        <input id="heroSecondaryText" type="text" placeholder="Free Consultation">
-                    </div>
-                    <div class="form-group">
-                        <label for="heroSecondaryUrl">Secondary CTA URL</label>
-                        <input id="heroSecondaryUrl" type="text" placeholder="pages/contact.html">
-                    </div>
-                </div>
-                <h3 style="margin-top: 2rem;">Contact Info</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contactAddress">Address</label>
-                        <input id="contactAddress" type="text" placeholder="Office address" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactPhone">Phone</label>
-                        <input id="contactPhone" type="tel" placeholder="+8801302090286" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contactEmail">Email</label>
-                        <input id="contactEmail" type="email" placeholder="contact@fusioneducationbd.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactHours">Office Hours</label>
-                        <input id="contactHours" type="text" placeholder="Thursday - Saturday, 10:00 AM - 6:00 PM" required>
-                    </div>
-                </div>
-                <h3 style="margin-top: 2rem;">Social Links</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="socialFacebook">Facebook URL</label>
-                        <input id="socialFacebook" type="url" placeholder="https://facebook.com/fusioneducationbd">
-                    </div>
-                    <div class="form-group">
-                        <label for="socialInstagram">Instagram URL</label>
-                        <input id="socialInstagram" type="url" placeholder="https://instagram.com/fusioneducation2025">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="socialTwitter">Twitter URL</label>
-                        <input id="socialTwitter" type="url" placeholder="https://twitter.com/fusioneducationbd">
-                    </div>
-                    <div class="form-group">
-                        <label for="socialLinkedin">LinkedIn URL</label>
-                        <input id="socialLinkedin" type="url" placeholder="https://linkedin.com/company/fusioneducationbd">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="socialWhatsapp">WhatsApp URL</label>
-                        <input id="socialWhatsapp" type="url" placeholder="https://wa.me/8801302090286">
-                    </div>
-                    <div class="form-group">
-                        <label for="footerTextInput">Footer Text</label>
-                        <input id="footerTextInput" type="text" placeholder="© 2026 Fusion Education BD. All rights reserved.">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 1.5rem;"><i class="fas fa-save"></i> Save Site Settings</button>
-            </form>
-        </section>
     </main>
 
-    <script src="../assets/js/gallery.js"></script>
-    <script src="../assets/js/discountCalculator.js"></script>
-    <script src="../assets/js/admin.js"></script>
+    <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <!-- Firebase Configuration -->
-    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/dao.js"></script>
+    <script src="../assets/js/admin.js"></script>
 </body>
 </html>

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "gal-1",
+    "title": "Classroom Activity & Kanji Practice",
+    "category": "Classroom",
+    "image": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop"
+  },
+  {
+    "id": "gal-2",
+    "title": "Cultural Event: Japanese Tea & Calligraphy",
+    "category": "Events",
+    "image": "https://images.unsplash.com/photo-1528164344705-475426879c0d?w=800&auto=format&fit=crop"
+  }
+]

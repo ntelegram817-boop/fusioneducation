@@ -1,0 +1,157 @@
+[
+  {
+    "id": "usr_inst_001",
+    "name": "Rahim Sensei (Tanaka)",
+    "email": "instructor@fusion.com",
+    "password": "password123",
+    "role": "instructor",
+    "branch": "Dinajpur",
+    "status": "active",
+    "permissions": [
+      "view_students",
+      "edit_students",
+      "manage_student_profile",
+      "manage_attendance",
+      "manage_batches",
+      "manage_routines",
+      "manage_academic_progress",
+      "view_documents",
+      "manage_documents",
+      "view_fees",
+      "manage_fees",
+      "custom_student_fee",
+      "manage_admissions",
+      "manage_readmissions",
+      "counseling",
+      "view_staff",
+      "edit_staff",
+      "manage_staff_permissions",
+      "view_reports",
+      "export_reports"
+    ],
+    "createdAt": "2026-08-15T09:00:00.000Z"
+  },
+  {
+    "id": "usr_inst_002",
+    "name": "Kenji Sato",
+    "email": "dhaka.instructor@fusion.com",
+    "password": "password123",
+    "role": "instructor",
+    "branch": "Dhaka",
+    "status": "active",
+    "permissions": [
+      "view_students",
+      "edit_students",
+      "manage_attendance",
+      "manage_batches",
+      "manage_routines",
+      "manage_academic_progress",
+      "view_documents",
+      "view_fees",
+      "view_reports"
+    ],
+    "createdAt": "2026-08-20T10:30:00.000Z"
+  },
+  {
+    "id": "usr_staff_001",
+    "name": "Mahmudul Hasan",
+    "email": "staff@fusioneducation.com",
+    "password": "staff123",
+    "role": "staff",
+    "branch": "Dinajpur",
+    "status": "active",
+    "permissions": [
+      "view_students",
+      "edit_students",
+      "manage_student_profile",
+      "manage_attendance",
+      "manage_batches",
+      "manage_admissions",
+      "manage_readmissions",
+      "counseling",
+      "view_documents",
+      "manage_documents",
+      "view_fees",
+      "manage_fees",
+      "custom_student_fee",
+      "view_reports",
+      "export_reports"
+    ],
+    "createdAt": "2026-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "usr_staff_002",
+    "name": "Tariqul Islam",
+    "email": "dinajpur@fusion.com",
+    "password": "password123",
+    "role": "staff",
+    "branch": "Dinajpur",
+    "status": "active",
+    "permissions": [
+      "view_students",
+      "manage_admissions",
+      "counseling",
+      "view_fees",
+      "view_reports"
+    ],
+    "createdAt": "2026-08-10T11:00:00.000Z"
+  },
+  {
+    "id": "usr_staff_003",
+    "name": "Nusrat Jahan",
+    "email": "bogura@fusion.com",
+    "password": "password123",
+    "role": "staff",
+    "branch": "Bogura",
+    "status": "active",
+    "permissions": [
+      "view_students",
+      "edit_students",
+      "manage_admissions",
+      "manage_readmissions",
+      "counseling",
+      "manage_attendance",
+      "view_fees",
+      "manage_fees",
+      "view_documents",
+      "manage_documents",
+      "view_reports",
+      "export_reports"
+    ],
+    "createdAt": "2026-08-12T09:15:00.000Z"
+  },
+  {
+    "id": "usr_staff_004",
+    "name": "Farhana Ahmed",
+    "email": "dhaka.staff@fusion.com",
+    "password": "password123",
+    "role": "staff",
+    "branch": "Dhaka",
+    "status": "active",
+    "permissions": [
+      "view_students",
+      "manage_admissions",
+      "counseling",
+      "view_fees",
+      "manage_fees",
+      "view_reports"
+    ],
+    "createdAt": "2026-08-18T14:00:00.000Z"
+  },
+  {
+    "id": "usr_staff_005",
+    "name": "Kamal Hossain",
+    "email": "rangpur.staff@fusion.com",
+    "password": "password123",
+    "role": "staff",
+    "branch": "Rangpur",
+    "status": "active",
+    "permissions": [
+      "view_students",
+      "manage_admissions",
+      "counseling",
+      "view_fees"
+    ],
+    "createdAt": "2026-08-25T16:00:00.000Z"
+  }
+]

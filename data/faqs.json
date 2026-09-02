@@ -1,0 +1,20 @@
+[
+  {
+    "id": "faq-1",
+    "question": "What JLPT level is required to study in Japan?",
+    "answer": "Most Japanese language schools require at least JLPT N5 or NAT-TEST 5Q (150 hours of study) for visa eligibility.",
+    "category": "Admission"
+  },
+  {
+    "id": "faq-2",
+    "question": "How long does it take to prepare for JLPT N5?",
+    "answer": "Our JLPT N5 preparation course takes approximately 3 months with intensive classroom learning and weekly mock tests.",
+    "category": "Courses"
+  },
+  {
+    "id": "faq-3",
+    "question": "Do you assist with university applications and visa processing?",
+    "answer": "Yes! We provide complete end-to-end guidance from university selection, SOP preparation, COE application to embassy visa interview.",
+    "category": "Visa"
+  }
+]

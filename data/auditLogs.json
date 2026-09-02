@@ -1,0 +1,257 @@
+[
+  {
+    "id": "log_1788290522211_76c1",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_003",
+    "targetName": "Nusrat Jahan",
+    "performedBy": {
+      "name": "Nusrat Jahan",
+      "email": "bogura@fusion.com",
+      "role": "staff",
+      "branch": "Bogura"
+    },
+    "timestamp": "2026-09-01T19:22:02.211Z"
+  },
+  {
+    "id": "log_1788290518549_mtej",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_003",
+    "targetName": "Nusrat Jahan",
+    "performedBy": {
+      "name": "Nusrat Jahan",
+      "email": "bogura@fusion.com",
+      "role": "staff",
+      "branch": "Bogura"
+    },
+    "timestamp": "2026-09-01T19:21:58.549Z"
+  },
+  {
+    "id": "log_1788290512944_lhps",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290512944",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Bogura"
+    },
+    "timestamp": "2026-09-01T19:21:52.944Z"
+  },
+  {
+    "id": "log_1788290503609_asjl",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_003",
+    "targetName": "Nusrat Jahan",
+    "performedBy": {
+      "name": "Nusrat Jahan",
+      "email": "bogura@fusion.com",
+      "role": "staff",
+      "branch": "Bogura"
+    },
+    "timestamp": "2026-09-01T19:21:43.609Z"
+  },
+  {
+    "id": "log_1788290492381_mgti",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_002",
+    "targetName": "Kenji Sato",
+    "performedBy": {
+      "name": "Kenji Sato",
+      "email": "dhaka.instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:21:32.381Z"
+  },
+  {
+    "id": "log_1788290477710_4q32",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290477710",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:21:17.710Z"
+  },
+  {
+    "id": "log_1788290476973_7n0q",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290476972",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:21:16.973Z"
+  },
+  {
+    "id": "log_1788290476211_m64i",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290476210",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:21:16.211Z"
+  },
+  {
+    "id": "log_1788290474832_gapf",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290474832",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:21:14.832Z"
+  },
+  {
+    "id": "log_1788290464343_n9ek",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290464342",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:21:04.343Z"
+  },
+  {
+    "id": "log_1788290463171_bxpw",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290463170",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:21:03.171Z"
+  },
+  {
+    "id": "log_1788290461860_o89o",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290461859",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:21:01.860Z"
+  },
+  {
+    "id": "log_1788290458816_chso",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:20:58.816Z"
+  },
+  {
+    "id": "log_1788290448371_t607",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_1788290448371",
+    "targetName": "ADMIN",
+    "performedBy": {
+      "name": "ADMIN",
+      "email": "admin@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:20:48.371Z"
+  },
+  {
+    "id": "log_1788290446545_rs03",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-01T19:20:46.545Z"
+  },
+  {
+    "id": "log_1788289516745_pn6n",
+    "action": "fee_customized",
+    "details": "Customized monthly fee for Rahim from ৳1,000 to ৳700",
+    "targetType": "student",
+    "targetId": "FE-2024-001",
+    "targetName": "Amit Rahman",
+    "performedBy": {
+      "name": "Main Admin",
+      "email": "admin@fusioneducation.com",
+      "role": "admin",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-01T19:05:16.745Z"
+  },
+  {
+    "id": "log_init_001",
+    "action": "system_initialized",
+    "targetType": "system",
+    "targetId": "sys_main",
+    "targetName": "Role & Permission System",
+    "details": "Management system initialized with RBAC, Branch Isolation, and Customizable Fee Engine.",
+    "performedBy": {
+      "name": "Main Admin",
+      "email": "admin@fusioneducation.com",
+      "role": "admin",
+      "branch": "All"
+    },
+    "timestamp": "2026-09-02T00:00:00.000Z"
+  }
+]

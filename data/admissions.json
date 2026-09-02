@@ -1,0 +1,77 @@
+[
+  {
+    "id": "FEBD-2026-003",
+    "applicationId": "FEBD-2026-003",
+    "applicationNumber": "FEBD-2026-003",
+    "submittedAt": "2026-09-01T10:35:43.115Z",
+    "fullName": "Manik I",
+    "email": "manik2025245@gmail.com",
+    "phone": "01723372217",
+    "dateOfBirth": "2006-03-14",
+    "gender": "male",
+    "address": "Dinajpur 5230",
+    "city": "Dinajpur",
+    "district": "Dinajpur",
+    "highestEducation": "ssc",
+    "course": "JLPT N5",
+    "courseLevel": "N5",
+    "branch": "dinajpur",
+    "japaneseExperience": "none",
+    "visaType": "student",
+    "emergencyName": "Manik I",
+    "emergencyPhone": "01723372217",
+    "comment": "",
+    "feeInfo": {
+      "course": "JLPT N5",
+      "level": "Beginner",
+      "baseFee": 15000,
+      "finalFee": 1000
+    },
+    "photoUrl": "/uploads/photos/1788258943110_t5u450.jpg",
+    "documentUrl": "/uploads/documents/1788258943111_uikzvj.pdf",
+    "documentUrls": [
+      "/uploads/documents/1788258943111_uikzvj.pdf"
+    ],
+    "documents": [
+      {
+        "name": "md manik.pdf",
+        "url": "/uploads/documents/1788258943111_uikzvj.pdf",
+        "size": 2958389,
+        "type": "application/pdf"
+      }
+    ],
+    "status": "admitted",
+    "ipAddress": "::1",
+    "batch": "Batch 14 - JLPT N5 Morning",
+    "notes": "Counseling verified. Approved for N5 intake.",
+    "updatedAt": "2026-09-01T11:38:17.157Z"
+  },
+  {
+    "applicationNumber": "FEBD-2026-001",
+    "submittedAt": "2026-09-01T10:30:12.574Z",
+    "fullName": "Md Shakil",
+    "email": "shakil@example.com",
+    "phone": "01712345678",
+    "dateOfBirth": "2001-05-15",
+    "gender": "male",
+    "address": "House 12, Road 4",
+    "city": "Dinajpur Sadar",
+    "district": "Dinajpur",
+    "highestEducation": "bachelor",
+    "course": "JLPT N5 - Beginner",
+    "courseLevel": "N5",
+    "branch": "dinajpur",
+    "japaneseExperience": "self-study",
+    "visaType": "student",
+    "emergencyName": "Md Ali",
+    "emergencyPhone": "01912345678",
+    "comment": "I want to study in Japan.",
+    "feeInfo": null,
+    "photoUrl": "/uploads/photos/1788258612567_1g381l.jpg",
+    "documentUrl": null,
+    "documentUrls": [],
+    "documents": [],
+    "status": "pending",
+    "ipAddress": "::1"
+  }
+]

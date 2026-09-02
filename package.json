@@ -9,11 +9,16 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^4.18.4",
+    "express-rate-limit": "^8.6.0",
     "express-session": "^1.17.4",
-    "firebase": "^12.15.0",
-    "helmet": "^7.0.0"
+    "express-validator": "^7.3.2",
+    "helmet": "^7.0.0",
+    "multer": "^2.2.0"
   },
   "devDependencies": {
     "live-server": "^1.2.2",

@@ -1,0 +1,7 @@
+# Cloudflare Pages redirects
+# SPA fallback - all unknown routes to index.html
+/*    /index.html   200
+# Redirect admin and staff dashboards to respective HTML files (if needed)
+/admin    /pages/admin.html   200
+/staff    /pages/staff-login.html   200
+/student  /pages/student-login.html   200

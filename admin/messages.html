@@ -3,216 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fusion Education BD - Messages</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Messages Inbox — Fusion Education BD Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .dashboard-shell {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 2rem 1rem 4rem;
-        }
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .tab-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .tab-btn {
-            border: 2px solid var(--border-light);
-            border-radius: 14px;
-            padding: 1rem 1.2rem;
-            background: var(--white);
-            color: var(--text-primary);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            text-decoration: none;
-            text-align: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .tab-btn.active,
-        .tab-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .tab-pane {
-            display: none;
-        }
-        .tab-pane.active {
-            display: block;
-        }
-        .dashboard-card {
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            box-shadow: var(--shadow-md);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        .form-row {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        }
-        .block-row {
-            display: grid;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .image-preview {
-            width: 100%;
-            max-width: 400px;
-            min-height: 180px;
-            border: 2px dashed var(--border-light);
-            border-radius: 18px;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            background: var(--background-light);
-        }
-        .image-preview img {
-            max-width: 100%;
-            max-height: 260px;
-            border-radius: 16px;
-            object-fit: cover;
-        }
-        .item-card {
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            border-radius: 18px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-        }
-        .item-grid {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: 280px 1fr;
-            align-items: start;
-        }
-        .item-card img,
-        .author-avatar {
-            width: 100%;
-            max-height: 220px;
-            object-fit: cover;
-            border-radius: 16px;
-        }
-        .author-avatar {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 64px;
-            height: 64px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #E60012, #FF3333);
-            color: white;
-            border-radius: 18px;
-            font-size: 1.2rem;
-        }
-        .item-meta {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: 0.75rem;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-        .item-meta span {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .action-row {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-        .outline-btn,
-        .btn {
-            min-width: 140px;
-        }
-        .success-message {
-            display: none;
-            margin-bottom: 1rem;
-            padding: 1rem 1.25rem;
-            border-radius: 14px;
-            background: #e6ffed;
-            color: #1f5e2b;
-            border: 1px solid #b8f1c1;
-        }
-        .success-message.show {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <nav>
-                <a href="../index.html" class="logo">
-                    <i class="fas fa-graduation-cap"></i>
-                    Fusion <span>Education</span>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="../index.html" class="logo">
+                <img src="../assets/images/logo.jpg" alt="Fusion Logo">
+                Fusion <span>Education</span>
+                <span class="logo-badge">Admin</span>
+            </a>
+            <div class="topbar-right">
+                <a href="../index.html" class="topbar-btn outline" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> View Site
                 </a>
-                <div class="nav-actions">
-                    <a href="../index.html" class="btn btn-secondary"><i class="fas fa-home"></i> View Site</a>
-                </div>
-            </nav>
+                <a href="../pages/admin-login.html" class="topbar-btn danger" onclick="logoutAdmin(event)">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
         </div>
     </header>
 
-    <main class="dashboard-shell">
-        <div class="dashboard-header">
-            <div>
-                <h1>Admin Control Panel</h1>
-                <p style="color: var(--text-secondary); margin-top: 0.5rem; max-width: 720px;">Complete website control: hero, posts, courses, testimonials, FAQ, contact leads, social links and admin login.</p>
+    <!-- NAV RAIL -->
+    <div class="nav-rail-container">
+        <nav class="nav-rail" aria-label="Admin Navigation">
+            <a href="dashboard.html" class="nav-pill"><i class="fas fa-sliders-h"></i> Site Settings</a>
+            <a href="posts.html" class="nav-pill"><i class="fas fa-newspaper"></i> Home Posts</a>
+            <a href="courses.html" class="nav-pill"><i class="fas fa-book-open"></i> Courses</a>
+            <a href="testimonials.html" class="nav-pill"><i class="fas fa-user-check"></i> Testimonials</a>
+            <a href="faqs.html" class="nav-pill"><i class="fas fa-question-circle"></i> FAQs</a>
+            <a href="messages.html" class="nav-pill active"><i class="fas fa-envelope"></i> Messages <span class="badge" id="navMsgCount">0</span></a>
+            <a href="admissions.html?tab=pending" class="nav-pill"><i class="fas fa-user-clock"></i> Admission Pending <span class="badge" id="navPendingCount">0</span></a>
+            <a href="admissions.html?tab=admitted" class="nav-pill"><i class="fas fa-user-check"></i> Admitted Students <span class="badge" id="navAdmittedCount">0</span></a>
+            <a href="users.html" class="nav-pill"><i class="fas fa-user-shield"></i> Admin User</a>
+        </nav>
+    </div>
+
+    <!-- MAIN -->
+    <main class="shell">
+        <div class="page-header">
+            <div class="page-title-block">
+                <h1>
+                    <span class="icon-wrap"><i class="fas fa-envelope"></i></span>
+                    Contact Inquiries & Messages
+                </h1>
+                <p>Read, respond to, and manage leads sent from the website contact page.</p>
             </div>
         </div>
 
-        <div class="success-message" id="successMessage"><i class="fas fa-check-circle"></i> <span id="successText"></span></div>
-
-        <div class="tab-buttons">
-            <a href="dashboard.html" class="tab-btn"><i class="fas fa-cogs"></i> Site Settings</a>
-            <a href="posts.html" class="tab-btn"><i class="fas fa-newspaper"></i> Home Posts</a>
-            <a href="courses.html" class="tab-btn"><i class="fas fa-book-open"></i> Courses</a>
-            <a href="testimonials.html" class="tab-btn"><i class="fas fa-user-check"></i> Testimonials</a>
-            <a href="faqs.html" class="tab-btn"><i class="fas fa-question-circle"></i> FAQs</a>
-            <a href="messages.html" class="tab-btn active"><i class="fas fa-envelope"></i> Messages</a>
-            <a href="admissions.html" class="tab-btn"><i class="fas fa-user-graduate"></i> Admissions</a>
-            <a href="users.html" class="tab-btn"><i class="fas fa-user-shield"></i> Admin User</a>
+        <div class="layout-single">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-inbox"></i> Inbox Messages
+                    </div>
+                    <span class="count-badge" id="messagesCountBadge">
+                        <i class="fas fa-envelope"></i> 0 messages
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="items-list" id="messagesList">
+                        <div class="skeleton skeleton-card"></div>
+                        <div class="skeleton skeleton-card"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <section id="contacts-tab" class="tab-pane active dashboard-card">
-            <h2><i class="fas fa-envelope"></i> Contact Messages</h2>
-            <div id="messagesList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
-        </section>
     </main>
 
-    <script src="../assets/js/gallery.js"></script>
-    <script src="../assets/js/discountCalculator.js"></script>
-    <script src="../assets/js/admin.js"></script>
+    <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <!-- Firebase Configuration -->
-    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/dao.js"></script>
+    <script src="../assets/js/admin.js"></script>
 </body>
 </html>

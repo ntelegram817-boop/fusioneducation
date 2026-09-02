@@ -1,4 +1,4 @@
 @echo off
-cd /d "c:\Users\mdbm3\Documents\website-2"
+cd /d "w:/Antigravity/website-2.o.2"
 node server.js
 pause

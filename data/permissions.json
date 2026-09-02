@@ -1,0 +1,65 @@
+{
+  "categories": [
+    {
+      "id": "students",
+      "name": "Students & Academics",
+      "icon": "fa-user-graduate",
+      "permissions": [
+        { "key": "view_students", "name": "View Students", "description": "View student roster and details in authorized branch", "roles": ["instructor", "staff"] },
+        { "key": "edit_students", "name": "Edit Students", "description": "Modify student profile info in authorized branch", "roles": ["instructor", "staff"] },
+        { "key": "manage_attendance", "name": "Manage Attendance", "description": "Record and update daily class attendance", "roles": ["instructor", "staff"] },
+        { "key": "manage_batches", "name": "Batch Management", "description": "Assign and transfer students between course batches", "roles": ["instructor", "staff"] },
+        { "key": "manage_routines", "name": "Manage Routines", "description": "Schedule class routines and timings", "roles": ["instructor"] },
+        { "key": "manage_academic_progress", "name": "Academic Progress", "description": "Update lesson progress, test marks and syllabus completion", "roles": ["instructor"] }
+      ]
+    },
+    {
+      "id": "admissions",
+      "name": "Admissions & Counseling",
+      "icon": "fa-clipboard-list",
+      "permissions": [
+        { "key": "manage_admissions", "name": "Manage Admissions", "description": "Process, review and approve online course applications", "roles": ["staff", "instructor"] },
+        { "key": "manage_readmissions", "name": "Manage Re-admissions", "description": "Process batch re-admissions and level upgrades", "roles": ["staff", "instructor"] },
+        { "key": "counseling", "name": "Counseling & Inquiries", "description": "Record counseling notes and follow-ups with applicants", "roles": ["staff", "instructor"] }
+      ]
+    },
+    {
+      "id": "fees",
+      "name": "Fees & Billing",
+      "icon": "fa-credit-card",
+      "permissions": [
+        { "key": "view_fees", "name": "View Fees & Payments", "description": "View student fee status, due balances and payment receipts", "roles": ["staff", "instructor"] },
+        { "key": "manage_fees", "name": "Manage Payments & Collections", "description": "Record partial/full payments and issue payment receipts", "roles": ["staff", "instructor"] },
+        { "key": "custom_student_fee", "name": "Custom Student Rates & Discounts", "description": "Set student-specific monthly rates, discounts and waivers", "roles": ["instructor", "staff"] }
+      ]
+    },
+    {
+      "id": "documents",
+      "name": "Documents & Visa",
+      "icon": "fa-passport",
+      "permissions": [
+        { "key": "view_documents", "name": "View Documents", "description": "Inspect student passports, certificates and transcripts", "roles": ["instructor", "staff"] },
+        { "key": "manage_documents", "name": "Manage Documents & Visa Steps", "description": "Update translation status, COE and embassy step tracker", "roles": ["instructor", "staff"] }
+      ]
+    },
+    {
+      "id": "staff_control",
+      "name": "Staff Management (Instructor Scope)",
+      "icon": "fa-users-cog",
+      "permissions": [
+        { "key": "view_staff", "name": "View Branch Staff", "description": "View counselors and staff assigned to same branch", "roles": ["instructor"] },
+        { "key": "edit_staff", "name": "Edit Branch Staff Info", "description": "Update staff contact info and profiles in same branch", "roles": ["instructor"] },
+        { "key": "manage_staff_permissions", "name": "Manage Staff Permissions", "description": "Adjust modular permissions for staff in same branch", "roles": ["instructor"] }
+      ]
+    },
+    {
+      "id": "reports",
+      "name": "Reports & Analytics",
+      "icon": "fa-chart-bar",
+      "permissions": [
+        { "key": "view_reports", "name": "View Reports", "description": "View batch attendance, admission and fee summary reports", "roles": ["instructor", "staff"] },
+        { "key": "export_reports", "name": "Export Data & Reports", "description": "Download printable student lists and payment summaries", "roles": ["instructor", "staff"] }
+      ]
+    }
+  ]
+}

@@ -8,118 +8,109 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body style="background: linear-gradient(135deg, #0B1020 0%, #1F2937 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+<body style="background: linear-gradient(135deg, #0B1020 0%, #1F2937 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem 1rem;">
     
-    <div style="width: 100%; max-width: 450px; padding: 1.5rem;">
-        <!-- Logo -->
-        <div style="text-align: center; margin-bottom: 3rem;">
-            <a href="../index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: 700; color: var(--white); text-decoration: none; margin-bottom: 1rem;">
-                <i class="fas fa-graduation-cap" style="color: var(--primary);"></i>
-                Fusion <span style="color: var(--text-secondary);">Admin</span>
+    <div style="width: 100%; max-width: 440px;">
+        <!-- Logo Header -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="../index.html" style="display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; margin-bottom: 0.75rem;">
+                <img src="../assets/images/logo.jpg" alt="Fusion Logo" style="height: 48px; width: 48px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <div style="text-align: left;">
+                    <div style="font-family: 'Poppins', sans-serif; font-size: 1.35rem; font-weight: 700; color: #FFFFFF; line-height: 1.2;">
+                        Fusion <span style="color: #E60012;">Education</span>
+                    </div>
+                    <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Control Panel</span>
+                </div>
             </a>
-            <p style="color: rgba(255, 255, 255, 0.7);">Manage your institution</p>
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; margin-top: 0.25rem;">Sign in to access admin control panel</p>
         </div>
 
-        <!-- Login Form -->
-        <div class="glass-dark card" style="padding: 2rem;">
-            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--white);">Admin Dashboard</h2>
+        <!-- Login Card -->
+        <div class="glass-dark card" style="padding: 2.25rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.35);">
+            <div id="loginAlert" style="display: none; padding: 0.8rem 1rem; border-radius: 10px; margin-bottom: 1.25rem; font-size: 0.88rem; font-weight: 500;"></div>
 
             <form id="adminLoginForm">
-                <div class="form-group" style="margin-bottom: 1.5rem;">
-                    <label style="color: var(--white);">Email Address</label>
-                    <input type="email" name="email" required placeholder="admin@fusioneducation.com" style="background: rgba(255, 255, 255, 0.1); color: var(--white); border-color: rgba(255, 255, 255, 0.2);">
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label style="color: #FFFFFF; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; display: block;">Admin Email</label>
+                    <input type="email" name="email" id="loginEmail" required placeholder="admin@fusioneducation.com" style="width: 100%; padding: 0.8rem 1rem; background: rgba(255, 255, 255, 0.08); color: #FFFFFF; border: 1.5px solid rgba(255, 255, 255, 0.2); border-radius: 10px; font-size: 0.95rem; outline: none; transition: all 0.2s;">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 1.5rem;">
-                    <label style="color: var(--white);">Password</label>
-                    <input type="password" name="password" required placeholder="••••••••" style="background: rgba(255, 255, 255, 0.1); color: var(--white); border-color: rgba(255, 255, 255, 0.2);">
+                    <label style="color: #FFFFFF; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; display: block;">Password</label>
+                    <input type="password" name="password" id="loginPassword" required placeholder="••••••••" style="width: 100%; padding: 0.8rem 1rem; background: rgba(255, 255, 255, 0.08); color: #FFFFFF; border: 1.5px solid rgba(255, 255, 255, 0.2); border-radius: 10px; font-size: 0.95rem; outline: none; transition: all 0.2s;">
                 </div>
 
-                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
-                    <label style="display: flex; gap: 0.5rem; cursor: pointer; color: rgba(255, 255, 255, 0.7);">
-                        <input type="checkbox" style="cursor: pointer;">
-                        <span>Remember me</span>
-                    </label>
-                    <a href="#" style="margin-left: auto; color: var(--primary); text-decoration: none; font-size: 0.9rem;">Forgot password?</a>
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-                    <i class="fas fa-sign-in-alt"></i> Sign In
+                <button type="submit" id="loginBtn" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; border-radius: 10px; font-weight: 700;">
+                    <i class="fas fa-sign-in-alt"></i> Sign In to Dashboard
                 </button>
             </form>
 
-            <!-- Divider -->
-            <div style="display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;">
-                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.2);"></div>
-                <span style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem;">OR</span>
-                <div style="flex: 1; height: 1px; background: rgba(255, 255, 255, 0.2);"></div>
-            </div>
-
-            <!-- Support Info -->
-            <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 12px; padding: 1rem; margin-top: 1.5rem;">
-                <p style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem;">Need help?</p>
-                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">Contact support: <a href="mailto:support@fusioneducation.com" style="color: var(--accent); text-decoration: none;">support@fusioneducation.com</a></p>
+            <!-- Support Note -->
+            <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 12px; padding: 0.9rem 1rem; margin-top: 1.5rem;">
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.82rem; margin: 0;">
+                    <i class="fas fa-shield-alt" style="color: var(--accent); margin-right: 0.4rem;"></i> Default access: <strong>admin@fusioneducation.com</strong> / <strong>admin123</strong>
+                </p>
             </div>
         </div>
 
-        <!-- Footer Links -->
-        <div style="text-align: center; margin-top: 2rem;">
-            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
-                Not an admin? <a href="../index.html" style="color: var(--primary); text-decoration: none;">Back to home</a>
-            </p>
+        <!-- Footer Link -->
+        <div style="text-align: center; margin-top: 1.75rem;">
+            <a href="../index.html" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+                <i class="fas fa-arrow-left"></i> Back to Main Website
+            </a>
         </div>
     </div>
 
-    <script src="../assets/js/gallery.js"></script>
-    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/dao.js"></script>
     <script>
         const defaultAdminEmail = 'admin@fusioneducation.com';
         const defaultAdminPassword = 'admin123';
 
         async function getAdminCredentials() {
-            if (typeof getSiteData === 'function') {
-                const stored = getSiteData();
-                return stored?.adminUser || { email: defaultAdminEmail, password: defaultAdminPassword };
-            }
+            try {
+                if (window.DAO && window.DAO.Settings) {
+                    const settings = await window.DAO.Settings.get();
+                    if (settings && settings.adminUser && settings.adminUser.email) {
+                        return settings.adminUser;
+                    }
+                }
+                const stored = localStorage.getItem('fusion_edu_adminUser');
+                if (stored) return JSON.parse(stored);
+            } catch (e) {}
             return { email: defaultAdminEmail, password: defaultAdminPassword };
+        }
+
+        function showAlert(msg, isSuccess) {
+            const alert = document.getElementById('loginAlert');
+            alert.style.display = 'block';
+            alert.style.background = isSuccess ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+            alert.style.color = isSuccess ? '#6ee7b7' : '#fca5a5';
+            alert.style.border = isSuccess ? '1px solid #10b981' : '1px solid #ef4444';
+            alert.innerHTML = `<i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`;
         }
 
         document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const email = document.querySelector('input[name="email"]').value;
-            const password = document.querySelector('input[name="password"]').value;
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
             const credentials = await getAdminCredentials();
 
             if (email === credentials.email && password === credentials.password) {
-                alert('Login successful! Redirecting to dashboard...');
-                window.location.href = '/admin/dashboard.html';
+                showAlert('Login successful! Redirecting...', true);
+                sessionStorage.setItem('fusion_admin_session', 'true');
+                setTimeout(() => {
+                    window.location.href = '../admin/dashboard.html';
+                }, 600);
             } else {
-                alert('Invalid credentials. Please try again.');
+                showAlert('Invalid email or password. Please try again.', false);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In to Dashboard';
             }
         });
-
-        // Add input styling for glass effect
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-                this.style.borderColor = 'rgba(37, 99, 235, 0.5)';
-                this.style.boxShadow = '0 0 15px rgba(37, 99, 235, 0.3)';
-            });
-            input.addEventListener('blur', function() {
-                this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                this.style.boxShadow = 'none';
-            });
-        });
     </script>
-
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <!-- Firebase Configuration -->
-    <script src="../assets/js/firebase-config.js"></script>
 </body>
 </html>

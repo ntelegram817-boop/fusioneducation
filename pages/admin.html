@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery Manager - Fusion Education BD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
@@ -13,6 +16,7 @@
             margin: 0 auto;
             padding: 2rem;
         }
+
         .admin-header {
             display: flex;
             justify-content: space-between;
@@ -21,15 +25,18 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
             color: var(--text-primary);
         }
+
         .form-group input,
         .form-group textarea,
         .form-group select {
@@ -40,6 +47,7 @@
             font-family: inherit;
             font-size: 1rem;
         }
+
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
@@ -47,15 +55,18 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(230, 0, 18, 0.1);
         }
+
         .form-group textarea {
             resize: vertical;
             min-height: 100px;
         }
+
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
         }
+
         .image-preview {
             width: 100%;
             max-width: 300px;
@@ -66,16 +77,19 @@
             padding: 1rem;
             text-align: center;
         }
+
         .image-preview img {
             max-width: 100%;
             max-height: 250px;
             border-radius: 8px;
         }
+
         .gallery-items {
             display: grid;
             gap: 1.5rem;
             margin-top: 2rem;
         }
+
         .gallery-item-card {
             background: var(--white);
             border: 2px solid var(--border-light);
@@ -83,17 +97,20 @@
             padding: 1.5rem;
             box-shadow: var(--shadow-md);
         }
+
         .gallery-item-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
             margin-bottom: 1rem;
         }
+
         .gallery-item-title {
             font-size: 1.25rem;
             font-weight: 600;
             color: var(--primary);
         }
+
         .delete-btn {
             background: var(--error);
             color: white;
@@ -103,10 +120,12 @@
             cursor: pointer;
             transition: all var(--transition-base);
         }
+
         .delete-btn:hover {
             background: #d03030;
             transform: scale(1.05);
         }
+
         .edit-btn {
             background: var(--accent);
             color: white;
@@ -117,16 +136,19 @@
             margin-right: 0.5rem;
             transition: all var(--transition-base);
         }
+
         .edit-btn:hover {
             background: #2563eb;
             transform: scale(1.05);
         }
+
         .tab-buttons {
             display: flex;
             gap: 0.5rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
+
         .tab-btn {
             padding: 0.75rem 1.5rem;
             border: 2px solid var(--border-light);
@@ -136,17 +158,21 @@
             transition: all var(--transition-base);
             font-weight: 600;
         }
+
         .tab-btn.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
         }
+
         .tab-content {
             display: none;
         }
+
         .tab-content.active {
             display: block;
         }
+
         .success-message {
             background: var(--success);
             color: white;
@@ -155,11 +181,13 @@
             margin-bottom: 1rem;
             display: none;
         }
+
         .success-message.show {
             display: block;
         }
     </style>
 </head>
+
 <body>
     <script>
         window.location.href = 'admin-login.html';
@@ -169,7 +197,7 @@
         <div class="container">
             <nav>
                 <a href="../index.html" class="logo">
-                    <i class="fas fa-graduation-cap"></i>
+                    <img src="../assets/images/logo.jpg" class="nav-logo-img" alt="Fusion Logo">
                     Fusion <span>Education</span>
                 </a>
                 <ul class="nav-menu">
@@ -188,7 +216,8 @@
             <div class="admin-header">
                 <div>
                     <h1>Gallery Manager</h1>
-                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Add, edit, and manage your gallery items with photos and text</p>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Add, edit, and manage your gallery
+                        items with photos and text</p>
                 </div>
                 <a href="../index.html" class="btn btn-primary"><i class="fas fa-home"></i> View Gallery</a>
             </div>
@@ -243,7 +272,8 @@
 
                         <div class="form-group">
                             <label for="itemImage"><i class="fas fa-upload"></i> Upload Photo</label>
-                            <input type="file" id="itemImage" accept="image/*" onchange="previewImage(event, 'addPreview')" required>
+                            <input type="file" id="itemImage" accept="image/*"
+                                onchange="previewImage(event, 'addPreview')" required>
                             <div id="addPreview" class="image-preview"></div>
                         </div>
 
@@ -273,10 +303,10 @@
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            
+
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
-            
+
             if (tabName === 'manage') {
                 loadItemsList();
             }
@@ -298,11 +328,11 @@
         // Handle adding new item
         function handleAddItem(event) {
             event.preventDefault();
-            
+
             const title = document.getElementById('itemTitle').value;
             const text = document.getElementById('itemText').value;
             const file = document.getElementById('itemImage').files[0];
-            
+
             // Validation
             if (!title || !text || !file) {
                 showSuccess('দয়া করে সব ফিল্ড পূরণ করুন!');
@@ -322,11 +352,11 @@
 
                     const result = addGalleryItem(item);
                     console.log('Item added:', result);
-                    
+
                     // Reset form
                     document.getElementById('addItemForm').reset();
                     document.getElementById('addPreview').innerHTML = '';
-                    
+
                     // Show success message
                     showSuccess('আইটেম সফলভাবে যোগ হয়েছে!');
                 } catch (error) {
@@ -334,12 +364,12 @@
                     showSuccess('ত্রুটি: ' + error.message);
                 }
             };
-            
+
             reader.onerror = () => {
                 console.error('File reading error');
                 showSuccess('ফাইল পড়তে ত্রুটি!');
             };
-            
+
             reader.readAsDataURL(file);
         }
 
@@ -425,12 +455,7 @@
         document.addEventListener('DOMContentLoaded', loadItemsList);
     </script>
 
-    <!-- Firebase Compat SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <!-- Firebase Configuration -->
-    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/dao.js"></script>
 </body>
+
 </html>

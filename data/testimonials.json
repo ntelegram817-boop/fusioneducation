@@ -1,0 +1,18 @@
+[
+  {
+    "id": "test-1",
+    "name": "Tanvir Ahmed",
+    "course": "JLPT N5 & Student Visa",
+    "rating": 5,
+    "quote": "Fusion Education provided exceptional Japanese classes and guided my visa file flawlessly. I am now studying in Tokyo!",
+    "image": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop"
+  },
+  {
+    "id": "test-2",
+    "name": "Nusrat Jahan",
+    "course": "JLPT N4 Intensive",
+    "rating": 5,
+    "quote": "The sensei at Fusion are very patient and supportive. The mock exams really helped me pass the JLPT with top scores.",
+    "image": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop"
+  }
+]
