@@ -779,7 +779,7 @@
     }
 
     /* ============================================================
-       4. TESTIMONIALS
+       4. TESTIMONIALS & SUCCESS STORIES
        ============================================================ */
     let testimonialsList = [];
 
@@ -788,10 +788,10 @@
         if (form) form.reset();
         if (document.getElementById('testimonialId')) document.getElementById('testimonialId').value = '';
         if (document.getElementById('testimonialSubmitBtn')) {
-            document.getElementById('testimonialSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save Testimonial';
+            document.getElementById('testimonialSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save Success Story';
         }
         if (document.getElementById('formCardTitle')) {
-            document.getElementById('formCardTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Add Testimonial';
+            document.getElementById('formCardTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Add Success Story';
         }
         if (document.getElementById('formCancelBtn')) {
             document.getElementById('formCancelBtn').style.display = 'none';
@@ -809,42 +809,47 @@
         const id = document.getElementById('testimonialId')?.value;
         const name = document.getElementById('testimonialName')?.value.trim() || '';
         const role = document.getElementById('testimonialRole')?.value.trim() || '';
+        const rating = Number(document.getElementById('testimonialRating')?.value) || 5;
+        const image = document.getElementById('testimonialImage')?.value.trim() || '';
         const text = document.getElementById('testimonialText')?.value.trim() || '';
-        const avatar = document.getElementById('testimonialAvatar')?.value.trim() || '';
 
         if (!name || !text) {
-            showToast('Name and testimonial text are required.', 'warning');
+            showToast('Student name and success story text are required.', 'warning');
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Save Testimonial';
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Success Story';
             }
             return;
         }
 
         const item = {
             name,
-            role: role || 'Student',
-            text,
-            avatar: avatar || name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+            course: role || 'Student in Japan',
+            role: role || 'Student in Japan',
+            rating: rating,
+            quote: text,
+            text: text,
+            image: image,
+            avatar: name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
         };
 
         try {
             if (id) {
                 await window.DAO.Testimonials.update(id, item);
-                showToast('Testimonial updated successfully!', 'success');
+                showToast('Success Story updated successfully!', 'success');
             } else {
                 await window.DAO.Testimonials.add(item);
-                showToast('Testimonial added successfully!', 'success');
+                showToast('Success Story added successfully!', 'success');
             }
             resetTestimonialForm();
             loadTestimonials();
         } catch (err) {
-            console.error('Error saving testimonial', err);
-            showToast('Failed to save testimonial: ' + err.message, 'error');
+            console.error('Error saving success story', err);
+            showToast('Failed to save story: ' + err.message, 'error');
         } finally {
             if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> Save Testimonial';
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Success Story';
             }
         }
     }
@@ -856,34 +861,45 @@
             testimonialsList = await window.DAO.Testimonials.getAll();
 
             if (document.getElementById('testimonialsCountBadge')) {
-                document.getElementById('testimonialsCountBadge').innerHTML = `<i class="fas fa-user-check"></i> ${testimonialsList.length} testimonial${testimonialsList.length !== 1 ? 's' : ''}`;
+                document.getElementById('testimonialsCountBadge').innerHTML = `<i class="fas fa-award"></i> ${testimonialsList.length} stor${testimonialsList.length !== 1 ? 'ies' : 'y'}`;
             }
 
             if (!testimonialsList.length) {
                 list.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-user-check"></i></div>
-                        <h3>No Testimonials Yet</h3>
-                        <p>Add your first student testimonial using the form on the left.</p>
+                        <div class="empty-icon"><i class="fas fa-award"></i></div>
+                        <h3>No Success Stories Yet</h3>
+                        <p>Add your first student success story using the form on the left.</p>
                     </div>`;
                 return;
             }
 
             list.innerHTML = testimonialsList.map(item => {
-                const role = item.role || item.course || 'Student';
-                const text = item.text || item.quote || 'Great experience studying Japanese.';
+                const role = item.course || item.role || 'Student in Japan';
+                const text = item.quote || item.text || 'Great experience studying with Fusion Education BD.';
+                const rating = Number(item.rating) || 5;
+                const starsHtml = '★'.repeat(Math.min(5, Math.max(1, rating))) + '☆'.repeat(5 - Math.min(5, Math.max(1, rating)));
                 const initials = item.avatar || (item.name ? item.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'ST');
+                const isImgUrl = item.image && (item.image.startsWith('http') || item.image.startsWith('../') || item.image.startsWith('data:'));
+
                 return `
-                <div class="item-card">
-                    <div style="display:flex; gap:1rem; align-items:center; margin-bottom:0.75rem;">
-                        <div class="author-avatar-wrap">${initials}</div>
-                        <div>
-                            <h3 class="item-card-title" style="margin:0;">${item.name}</h3>
-                            <p style="color:var(--text-secondary); font-size:0.85rem; margin:0.15rem 0 0;">${role}</p>
+                <div class="item-card" style="border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; border: 1px solid var(--border); background: var(--bg-card);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
+                        <div style="display:flex; gap:0.85rem; align-items:center;">
+                            ${isImgUrl ? `
+                                <img src="${item.image}" alt="${item.name}" style="width:46px; height:46px; border-radius:50%; object-fit:cover; border:2px solid #e60012;">
+                            ` : `
+                                <div class="author-avatar-wrap" style="width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg, #e60012, #ff4d5e); color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center;">${initials}</div>
+                            `}
+                            <div>
+                                <h3 class="item-card-title" style="margin:0; font-size:1.05rem;">${item.name}</h3>
+                                <p style="color:var(--text-secondary); font-size:0.82rem; margin:0.15rem 0 0; font-weight:600;">${role}</p>
+                            </div>
                         </div>
+                        <div style="color:#f59e0b; font-size:0.95rem;" title="${rating} Stars">${starsHtml}</div>
                     </div>
-                    <p class="item-desc">"${text}"</p>
-                    <div class="action-row">
+                    <p class="item-desc" style="font-style:italic; background:var(--bg); padding:0.85rem 1.1rem; border-radius:10px; border:1px solid var(--border); font-size:0.92rem; color:var(--text-primary); margin-bottom:0.85rem;">"${text}"</p>
+                    <div class="action-row" style="display:flex; gap:0.5rem; justify-content:flex-end;">
                         <button class="card-action-btn edit" onclick="window.editTestimonial('${item.id}')"><i class="fas fa-edit"></i> Edit</button>
                         <button class="card-action-btn delete" onclick="window.deleteTestimonial('${item.id}')"><i class="fas fa-trash"></i> Delete</button>
                     </div>
@@ -891,7 +907,7 @@
             }).join('');
         } catch (err) {
             console.error('Error loading testimonials', err);
-            list.innerHTML = '<div class="empty-state"><p style="color:var(--error);">Failed to load testimonials.</p></div>';
+            list.innerHTML = '<div class="empty-state"><p style="color:var(--error);">Failed to load success stories.</p></div>';
         }
     }
 
@@ -901,28 +917,30 @@
 
         if (document.getElementById('testimonialId')) document.getElementById('testimonialId').value = item.id;
         if (document.getElementById('testimonialName')) document.getElementById('testimonialName').value = item.name || '';
-        if (document.getElementById('testimonialRole')) document.getElementById('testimonialRole').value = item.role || item.course || '';
-        if (document.getElementById('testimonialText')) document.getElementById('testimonialText').value = item.text || item.quote || '';
-        if (document.getElementById('testimonialAvatar')) document.getElementById('testimonialAvatar').value = item.avatar || '';
+        if (document.getElementById('testimonialRole')) document.getElementById('testimonialRole').value = item.course || item.role || '';
+        if (document.getElementById('testimonialRating')) document.getElementById('testimonialRating').value = String(item.rating || 5);
+        if (document.getElementById('testimonialImage')) document.getElementById('testimonialImage').value = item.image || '';
+        if (document.getElementById('testimonialText')) document.getElementById('testimonialText').value = item.quote || item.text || '';
 
         if (document.getElementById('testimonialSubmitBtn')) {
-            document.getElementById('testimonialSubmitBtn').innerHTML = '<i class="fas fa-check"></i> Update Testimonial';
+            document.getElementById('testimonialSubmitBtn').innerHTML = '<i class="fas fa-check"></i> Update Story';
         }
         if (document.getElementById('formCardTitle')) {
-            document.getElementById('formCardTitle').innerHTML = '<i class="fas fa-edit"></i> Editing Testimonial';
+            document.getElementById('formCardTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Success Story';
         }
         if (document.getElementById('formCancelBtn')) {
-            document.getElementById('formCancelBtn').style.display = '';
+            document.getElementById('formCancelBtn').style.display = 'inline-flex';
         }
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('formCard')?.scrollIntoView({ behavior: 'smooth' });
     }
 
     function deleteTestimonial(id) {
-        openDeleteModal('Delete Testimonial?', 'Are you sure you want to remove this testimonial?', async () => {
+        openDeleteModal('Delete Success Story?', 'Are you sure you want to delete this student success story from the website?', async () => {
             await window.DAO.Testimonials.delete(id);
-            showToast('Testimonial removed successfully!', 'success');
+            showToast('Success story deleted successfully!', 'success');
             loadTestimonials();
+            updateNavBadges();
         });
     }
 

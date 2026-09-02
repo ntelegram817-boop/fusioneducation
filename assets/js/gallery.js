@@ -137,6 +137,9 @@ async function renderCourses() {
     }
 }
 
+let storyCurrentIndex = 0;
+let storyAutoPlayTimer = null;
+
 async function renderTestimonials() {
     const container = document.getElementById('testimonialsContainer');
     if (!container) return;
@@ -144,26 +147,141 @@ async function renderTestimonials() {
     try {
         const items = await window.DAO.Testimonials.getAll();
 
-        if (!items.length) {
-            container.innerHTML = '<p style="text-align:center;padding:2rem;grid-column:1/-1;">No testimonials yet.</p>';
+        if (!items || !items.length) {
+            container.innerHTML = '<p style="text-align:center;padding:2rem;width:100%;color:#64748b;">No success stories published yet.</p>';
             return;
         }
 
-        container.innerHTML = items.map(t => `
-            <div class="testimonial">
-                <div class="testimonial-quote">"</div>
-                <p class="testimonial-text">${t.text}</p>
-                <div class="testimonial-author">
-                    <div class="author-avatar">${t.avatar || t.name.slice(0, 2).toUpperCase()}</div>
-                    <div class="author-info">
-                        <h4>${t.name}</h4>
-                        <p>${t.role}</p>
+        container.innerHTML = items.map(t => {
+            const quoteText = t.quote || t.text || t.message || 'Fusion Education BD guided my Japanese language training and visa processing smoothly!';
+            const studentName = t.name || 'Alumni Student';
+            const studentRole = t.course || t.role || t.status || 'JLPT Student • Japan Visa';
+            const rating = Number(t.rating) || 5;
+            const starsHtml = '★'.repeat(Math.min(5, Math.max(1, rating))) + '☆'.repeat(5 - Math.min(5, Math.max(1, rating)));
+            const initials = studentName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'FE';
+            const isImgUrl = t.image && (t.image.startsWith('http') || t.image.startsWith('../') || t.image.startsWith('data:'));
+
+            return `
+            <div class="story-slide-item">
+                <div class="story-card-modern">
+                    <div>
+                        <div class="story-card-header">
+                            <div class="story-stars" title="${rating} out of 5 stars">${starsHtml}</div>
+                            <span class="story-quote-icon">“</span>
+                        </div>
+                        <p class="story-quote-text">"${quoteText}"</p>
+                    </div>
+                    <div class="story-author-box">
+                        ${isImgUrl ? `
+                            <img src="${t.image}" alt="${studentName}" class="story-author-avatar" onerror="this.outerHTML='<div class=\\'story-author-initials\\'>${initials}</div>'">
+                        ` : `
+                            <div class="story-author-initials">${t.avatar || initials}</div>
+                        `}
+                        <div>
+                            <div class="story-author-name">${studentName}</div>
+                            <div class="story-author-role"><i class="fas fa-check-circle" style="font-size:0.75rem;"></i> ${studentRole}</div>
+                        </div>
                     </div>
                 </div>
-            </div>`).join('');
+            </div>`;
+        }).join('');
+
+        initStoryCarousel(items.length);
+
     } catch (err) {
         console.error('[gallery] Error loading testimonials:', err);
     }
+}
+
+function initStoryCarousel(totalItems) {
+    const track = document.getElementById('testimonialsContainer');
+    const prevBtn = document.getElementById('prevStoryBtn');
+    const nextBtn = document.getElementById('nextStoryBtn');
+    const dotsContainer = document.getElementById('storyDots');
+    const wrapper = document.querySelector('.stories-carousel-wrapper');
+    if (!track) return;
+
+    function getVisibleCards() {
+        if (window.innerWidth <= 640) return 1;
+        if (window.innerWidth <= 992) return 2;
+        return 3;
+    }
+
+    function getMaxIndex() {
+        const visible = getVisibleCards();
+        return Math.max(0, totalItems - visible);
+    }
+
+    function updateCarousel() {
+        const visible = getVisibleCards();
+        const maxIdx = getMaxIndex();
+        if (storyCurrentIndex > maxIdx) storyCurrentIndex = maxIdx;
+        if (storyCurrentIndex < 0) storyCurrentIndex = 0;
+
+        const slides = track.querySelectorAll('.story-slide-item');
+        if (slides.length && slides[0]) {
+            const slideWidth = slides[0].offsetWidth;
+            const gap = 24; // 1.5rem gap
+            track.style.transform = `translateX(-${storyCurrentIndex * (slideWidth + gap)}px)`;
+        }
+
+        // Update dots
+        if (dotsContainer) {
+            const totalDots = maxIdx + 1;
+            dotsContainer.innerHTML = Array.from({ length: totalDots }).map((_, i) => `
+                <button type="button" class="story-dot ${i === storyCurrentIndex ? 'active' : ''}" aria-label="Go to slide ${i + 1}" onclick="goToStorySlide(${i})"></button>
+            `).join('');
+        }
+
+        if (prevBtn) prevBtn.style.opacity = storyCurrentIndex === 0 ? '0.4' : '1';
+        if (nextBtn) nextBtn.style.opacity = storyCurrentIndex >= maxIdx ? '0.4' : '1';
+    }
+
+    window.goToStorySlide = function(idx) {
+        storyCurrentIndex = idx;
+        updateCarousel();
+    };
+
+    if (prevBtn) {
+        prevBtn.onclick = () => {
+            const maxIdx = getMaxIndex();
+            storyCurrentIndex = storyCurrentIndex > 0 ? storyCurrentIndex - 1 : maxIdx;
+            updateCarousel();
+        };
+    }
+
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            const maxIdx = getMaxIndex();
+            storyCurrentIndex = storyCurrentIndex < maxIdx ? storyCurrentIndex + 1 : 0;
+            updateCarousel();
+        };
+    }
+
+    // Auto Play every 4.5 seconds
+    if (storyAutoPlayTimer) clearInterval(storyAutoPlayTimer);
+    storyAutoPlayTimer = setInterval(() => {
+        const maxIdx = getMaxIndex();
+        storyCurrentIndex = storyCurrentIndex < maxIdx ? storyCurrentIndex + 1 : 0;
+        updateCarousel();
+    }, 4500);
+
+    if (wrapper) {
+        wrapper.onmouseenter = () => {
+            if (storyAutoPlayTimer) clearInterval(storyAutoPlayTimer);
+        };
+        wrapper.onmouseleave = () => {
+            if (storyAutoPlayTimer) clearInterval(storyAutoPlayTimer);
+            storyAutoPlayTimer = setInterval(() => {
+                const maxIdx = getMaxIndex();
+                storyCurrentIndex = storyCurrentIndex < maxIdx ? storyCurrentIndex + 1 : 0;
+                updateCarousel();
+            }, 4500);
+        };
+    }
+
+    window.addEventListener('resize', updateCarousel);
+    setTimeout(updateCarousel, 100);
 }
 
 async function renderFaqs() {

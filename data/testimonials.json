@@ -2,17 +2,56 @@
   {
     "id": "test-1",
     "name": "Tanvir Ahmed",
-    "course": "JLPT N5 & Student Visa",
+    "course": "JLPT N5 • Tokyo International University",
+    "role": "Student Visa • Tokyo",
     "rating": 5,
-    "quote": "Fusion Education provided exceptional Japanese classes and guided my visa file flawlessly. I am now studying in Tokyo!",
-    "image": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop"
+    "quote": "Fusion Education provided exceptional Japanese classes and guided my student visa file flawlessly. I am now happily studying at Tokyo International University!",
+    "text": "Fusion Education provided exceptional Japanese classes and guided my student visa file flawlessly. I am now happily studying at Tokyo International University!",
+    "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop",
+    "avatar": "TA"
   },
   {
     "id": "test-2",
     "name": "Nusrat Jahan",
-    "course": "JLPT N4 Intensive",
+    "course": "JLPT N4 Intensive • Kyoto Language Institute",
+    "role": "Student Visa • Kyoto",
     "rating": 5,
-    "quote": "The sensei at Fusion are very patient and supportive. The mock exams really helped me pass the JLPT with top scores.",
-    "image": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop"
+    "quote": "The Japanese native instructors at Fusion are very patient and supportive. The mock exams really helped me pass JLPT N4 with top scores and secure my COE.",
+    "text": "The Japanese native instructors at Fusion are very patient and supportive. The mock exams really helped me pass JLPT N4 with top scores and secure my COE.",
+    "image": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop",
+    "avatar": "NJ"
+  },
+  {
+    "id": "test-3",
+    "name": "Rashidul Islam",
+    "course": "SSW Visa • Osaka Hospitality & Service",
+    "role": "Work Visa • Osaka",
+    "rating": 5,
+    "quote": "From interview training to document authentication, the Dinajpur branch counselor took care of everything. Now I am working in Osaka on an SSW visa!",
+    "text": "From interview training to document authentication, the Dinajpur branch counselor took care of everything. Now I am working in Osaka on an SSW visa!",
+    "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop",
+    "avatar": "RI"
+  },
+  {
+    "id": "test-4",
+    "name": "Farhana Akter",
+    "course": "JLPT N3 Advance • Nagoya Graduate School",
+    "role": "Masters Program • Nagoya",
+    "rating": 5,
+    "quote": "The kanji drills and interview prep sessions gave me the confidence I needed. Fusion Education is truly the best Japanese language academy in Bangladesh.",
+    "text": "The kanji drills and interview prep sessions gave me the confidence I needed. Fusion Education is truly the best Japanese language academy in Bangladesh.",
+    "image": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop",
+    "avatar": "FA"
+  },
+  {
+    "id": "test-5",
+    "name": "Mahmudul Hasan",
+    "course": "TITP Technical Intern • Fukuoka Engineering",
+    "role": "TITP Visa • Fukuoka",
+    "rating": 5,
+    "quote": "Honest visa counseling without any hidden costs. The sensei taught us real workplace Japanese culture and conversation manners that helped me immensely.",
+    "text": "Honest visa counseling without any hidden costs. The sensei taught us real workplace Japanese culture and conversation manners that helped me immensely.",
+    "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop",
+    "avatar": "MH"
   }
 ]

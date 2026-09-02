@@ -1361,3 +1361,204 @@ footer {
   margin: 0 auto !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
 }
+
+/* ===== MODERN SUCCESS STORIES CAROUSEL ===== */
+.stories-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 0 3.5rem;
+  box-sizing: border-box;
+}
+
+.stories-slider-viewport {
+  overflow: hidden;
+  border-radius: 20px;
+  width: 100%;
+}
+
+.stories-slider-track {
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.story-slide-item {
+  flex: 0 0 calc(33.333% - 1rem);
+  box-sizing: border-box;
+  display: flex;
+}
+
+@media (max-width: 992px) {
+  .story-slide-item {
+    flex: 0 0 calc(50% - 0.75rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .stories-carousel-wrapper {
+    padding: 0 1rem;
+  }
+  .story-slide-item {
+    flex: 0 0 100%;
+  }
+}
+
+.story-card-modern {
+  background: var(--white);
+  border: 1px solid var(--border-light, #e2e8f0);
+  border-radius: 18px;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+}
+
+.story-card-modern:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 30px -10px rgba(230, 0, 18, 0.12);
+  border-color: rgba(230, 0, 18, 0.25);
+}
+
+.story-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.story-stars {
+  color: #f59e0b;
+  font-size: 0.95rem;
+  display: flex;
+  gap: 0.2rem;
+}
+
+.story-quote-icon {
+  font-size: 2.2rem;
+  color: rgba(230, 0, 18, 0.2);
+  line-height: 1;
+  font-family: Georgia, serif;
+}
+
+.story-quote-text {
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--text-secondary, #475569);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+  flex: 1;
+}
+
+.story-author-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 1.2rem;
+}
+
+.story-author-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary, #e60012);
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.story-author-initials {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary, #e60012), #ff4d5e);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(230, 0, 18, 0.25);
+}
+
+.story-author-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  margin-bottom: 0.2rem;
+}
+
+.story-author-role {
+  font-size: 0.8rem;
+  color: var(--primary, #e60012);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.story-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1.5px solid var(--border-light, #e2e8f0);
+  color: var(--text-primary, #0f172a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.story-nav-btn:hover {
+  background: var(--primary, #e60012);
+  color: #ffffff;
+  border-color: var(--primary, #e60012);
+  box-shadow: 0 6px 20px rgba(230, 0, 18, 0.35);
+}
+
+.story-nav-btn.prev {
+  left: 0;
+}
+
+.story-nav-btn.next {
+  right: 0;
+}
+
+.stories-dots-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.story-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0;
+}
+
+.story-dot.active {
+  background: var(--primary, #e60012);
+  width: 28px;
+  border-radius: 10px;
+}
