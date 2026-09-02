@@ -1079,24 +1079,30 @@
             }
 
             list.innerHTML = items.map(msg => {
-                const dateStr = msg.createdAt ? new Date(msg.createdAt).toLocaleString() : (msg.submittedAt ? new Date(msg.submittedAt).toLocaleString() : 'Recent');
+                const dateStr = msg.createdAt ? new Date(msg.createdAt).toLocaleString() : (msg.submittedAt ? new Date(msg.submittedAt).toLocaleString() : (msg.receivedAt || 'Recent'));
+                const safeId = msg.id;
+                const formattedSubject = (msg.subject || 'General Inquiry').replace(/-/g, ' ');
                 return `
-                <div class="item-card">
-                    <div class="item-card-top">
-                        <div>
-                            <h3 class="item-card-title" style="display:inline-block; margin-right:0.5rem;">${msg.name || 'Anonymous'}</h3>
-                            <span class="badge-status blue">${msg.subject || 'General Inquiry'}</span>
+                <div class="item-card message-row-card" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.4rem; margin-bottom: 0.85rem; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s;">
+                    <div style="display: flex; align-items: center; gap: 0.9rem; min-width: 0;">
+                        <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.2); display: flex; align-items: center; justify-content: center; color: #2563eb; font-size: 1rem; flex-shrink: 0;">
+                            <i class="fas fa-user"></i>
                         </div>
-                        <small style="color:var(--text-muted); font-size:0.8rem;"><i class="fas fa-calendar-alt"></i> ${dateStr}</small>
+                        <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+                            <h3 style="font-size: 1.02rem; font-weight: 700; color: var(--text-primary); margin: 0;">${msg.name || 'Anonymous'}</h3>
+                            <span style="background: rgba(37,99,235,0.1); color: #2563eb; border: 1px solid rgba(37,99,235,0.25); padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.76rem; font-weight: 700; text-transform: capitalize;">
+                                ${formattedSubject}
+                            </span>
+                        </div>
                     </div>
-                    <div class="item-meta">
-                        ${msg.email ? `<span class="meta-pill"><i class="fas fa-envelope"></i> <a href="mailto:${msg.email}" style="color:inherit; text-decoration:none;">${msg.email}</a></span>` : ''}
-                        ${msg.phone ? `<span class="meta-pill"><i class="fas fa-phone"></i> <a href="tel:${msg.phone}" style="color:inherit; text-decoration:none;">${msg.phone}</a></span>` : ''}
-                    </div>
-                    <p class="item-desc" style="background:var(--bg); padding:0.9rem 1.1rem; border-radius:var(--radius-sm); border:1px solid var(--border);">${msg.message || 'No message text.'}</p>
-                    <div class="action-row">
-                        ${msg.email ? `<a class="card-action-btn view-link" href="mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Inquiry at Fusion Education BD')}"><i class="fas fa-reply"></i> Reply via Email</a>` : ''}
-                        <button class="card-action-btn delete" onclick="window.deleteContactMessage('${msg.id}')"><i class="fas fa-trash"></i> Delete</button>
+
+                    <div style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
+                        <button type="button" class="btn btn-primary" onclick="window.viewContactMessageDetails('${safeId}')" style="padding: 0.45rem 1rem; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 8px;">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <small style="color: var(--text-muted); font-size: 0.82rem; display: flex; align-items: center; gap: 0.35rem; white-space: nowrap;">
+                            <i class="fas fa-calendar-alt"></i> ${dateStr}
+                        </small>
                     </div>
                 </div>`;
             }).join('');
@@ -1106,14 +1112,108 @@
         }
     }
 
-    function deleteContactMessage(id) {
+    window.viewContactMessageDetails = async function(id) {
+        try {
+            const items = await window.DAO.ContactMessages.getAll();
+            const msg = items.find(m => String(m.id) === String(id));
+            if (!msg) {
+                showToast('Message not found.', 'error');
+                return;
+            }
+
+            const modal = document.getElementById('messageViewModal');
+            if (!modal) return;
+
+            const dateStr = msg.createdAt ? new Date(msg.createdAt).toLocaleString() : (msg.submittedAt ? new Date(msg.submittedAt).toLocaleString() : (msg.receivedAt || 'Recent'));
+            const formattedSubject = (msg.subject || 'General Inquiry').replace(/-/g, ' ');
+
+            document.getElementById('modalMsgSenderName').textContent = msg.name || 'Anonymous';
+            document.getElementById('modalMsgSubjectBadge').textContent = formattedSubject;
+
+            document.getElementById('modalMsgBody').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 0.85rem 1rem; border-radius: 12px;">
+                        <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem;">
+                            <i class="fas fa-envelope" style="color: #38bdf8; margin-right: 0.35rem;"></i> Email Address
+                        </div>
+                        <div style="font-weight: 600; color: #fff; word-break: break-all;">
+                            ${msg.email ? `<a href="mailto:${msg.email}" style="color: #38bdf8; text-decoration: none;">${msg.email}</a>` : 'Not provided'}
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 0.85rem 1rem; border-radius: 12px;">
+                        <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem;">
+                            <i class="fas fa-phone" style="color: #34d399; margin-right: 0.35rem;"></i> Phone Number
+                        </div>
+                        <div style="font-weight: 600; color: #fff;">
+                            ${msg.phone ? `<a href="tel:${msg.phone}" style="color: #34d399; text-decoration: none;">${msg.phone}</a>` : 'Not provided'}
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 0.85rem 1rem; border-radius: 12px;">
+                        <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem;">
+                            <i class="fas fa-calendar-alt" style="color: #fbbf24; margin-right: 0.35rem;"></i> Received At
+                        </div>
+                        <div style="font-weight: 600; color: #e2e8f0; font-size: 0.9rem;">
+                            ${dateStr}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">
+                        <i class="fas fa-comment-dots" style="color: #e60012; margin-right: 0.35rem;"></i> Full Message Text
+                    </label>
+                    <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.25rem; font-size: 0.95rem; line-height: 1.6; color: #f1f5f9; white-space: pre-wrap; min-height: 100px;">
+                        ${msg.message || 'No message text provided.'}
+                    </div>
+                </div>
+            `;
+
+            // Setup action buttons
+            const actionLeft = document.getElementById('modalMsgActionLeft');
+            if (actionLeft) {
+                actionLeft.innerHTML = `
+                    ${msg.email ? `
+                        <a href="mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Inquiry at Fusion Education BD')}" class="btn btn-primary" style="padding: 0.5rem 1rem; text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+                            <i class="fas fa-reply"></i> Reply via Email
+                        </a>
+                    ` : ''}
+                    ${msg.phone ? `
+                        <a href="tel:${msg.phone}" class="btn btn-secondary" style="padding: 0.5rem 1rem; text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+                            <i class="fas fa-phone-alt"></i> Call
+                        </a>
+                    ` : ''}
+                `;
+            }
+
+            const delBtn = document.getElementById('modalMsgDeleteBtn');
+            if (delBtn) {
+                delBtn.onclick = () => {
+                    closeMessageModal();
+                    window.deleteContactMessage(msg.id);
+                };
+            }
+
+            modal.style.display = 'flex';
+        } catch (e) {
+            console.error('Error viewing message details:', e);
+        }
+    };
+
+    window.closeMessageModal = function() {
+        const modal = document.getElementById('messageViewModal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    window.deleteContactMessage = function(id) {
         openDeleteModal('Delete Message?', 'Are you sure you want to delete this contact message?', async () => {
             await window.DAO.ContactMessages.delete(id);
             showToast('Message deleted successfully!', 'success');
             loadContactMessages();
             updateNavBadges();
         });
-    }
+    };
 
     /* ============================================================
        7. STUDENT ADMISSIONS

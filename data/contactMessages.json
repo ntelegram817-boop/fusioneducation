@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": "msg_1788361380463",
+    "name": "Manik I",
+    "email": "manik2025245@gmail.com",
+    "phone": "01723372217",
+    "subject": "course-inquiry",
+    "message": "wertyhujik",
+    "createdAt": "2026-09-02T15:03:00.463Z"
+  },
+  {
+    "id": "msg_1788361202956",
+    "name": "Manik I",
+    "email": "manik2025245@gmail.com",
+    "phone": "01723372217",
+    "subject": "visa-inquiry",
+    "message": "swedfghj",
+    "createdAt": "2026-09-02T15:00:02.956Z"
+  }
+]

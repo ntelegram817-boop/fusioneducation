@@ -260,23 +260,31 @@ function getDefaultGalleryItems() {
   ];
 }
 
-function handleContactFormSubmission(form) {
-  if (typeof saveContactMessage !== 'function') return;
-
+async function handleContactFormSubmission(form) {
   const formData = new FormData(form);
   const message = {
-    id: Date.now().toString(),
-    name: formData.get('name'),
-    email: formData.get('email'),
-    phone: formData.get('phone'),
-    subject: formData.get('subject'),
-    message: formData.get('message'),
-    receivedAt: new Date().toLocaleString()
+    id: 'MSG-' + Date.now(),
+    name: formData.get('name') || document.getElementById('name')?.value,
+    email: formData.get('email') || document.getElementById('email')?.value,
+    phone: formData.get('phone') || document.getElementById('phone')?.value,
+    subject: formData.get('subject') || document.getElementById('subject')?.value || 'General Inquiry',
+    message: formData.get('message') || document.getElementById('message')?.value,
+    receivedAt: new Date().toLocaleString(),
+    createdAt: new Date().toISOString()
   };
 
-  saveContactMessage(message);
-  showAlert('Message sent successfully!', 'success');
-  form.reset();
+  try {
+    if (window.DAO && window.DAO.ContactMessages) {
+      await (window.DAO.ContactMessages.add ? window.DAO.ContactMessages.add(message) : window.DAO.ContactMessages.create(message));
+    } else if (typeof saveContactMessage === 'function') {
+      saveContactMessage(message);
+    }
+    showAlert('Message sent successfully! We will contact you shortly.', 'success');
+    form.reset();
+  } catch (err) {
+    console.error('Contact form submission error:', err);
+    showAlert('Could not send message. Please try again.', 'error');
+  }
 }
 
 const originalInitForms = initForms;
