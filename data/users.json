@@ -2,10 +2,10 @@
   {
     "id": "usr_inst_1788373283107",
     "name": "manikkkkkk",
-    "email": "manik2025245@gmail.com",
-    "password": "74107410",
+    "email": "manik20252455@gmail.com",
+    "password": "741074100",
     "role": "instructor",
-    "branch": "asdfgh",
+    "branch": "asdfghh",
     "permissions": [
       "view_students",
       "edit_students",
@@ -27,8 +27,9 @@
       "view_reports",
       "export_reports"
     ],
-    "status": "active",
-    "createdAt": "2026-09-02T18:21:23.107Z"
+    "status": "inactive",
+    "createdAt": "2026-09-02T18:21:23.107Z",
+    "updatedAt": "2026-09-02T19:05:32.759Z"
   },
   {
     "id": "usr_inst_1788342774881",

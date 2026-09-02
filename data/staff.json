@@ -2,11 +2,34 @@
   {
     "id": "usr_inst_1788373283107",
     "name": "manikkkkkk",
-    "email": "manik2025245@gmail.com",
-    "password": "74107410",
+    "email": "manik20252455@gmail.com",
+    "password": "741074100",
     "role": "instructor",
-    "branch": "asdfgh",
-    "status": "active"
+    "branch": "asdfghh",
+    "status": "inactive",
+    "permissions": [
+      "view_students",
+      "edit_students",
+      "manage_attendance",
+      "manage_batches",
+      "manage_routines",
+      "manage_academic_progress",
+      "manage_admissions",
+      "manage_readmissions",
+      "counseling",
+      "view_fees",
+      "manage_fees",
+      "custom_student_fee",
+      "view_documents",
+      "manage_documents",
+      "view_staff",
+      "edit_staff",
+      "manage_staff_permissions",
+      "view_reports",
+      "export_reports"
+    ],
+    "createdAt": "2026-09-02T18:21:23.107Z",
+    "updatedAt": "2026-09-02T19:05:32.759Z"
   },
   {
     "id": "usr_inst_1788342774881",

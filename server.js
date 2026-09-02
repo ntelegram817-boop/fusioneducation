@@ -955,11 +955,21 @@ app.put('/api/branches/:id', (req, res) => {
 
 app.delete('/api/branches/:id', (req, res) => {
   const { id } = req.params;
+  const { adminPassword } = req.body || {};
+
+  const settings = readData('settings.json', {});
+  const validPass = (settings.adminUser && settings.adminUser.password) || 'admin123';
+
+  if (!adminPassword || adminPassword !== validPass) {
+    return res.status(401).json({ success: false, error: 'Incorrect admin password. Deletion unauthorized.' });
+  }
+
   let branches = readData('branches.json', []);
+  const branchToDelete = branches.find(b => b.id === id || b.name.toLowerCase() === id.toLowerCase());
   branches = branches.filter(b => b.id !== id && b.name.toLowerCase() !== id.toLowerCase());
   writeData('branches.json', branches);
-  recordAuditLog('branch_deleted', `Branch deleted: ${id}`, 'branch', id, id, getAuthenticatedUser(req));
-  res.json({ success: true, message: 'Branch deleted' });
+  recordAuditLog('branch_deleted', `Branch deleted: ${branchToDelete ? (branchToDelete.displayName || branchToDelete.name) : id}`, 'branch', id, branchToDelete ? branchToDelete.name : id, getAuthenticatedUser(req));
+  res.json({ success: true, message: 'Branch deleted successfully' });
 });
 
 // ── PERMISSIONS CATALOG ───────────────────────────────────────────

@@ -165,17 +165,18 @@
                 if (res && res.error) return res;
                 return { success: true, message: 'Updated locally' };
             },
-            async delete(id) {
-                const res = await apiFetch(`${endpoint}/${id}`, 'DELETE');
+            async delete(id, body) {
+                const res = await apiFetch(`${endpoint}/${id}`, 'DELETE', body);
+                if (res && res.error) return res;
                 let list = getLocal(resourceKey, []);
                 list = list.filter(item => 
                     String(item.id) !== String(id) && 
+                    String(item.name || '').toLowerCase() !== String(id).toLowerCase() && 
                     String(item.applicationNumber) !== String(id) && 
                     String(item.applicationId) !== String(id)
                 );
                 setLocal(resourceKey, list);
                 if (res && res.success) return res;
-                if (res && res.error) return res;
                 return { success: true, message: 'Deleted locally' };
             }
         };
