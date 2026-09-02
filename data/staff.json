@@ -1,5 +1,14 @@
 [
   {
+    "id": "usr_inst_1788373283107",
+    "name": "manikkkkkk",
+    "email": "manik2025245@gmail.com",
+    "password": "74107410",
+    "role": "instructor",
+    "branch": "asdfgh",
+    "status": "active"
+  },
+  {
     "id": "usr_inst_1788342774881",
     "name": "Tariq Sensei llll",
     "email": "tariq.senseib@fusion.com",

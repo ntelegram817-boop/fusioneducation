@@ -193,15 +193,56 @@
   </main>
 
   <script>
-    function fillStaff(email, pass, branch) {
-      document.getElementById('staffEmail').value = email;
-      document.getElementById('staffPassword').value = pass;
-      document.getElementById('staffBranch').value = branch;
-    }
-
     function getApiUrl(path) {
       if (window.location.port === '3000') return path;
       return 'http://localhost:3000' + path;
+    }
+
+    async function loadStaffBranches() {
+      const select = document.getElementById('staffBranch');
+      if (!select) return;
+      try {
+        let endpoint = getApiUrl('/api/branches');
+        const res = await fetch(endpoint);
+        if (res.ok) {
+          const data = await res.json();
+          const branches = data.branches || [];
+          if (Array.isArray(branches) && branches.length > 0) {
+            const currentVal = select.value;
+            select.innerHTML = '';
+            branches.forEach(b => {
+              const bName = b.name || b.displayName || '';
+              const bDisplay = b.displayName || (bName ? (bName.charAt(0).toUpperCase() + bName.slice(1) + ' Branch') : 'Branch');
+              const opt = document.createElement('option');
+              opt.value = bName;
+              opt.textContent = bDisplay;
+              select.appendChild(opt);
+            });
+            if (currentVal && select.querySelector('option[value="' + currentVal + '"]')) {
+              select.value = currentVal;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load dynamic branches for staff login:', err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadStaffBranches);
+
+    function fillStaff(email, pass, branch) {
+      document.getElementById('staffEmail').value = email;
+      document.getElementById('staffPassword').value = pass;
+      const branchSel = document.getElementById('staffBranch');
+      if (branchSel) {
+        if (!branchSel.querySelector(`option[value="${branch}"]`)) {
+          const opt = document.createElement('option');
+          opt.value = branch;
+          opt.textContent = `${branch} Branch`;
+          branchSel.appendChild(opt);
+        }
+        branchSel.value = branch;
+      }
     }
 
     const demoStaffDirectory = {

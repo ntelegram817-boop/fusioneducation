@@ -797,6 +797,88 @@
     }
 
     // ==========================================================
+    // DYNAMIC BRANCHES & COURSES
+    // ==========================================================
+    async function populateBranchOptions() {
+        const branchSelect = document.getElementById('branch');
+        if (!branchSelect) return;
+
+        try {
+            let branches = [];
+            if (window.DAO && window.DAO.Branches) {
+                branches = await window.DAO.Branches.getAll();
+            } else {
+                const res = await fetch('/api/branches');
+                if (res.ok) {
+                    const data = await res.json();
+                    branches = data.branches || [];
+                }
+            }
+
+            if (Array.isArray(branches) && branches.length > 0) {
+                const cur = branchSelect.value;
+                branchSelect.innerHTML = '<option value="">Choose a branch</option>' + branches.map(b => {
+                    const rawVal = (b.name || b.displayName || '').trim();
+                    const valKey = rawVal.toLowerCase();
+                    const label = b.displayName || (rawVal ? (rawVal.charAt(0).toUpperCase() + rawVal.slice(1) + ' Branch') : 'Branch');
+                    return `<option value="${valKey}">${label}</option>`;
+                }).join('');
+                if (cur) branchSelect.value = cur;
+            }
+        } catch (err) {
+            console.warn('[Admission] Could not load dynamic branches:', err);
+        }
+    }
+
+    async function populateCourseOptions() {
+        const courseSelect = document.getElementById('course');
+        if (!courseSelect) return;
+
+        try {
+            let courses = [];
+            if (window.DAO && window.DAO.Courses) {
+                courses = await window.DAO.Courses.getAll();
+            } else {
+                const res = await fetch('/api/courses');
+                if (res.ok) {
+                    const data = await res.json();
+                    courses = data.courses || [];
+                }
+            }
+
+            if (Array.isArray(courses) && courses.length > 0) {
+                admissionCourseList = courses;
+                const cur = courseSelect.value;
+                courseSelect.innerHTML = '<option value="">Choose a course</option>' + courses.map(c => {
+                    const cId = (c.id || c.code || c.title || '').toLowerCase();
+                    const cTitle = c.title || c.name || 'Course';
+                    const feeStr = c.fee ? ` (৳${Number(c.fee).toLocaleString()})` : '';
+                    return `<option value="${cId}" data-fee="${c.fee || 0}">${cTitle}${feeStr}</option>`;
+                }).join('');
+                if (cur) courseSelect.value = cur;
+            }
+        } catch (err) {
+            console.warn('[Admission] Could not load dynamic courses:', err);
+        }
+    }
+
+    function updateFeeDisplay() {
+        const courseSelect = document.getElementById('course');
+        const feeContent = document.getElementById('courseFeeContent');
+        if (!courseSelect || !feeContent) return;
+
+        const selectedOpt = courseSelect.options[courseSelect.selectedIndex];
+        const fee = selectedOpt?.getAttribute('data-fee');
+        if (fee && Number(fee) > 0) {
+            feeContent.innerHTML = `<span style="font-size: 0.85rem; color: #16a34a; font-weight: 700;"><i class="fas fa-tag"></i> Course Fee: ৳${Number(fee).toLocaleString()}</span>`;
+            feeContent.style.display = 'block';
+        } else {
+            feeContent.innerHTML = '';
+            feeContent.style.display = 'none';
+        }
+    }
+
+    // ==========================================================
     // WIRE UP EVENTS
     // ==========================================================
     document.addEventListener('DOMContentLoaded', () => {
@@ -823,7 +905,8 @@
         setupPhotoPreview();
         setupDocPreview();
 
-        // Course API
+        // Branches & Course API
+        populateBranchOptions();
         populateCourseOptions();
         document.getElementById('course')?.addEventListener('change', updateFeeDisplay);
 

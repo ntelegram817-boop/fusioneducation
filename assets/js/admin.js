@@ -1242,6 +1242,23 @@
         try {
             const admissions = await window.DAO.Admissions.getAll();
 
+            // Dynamically populate admBranchFilter if present
+            const admBranchSelect = document.getElementById('admBranchFilter');
+            if (admBranchSelect && window.DAO.Branches) {
+                try {
+                    const branches = await window.DAO.Branches.getAll();
+                    if (Array.isArray(branches) && branches.length > 0) {
+                        const cur = admBranchSelect.value || 'all';
+                        admBranchSelect.innerHTML = '<option value="all">All Branches</option>' + branches.map(b => {
+                            const bVal = (b.name || b.displayName || '').toLowerCase();
+                            const bLabel = b.displayName || (b.name ? (b.name.charAt(0).toUpperCase() + b.name.slice(1) + ' Branch') : 'Branch');
+                            return `<option value="${bVal}">${bLabel}</option>`;
+                        }).join('');
+                        admBranchSelect.value = cur;
+                    }
+                } catch (_) {}
+            }
+
             if (document.getElementById('admissionsCountBadge')) {
                 document.getElementById('admissionsCountBadge').innerHTML = `<i class="fas fa-user-graduate"></i> ${admissions.length} application${admissions.length !== 1 ? 's' : ''}`;
             }

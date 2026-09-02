@@ -1,5 +1,70 @@
 [
   {
+    "id": "log_1788373332403_de0t",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_1788373283107",
+    "targetName": "manikkkkkk",
+    "performedBy": {
+      "name": "manikkkkkk",
+      "email": "manik2025245@gmail.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T18:22:12.403Z"
+  },
+  {
+    "id": "log_1788373283126_456y",
+    "action": "user_created",
+    "details": "Created instructor account: manikkkkkk (asdfgh)",
+    "targetType": "user",
+    "targetId": "usr_inst_1788373283107",
+    "targetName": "manikkkkkk",
+    "performedBy": {
+      "id": "usr_staff_005",
+      "name": "Kamal Hossain",
+      "email": "rangpur.staff@fusion.com",
+      "password": "password123",
+      "role": "staff",
+      "branch": "Rangpur",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "manage_admissions",
+        "counseling",
+        "view_fees"
+      ],
+      "createdAt": "2026-08-25T16:00:00.000Z"
+    },
+    "timestamp": "2026-09-02T18:21:23.126Z"
+  },
+  {
+    "id": "log_1788373167739_it6b",
+    "action": "branch_created",
+    "details": "Branch created: asdfgh",
+    "targetType": "branch",
+    "targetId": "branch_1788373167735",
+    "targetName": "asdfgh",
+    "performedBy": {
+      "id": "usr_staff_005",
+      "name": "Kamal Hossain",
+      "email": "rangpur.staff@fusion.com",
+      "password": "password123",
+      "role": "staff",
+      "branch": "Rangpur",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "manage_admissions",
+        "counseling",
+        "view_fees"
+      ],
+      "createdAt": "2026-08-25T16:00:00.000Z"
+    },
+    "timestamp": "2026-09-02T18:19:27.739Z"
+  },
+  {
     "id": "log_1788357193284_a1wn",
     "action": "user_login",
     "details": "Logged in via Staff/Instructor portal (staff)",
