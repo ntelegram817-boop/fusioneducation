@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="../assets/js/gallery.js"></script>
+    <script src="../assets/js/discountCalculator.js"></script>
 </head>
 <body>
     <!-- Header/Navigation -->
@@ -61,7 +63,7 @@
                     <p style="font-size: 0.9rem; color: var(--text-secondary);">Step 1 of 3: Personal Information</p>
                 </div>
 
-                <form class="card" id="admissionForm">
+                <form class="card" id="admissionForm" data-skip-generic-submit="true">
                     <!-- Step 1: Personal Information -->
                     <div id="step1">
                         <h3 style="margin-bottom: 1.5rem;">Personal Information</h3>
@@ -98,6 +100,7 @@
                             </div>
                         </div>
 
+                        <!-- DISCOUNT SECTION - ON STEP 2 -->
                         <div class="form-group">
                             <label for="address">Address</label>
                             <input type="text" id="address" name="address" required placeholder="Your residential address">
@@ -139,12 +142,12 @@
                             <label for="course">Select Course</label>
                             <select id="course" name="course" required>
                                 <option value="">Choose a course</option>
-                                <option value="n5">JLPT N5 (Beginner)</option>
-                                <option value="n4">JLPT N4 (Intermediate)</option>
-                                <option value="n3">JLPT N3 (Advanced)</option>
-                                <option value="speaking">Conversation Kaiwa</option>
-                                <option value="combined">Combined Program</option>
                             </select>
+                        </div>
+
+                        <div id="courseFeeDisplay" style="display: none; background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(255, 51, 51, 0.1)); border-left: 4px solid var(--primary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;"><strong>Course Fee:</strong></p>
+                            <div id="courseFeeContent"></div>
                         </div>
 
                         <div class="form-group">
@@ -273,8 +276,36 @@
     </div>
 
     <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/gallery.js"></script>
     <script>
+        let admissionCourseList = [];
+
+        function populateCourseOptions() {
+            const courseSelect = document.getElementById('course');
+            if (!courseSelect) return;
+
+            fetch('/api/courses')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.courses) {
+                        admissionCourseList = data.courses;
+                        const existingValue = courseSelect.value;
+                        courseSelect.innerHTML = '<option value="">Choose a course</option>';
+
+                        admissionCourseList.forEach(course => {
+                            const option = document.createElement('option');
+                            option.value = course.title || course.level || `course-${course.id}`;
+                            option.textContent = course.title || course.level || 'Unnamed Course';
+                            courseSelect.appendChild(option);
+                        });
+
+                        if (existingValue) {
+                            courseSelect.value = existingValue;
+                        }
+                    }
+                })
+                .catch(err => console.error('Error loading courses:', err));
+        }
+
         function goToStep1() {
             document.getElementById('step1').style.display = 'block';
             document.getElementById('step2').style.display = 'none';
@@ -345,6 +376,7 @@
             const branch = document.getElementById('branch').value;
             const visaType = document.getElementById('visaType').value;
             const comment = document.getElementById('comment').value;
+            const courseFeeInfo = document.getElementById('courseFeeInfo')?.value || null;
 
             try {
                 const response = await fetch('/api/admission/submit', {
@@ -357,7 +389,8 @@
                         course,
                         branch,
                         visaType,
-                        comment
+                        comment,
+                        feeInfo: courseFeeInfo
                     })
                 });
 
@@ -385,5 +418,97 @@
             }
         });
     </script>
+
+    <script>
+        function formatTaka(amount) {
+            return `${amount.toLocaleString('en-US')} Taka`;
+        }
+
+        function mapCourseValueToMatcher(courseValue) {
+            const normalized = courseValue.toLowerCase();
+            return (course) => {
+                const title = (course.title || '').toLowerCase();
+                const level = (course.level || '').toLowerCase();
+                const description = (course.description || '').toLowerCase();
+
+                if (normalized === 'n5') return title.includes('n5') || level.includes('n5');
+                if (normalized === 'n4') return title.includes('n4') || level.includes('n4');
+                if (normalized === 'n3') return title.includes('n3') || level.includes('n3');
+                if (normalized === 'speaking') return title.includes('kaiwa') || title.includes('conversation') || description.includes('kaiwa') || description.includes('conversation');
+                if (normalized === 'combined') return title.includes('combined') || description.includes('combined');
+                return title.includes(normalized) || level.includes(normalized) || description.includes(normalized);
+            };
+        }
+
+        function setCourseFeeInfo(feeInfo) {
+            let feeInput = document.getElementById('courseFeeInfo');
+            if (!feeInput) {
+                feeInput = document.createElement('input');
+                feeInput.type = 'hidden';
+                feeInput.id = 'courseFeeInfo';
+                feeInput.name = 'courseFeeInfo';
+                document.getElementById('admissionForm').appendChild(feeInput);
+            }
+            feeInput.value = JSON.stringify(feeInfo || {});
+        }
+
+        function getSelectedCourseData() {
+            const selectedVal = document.getElementById('course')?.value;
+            if (!selectedVal) return null;
+            return admissionCourseList.find(course => {
+                const key = course.title || course.level || `course-${course.id}`;
+                return key === selectedVal;
+            });
+        }
+
+        function updateFeeDisplay() {
+            const selectedCourse = getSelectedCourseData();
+            const feeDisplay = document.getElementById('courseFeeDisplay');
+            const feeContent = document.getElementById('courseFeeContent');
+
+            if (!selectedCourse) {
+                feeDisplay.style.display = 'none';
+                setCourseFeeInfo(null);
+                return;
+            }
+
+            const discountInfo = getCourseDiscountInfo(selectedCourse);
+            const baseFee = discountInfo.originalPrice;
+            const totalFee = discountInfo.finalPrice;
+            const discountText = discountInfo.hasDiscount ? `${discountInfo.discountPercent}% OFF` : 'No discount currently applied';
+            const badge = getDiscountBadgeHTML(discountInfo);
+            let html = `${badge}${getPriceHTML(discountInfo)}`;
+            html += `<p style="margin-top: 0.75rem; color: var(--text-secondary);">${discountText}</p>`;
+            if (discountInfo.hasDiscount) {
+                html += `<p style="margin-top: 0.5rem; color: var(--text-secondary);">You save ${formatTaka(discountInfo.discountAmount)} from the base fee.</p>`;
+            }
+            feeContent.innerHTML = html;
+            feeDisplay.style.display = 'block';
+
+            setCourseFeeInfo({
+                course: selectedCourse.title || selectedCourse.level || document.getElementById('course')?.value,
+                baseFee,
+                discountType: selectedCourse.discountType || 'none',
+                discountValue: selectedCourse.discountValue || 0,
+                discountAmount: discountInfo.discountAmount,
+                totalFee
+            });
+        }
+
+        document.getElementById('course')?.addEventListener('change', updateFeeDisplay);
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSiteData();
+            populateCourseOptions();
+            updateFeeDisplay();
+        });
+    </script>
+
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <!-- Firebase Configuration -->
+    <script src="../assets/js/firebase-config.js"></script>
 </body>
 </html>

@@ -284,6 +284,7 @@ function initForms() {
   const forms = document.querySelectorAll('form');
   
   forms.forEach(form => {
+    if (form.dataset.skipGenericSubmit === 'true') return;
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const submitBtn = form.querySelector('button[type="submit"]');

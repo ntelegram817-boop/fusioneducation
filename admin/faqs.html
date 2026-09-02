@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fusion Education BD - Site Settings</title>
+    <title>Fusion Education BD - FAQs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -187,114 +187,36 @@
         <div class="success-message" id="successMessage"><i class="fas fa-check-circle"></i> <span id="successText"></span></div>
 
         <div class="tab-buttons">
-            <a href="dashboard.html" class="tab-btn active"><i class="fas fa-cogs"></i> Site Settings</a>
+            <a href="dashboard.html" class="tab-btn"><i class="fas fa-cogs"></i> Site Settings</a>
             <a href="posts.html" class="tab-btn"><i class="fas fa-newspaper"></i> Home Posts</a>
             <a href="courses.html" class="tab-btn"><i class="fas fa-book-open"></i> Courses</a>
             <a href="testimonials.html" class="tab-btn"><i class="fas fa-user-check"></i> Testimonials</a>
-            <a href="faqs.html" class="tab-btn"><i class="fas fa-question-circle"></i> FAQs</a>
+            <a href="faqs.html" class="tab-btn active"><i class="fas fa-question-circle"></i> FAQs</a>
             <a href="messages.html" class="tab-btn"><i class="fas fa-envelope"></i> Messages</a>
             <a href="admissions.html" class="tab-btn"><i class="fas fa-user-graduate"></i> Admissions</a>
             <a href="users.html" class="tab-btn"><i class="fas fa-user-shield"></i> Admin User</a>
         </div>
 
-        <section id="settings-tab" class="tab-pane active dashboard-card">
-            <h2><i class="fas fa-sliders-h"></i> Site Settings</h2>
-            <form id="settingsForm" data-skip-generic-submit="true">
+        <section id="faqs-tab" class="tab-pane active dashboard-card">
+            <h2><i class="fas fa-question-circle"></i> FAQ Manager</h2>
+            <form id="faqForm" class="block-row" data-skip-generic-submit="true">
+                <input type="hidden" id="faqId">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="heroTitleInput">Hero Title</label>
-                        <input id="heroTitleInput" type="text" placeholder="Hero title" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="heroSubtitleInput">Hero Subtitle</label>
-                        <input id="heroSubtitleInput" type="text" placeholder="Hero subtitle" required>
+                        <label for="faqQuestion">Question</label>
+                        <input id="faqQuestion" type="text" placeholder="What is the course duration?" required>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="heroImageUrl">Hero Background Image URL</label>
-                        <input id="heroImageUrl" type="text" placeholder="https://example.com/banner.jpg" onchange="previewImage(event, 'heroPreview')">
-                    </div>
-                    <div class="form-group">
-                        <label for="heroImageFile">Upload Hero Image</label>
-                        <input id="heroImageFile" type="file" accept="image/*" onchange="previewImage(event, 'heroPreview')">
-                    </div>
+                <div class="form-group">
+                    <label for="faqAnswer">Answer</label>
+                    <textarea id="faqAnswer" placeholder="Provide the answer here..." required></textarea>
                 </div>
-                <div id="heroPreview" class="image-preview">Upload or enter image URL to preview here.</div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="heroCtaText">Primary CTA Text</label>
-                        <input id="heroCtaText" type="text" placeholder="Start Your Journey" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="heroCtaUrl">Primary CTA URL</label>
-                        <input id="heroCtaUrl" type="text" placeholder="pages/admission.html" required>
-                    </div>
+                <div class="action-row">
+                    <button type="submit" class="btn btn-primary" id="faqSubmitBtn"><i class="fas fa-save"></i> Save FAQ</button>
+                    <button type="button" class="outline-btn" onclick="resetFaqForm()"><i class="fas fa-ban"></i> Cancel</button>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="heroSecondaryText">Secondary CTA Text</label>
-                        <input id="heroSecondaryText" type="text" placeholder="Free Consultation">
-                    </div>
-                    <div class="form-group">
-                        <label for="heroSecondaryUrl">Secondary CTA URL</label>
-                        <input id="heroSecondaryUrl" type="text" placeholder="pages/contact.html">
-                    </div>
-                </div>
-                <h3 style="margin-top: 2rem;">Contact Info</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contactAddress">Address</label>
-                        <input id="contactAddress" type="text" placeholder="Office address" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactPhone">Phone</label>
-                        <input id="contactPhone" type="tel" placeholder="+8801302090286" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contactEmail">Email</label>
-                        <input id="contactEmail" type="email" placeholder="contact@fusioneducationbd.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactHours">Office Hours</label>
-                        <input id="contactHours" type="text" placeholder="Thursday - Saturday, 10:00 AM - 6:00 PM" required>
-                    </div>
-                </div>
-                <h3 style="margin-top: 2rem;">Social Links</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="socialFacebook">Facebook URL</label>
-                        <input id="socialFacebook" type="url" placeholder="https://facebook.com/fusioneducationbd">
-                    </div>
-                    <div class="form-group">
-                        <label for="socialInstagram">Instagram URL</label>
-                        <input id="socialInstagram" type="url" placeholder="https://instagram.com/fusioneducation2025">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="socialTwitter">Twitter URL</label>
-                        <input id="socialTwitter" type="url" placeholder="https://twitter.com/fusioneducationbd">
-                    </div>
-                    <div class="form-group">
-                        <label for="socialLinkedin">LinkedIn URL</label>
-                        <input id="socialLinkedin" type="url" placeholder="https://linkedin.com/company/fusioneducationbd">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="socialWhatsapp">WhatsApp URL</label>
-                        <input id="socialWhatsapp" type="url" placeholder="https://wa.me/8801302090286">
-                    </div>
-                    <div class="form-group">
-                        <label for="footerTextInput">Footer Text</label>
-                        <input id="footerTextInput" type="text" placeholder="© 2026 Fusion Education BD. All rights reserved.">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 1.5rem;"><i class="fas fa-save"></i> Save Site Settings</button>
             </form>
+            <div id="faqsList" style="display:grid; gap:1rem; margin-top:1.5rem;"></div>
         </section>
     </main>
 
