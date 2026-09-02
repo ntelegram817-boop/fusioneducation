@@ -38,12 +38,14 @@ app.use(cors({
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser());
+app.use(express.static(__dirname));
 
 // ── Trust proxy (for correct IP in rate limiter) ─────────────
 app.set('trust proxy', 1);
 
 // ── API Routes ───────────────────────────────────────────────
 app.use('/api/admission', admissionRoutes);
+app.use('/api/admissions', admissionRoutes);
 
 // ── API Endpoints & CRUD Data Layer ──────────────────────────
 const dataDir = path.join(__dirname, 'data');
@@ -657,20 +659,27 @@ app.get('/api/staff/me', (req, res) => {
   }
 
   const email = req.cookies.fusion_staff_email;
-  const branch = req.cookies.fusion_staff_branch || 'Dinajpur';
+  const branch = req.cookies.fusion_staff_branch;
+  if (!email) {
+    return res.json({
+      success: true,
+      authenticated: false
+    });
+  }
+
   const users = readData('users.json', []);
-  const staff = users.find(s => s.email && s.email.toLowerCase() === (email || '').toLowerCase()) || {
-    name: 'Mahmudul Hasan',
-    email: 'staff@fusioneducation.com',
-    branch: 'Dinajpur',
-    role: 'staff',
-    permissions: ['view_students', 'edit_students', 'manage_admissions', 'counseling', 'view_fees', 'manage_fees', 'view_reports']
-  };
+  const staff = users.find(s => s.email && s.email.toLowerCase() === email.toLowerCase());
+  if (!staff) {
+    return res.json({
+      success: true,
+      authenticated: false
+    });
+  }
 
   return res.json({
     success: true,
-    authenticated: Boolean(email),
-    id: staff.id || 'usr_default',
+    authenticated: true,
+    id: staff.id || 'usr_staff',
     name: staff.name,
     email: staff.email,
     branch: branch || staff.branch || 'Dinajpur',
@@ -761,6 +770,148 @@ app.get('/api/staff/students', (req, res) => {
   return res.json({ success: true, branch, students: list });
 });
 
+// ── WALK-IN STUDENT REGISTRATION (MANUAL ADD) ─────────────────────
+app.post('/api/staff/students', (req, res) => {
+  const user = getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions')) {
+    return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required' });
+  }
+
+  const { fullName, phone, email, course, branch, status, batch, city, notes, admissionDate } = req.body;
+  if (!fullName) {
+    return res.status(400).json({ success: false, error: 'Student full name is required.' });
+  }
+
+  const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
+
+  // Determine admission date: custom or auto-current
+  let dateIso = new Date().toISOString();
+  if (admissionDate && !isNaN(new Date(admissionDate).getTime())) {
+    dateIso = new Date(admissionDate).toISOString();
+  }
+
+  const newAppNum = req.body.applicationNumber || req.body.id || `FEBD-${new Date().getFullYear()}-${String(Math.floor(100 + Math.random() * 900))}`;
+  const targetBranch = branch || (user ? user.branch : 'Dinajpur');
+
+  const newStudent = {
+    identifier: newAppNum,
+    id: newAppNum,
+    applicationNumber: newAppNum,
+    applicationId: newAppNum,
+    fullName: fullName.trim(),
+    email: (email || '').trim().toLowerCase(),
+    phone: (phone || '').trim(),
+    currentCourse: course || 'JLPT N5',
+    course: course || 'JLPT N5',
+    courseLevel: req.body.courseLevel || 'N5',
+    branch: targetBranch,
+    status: status === 'admitted' ? 'admitted' : (status || 'pending'),
+    batch: batch || 'Batch 01',
+    city: city || '',
+    address: req.body.address || city || '',
+    notes: notes || '',
+    comment: notes || '',
+    photo: '../assets/images/student-placeholder.jpg',
+    photoUrl: '../assets/images/student-placeholder.jpg',
+    submittedAt: dateIso,
+    enrollmentDate: dateIso,
+    createdAt: dateIso,
+    payments: []
+  };
+
+  students.unshift(newStudent);
+  writeData('students.json', students);
+
+  // Sync to admissions.json
+  const admRecord = {
+    id: newAppNum,
+    applicationNumber: newAppNum,
+    fullName: newStudent.fullName,
+    email: newStudent.email,
+    phone: newStudent.phone,
+    course: newStudent.course,
+    branch: newStudent.branch,
+    status: newStudent.status,
+    batch: newStudent.batch,
+    city: newStudent.city,
+    comment: newStudent.notes,
+    photoUrl: newStudent.photoUrl,
+    submittedAt: dateIso
+  };
+  admissions.unshift(admRecord);
+  writeData('admissions.json', admissions);
+
+  recordAuditLog('student_registered', `Registered walk-in student ${newStudent.fullName} (${newAppNum}) for ${newStudent.branch}`, 'student', newAppNum, newStudent.fullName, user || { name: 'Staff Member', role: 'staff', branch: targetBranch });
+
+  res.json({
+    success: true,
+    message: 'Student registered successfully',
+    student: newStudent
+  });
+});
+
+// ── UPDATE STUDENT PROFILE OR STATUS ──────────────────────────────
+app.put('/api/staff/students/:id', (req, res) => {
+  const user = getAuthenticatedUser(req);
+  const { id } = req.params;
+  const cleanId = String(id).trim().toLowerCase();
+
+  const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
+
+  let sIdx = students.findIndex(s => 
+    (s.identifier && s.identifier.toLowerCase() === cleanId) ||
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId)
+  );
+
+  let aIdx = admissions.findIndex(a => 
+    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
+    (a.id && String(a.id).toLowerCase() === cleanId)
+  );
+
+  if (sIdx === -1 && aIdx === -1) {
+    return res.status(404).json({ success: false, error: 'Student record not found.' });
+  }
+
+  // If status is being modified to admitted, verify permission
+  if (req.body.status && (req.body.status === 'admitted' || req.body.status === 'approved')) {
+    if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions')) {
+      return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required to admit student' });
+    }
+  }
+
+  // Update in students.json
+  if (sIdx !== -1) {
+    students[sIdx] = {
+      ...students[sIdx],
+      ...req.body,
+      updatedAt: new Date().toISOString()
+    };
+    writeData('students.json', students);
+  }
+
+  // Update in admissions.json
+  if (aIdx !== -1) {
+    admissions[aIdx] = {
+      ...admissions[aIdx],
+      ...req.body,
+      updatedAt: new Date().toISOString()
+    };
+    writeData('admissions.json', admissions);
+  }
+
+  const updatedRec = sIdx !== -1 ? students[sIdx] : admissions[aIdx];
+  recordAuditLog('student_updated', `Updated student profile ${updatedRec.fullName || cleanId}`, 'student', cleanId, updatedRec.fullName || cleanId, user);
+
+  res.json({
+    success: true,
+    message: 'Student record updated successfully',
+    student: updatedRec
+  });
+});
+
 app.post('/api/staff/logout', (req, res) => {
   res.clearCookie('fusion_staff_email');
   res.clearCookie('fusion_staff_branch');
@@ -824,8 +975,8 @@ app.get('/api/admin/users', (req, res) => {
 
 app.post('/api/admin/users', (req, res) => {
   const { name, email, password, role, branch, permissions, status } = req.body;
-  if (!name || !email || !password) {
-    return res.status(400).json({ success: false, error: 'Name, Email, and Password are required.' });
+  if (!name || !email) {
+    return res.status(400).json({ success: false, error: 'Name and Email are required.' });
   }
 
   const users = readData('users.json', []);
@@ -834,11 +985,13 @@ app.post('/api/admin/users', (req, res) => {
     return res.status(400).json({ success: false, error: 'A user with this email address already exists.' });
   }
 
+  const userPassword = (password && String(password).trim()) ? String(password).trim() : 'password123';
+
   const newUser = {
     id: req.body.id || ('usr_' + (role === 'instructor' ? 'inst_' : 'staff_') + Date.now()),
     name: name.trim(),
     email: email.trim().toLowerCase(),
-    password: password.trim(),
+    password: userPassword,
     role: role || 'staff',
     branch: branch || 'Dinajpur',
     permissions: Array.isArray(permissions) ? permissions : [
@@ -853,7 +1006,8 @@ app.post('/api/admin/users', (req, res) => {
 
   // Sync staff.json
   const staffList = readData('staff.json', []);
-  staffList.unshift({
+  const sIdx = staffList.findIndex(s => s.id === newUser.id || s.email.toLowerCase() === newUser.email.toLowerCase());
+  const staffEntry = {
     id: newUser.id,
     name: newUser.name,
     email: newUser.email,
@@ -861,7 +1015,12 @@ app.post('/api/admin/users', (req, res) => {
     role: newUser.role,
     branch: newUser.branch,
     status: newUser.status
-  });
+  };
+  if (sIdx !== -1) {
+    staffList[sIdx] = staffEntry;
+  } else {
+    staffList.unshift(staffEntry);
+  }
   writeData('staff.json', staffList);
 
   recordAuditLog('user_created', `Created ${newUser.role} account: ${newUser.name} (${newUser.branch})`, 'user', newUser.id, newUser.name, getAuthenticatedUser(req));

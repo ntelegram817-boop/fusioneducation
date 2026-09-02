@@ -1,5 +1,773 @@
 [
   {
+    "id": "log_1788347331097_08ko",
+    "action": "user_updated",
+    "details": "Updated user Mahmudul Hasan permissions & details",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "System",
+      "email": "system@fusion.com",
+      "role": "system",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T11:08:51.097Z"
+  },
+  {
+    "id": "log_1788347232752_t139",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T11:07:12.752Z"
+  },
+  {
+    "id": "log_1788347220491_u3nj",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T11:07:00.491Z"
+  },
+  {
+    "id": "log_1788346840983_d15m",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_002",
+    "targetName": "Tariqul Islam",
+    "performedBy": {
+      "name": "Tariqul Islam",
+      "email": "dinajpur@fusion.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T11:00:40.983Z"
+  },
+  {
+    "id": "log_1788346690421_d9rb",
+    "action": "student_registered",
+    "details": "Registered walk-in student Sabbir Hossain (FEBD-2026-292) for Dinajpur",
+    "targetType": "student",
+    "targetId": "FEBD-2026-292",
+    "targetName": "Sabbir Hossain",
+    "performedBy": {
+      "id": "usr_inst_001",
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "password": "password123",
+      "role": "instructor",
+      "branch": "Dinajpur",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "edit_students",
+        "manage_student_profile",
+        "manage_attendance",
+        "manage_batches",
+        "manage_routines",
+        "manage_academic_progress",
+        "view_documents",
+        "manage_documents",
+        "view_fees",
+        "manage_fees",
+        "custom_student_fee",
+        "manage_admissions",
+        "manage_readmissions",
+        "counseling",
+        "view_staff",
+        "edit_staff",
+        "manage_staff_permissions",
+        "view_reports",
+        "export_reports"
+      ],
+      "createdAt": "2026-08-15T09:00:00.000Z"
+    },
+    "timestamp": "2026-09-02T10:58:10.422Z"
+  },
+  {
+    "id": "log_1788346426122_w2h5",
+    "action": "student_registered",
+    "details": "Registered walk-in student Sabbir Hossain (FEBD-2026-565) for Dinajpur",
+    "targetType": "student",
+    "targetId": "FEBD-2026-565",
+    "targetName": "Sabbir Hossain",
+    "performedBy": {
+      "id": "usr_inst_001",
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "password": "password123",
+      "role": "instructor",
+      "branch": "Dinajpur",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "edit_students",
+        "manage_student_profile",
+        "manage_attendance",
+        "manage_batches",
+        "manage_routines",
+        "manage_academic_progress",
+        "view_documents",
+        "manage_documents",
+        "view_fees",
+        "manage_fees",
+        "custom_student_fee",
+        "manage_admissions",
+        "manage_readmissions",
+        "counseling",
+        "view_staff",
+        "edit_staff",
+        "manage_staff_permissions",
+        "view_reports",
+        "export_reports"
+      ],
+      "createdAt": "2026-08-15T09:00:00.000Z"
+    },
+    "timestamp": "2026-09-02T10:53:46.122Z"
+  },
+  {
+    "id": "log_1788346293211_9r16",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T10:51:33.211Z"
+  },
+  {
+    "id": "log_1788346176987_c0d9",
+    "action": "student_registered",
+    "details": "Registered walk-in student Test Auto Date Student (FEBD-2026-133) for Dhaka",
+    "targetType": "student",
+    "targetId": "FEBD-2026-133",
+    "targetName": "Test Auto Date Student",
+    "performedBy": {
+      "name": "Staff Member",
+      "role": "staff",
+      "branch": "Dhaka"
+    },
+    "timestamp": "2026-09-02T10:49:36.987Z"
+  },
+  {
+    "id": "log_1788346176944_utce",
+    "action": "student_registered",
+    "details": "Registered walk-in student Test Custom Date Student (FEBD-2026-295) for Dinajpur",
+    "targetType": "student",
+    "targetId": "FEBD-2026-295",
+    "targetName": "Test Custom Date Student",
+    "performedBy": {
+      "name": "Staff Member",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T10:49:36.944Z"
+  },
+  {
+    "id": "log_1788345775115_nvq2",
+    "action": "fee_customized",
+    "details": "Customized monthly fee for Rahim from ৳1,000 to ৳700",
+    "targetType": "student",
+    "targetId": "FE-2024-001",
+    "targetName": "Amit Rahman",
+    "performedBy": {
+      "name": "Main Admin",
+      "email": "admin@fusioneducation.com",
+      "role": "admin",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T10:42:55.115Z"
+  },
+  {
+    "id": "log_1788343932950_fq73",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T10:12:12.950Z"
+  },
+  {
+    "id": "log_1788343540602_ybsb",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T10:05:40.602Z"
+  },
+  {
+    "id": "log_1788343537168_3ugc",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T10:05:37.168Z"
+  },
+  {
+    "id": "log_1788343534437_dssr",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T10:05:34.438Z"
+  },
+  {
+    "id": "log_1788343527156_vfrj",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T10:05:27.156Z"
+  },
+  {
+    "id": "log_1788342859382_1glj",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_1788342774881",
+    "targetName": "Tariq Sensei llll",
+    "performedBy": {
+      "name": "Tariq Sensei llll",
+      "email": "tariq.senseib@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T09:54:19.383Z"
+  },
+  {
+    "id": "log_1788342815296_kcke",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_1788342774881",
+    "targetName": "Tariq Sensei llll",
+    "performedBy": {
+      "name": "Tariq Sensei llll",
+      "email": "tariq.senseib@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T09:53:35.296Z"
+  },
+  {
+    "id": "log_1788342774891_oe4c",
+    "action": "user_created",
+    "details": "Created instructor account: Tariq Sensei llll (thailand)",
+    "targetType": "user",
+    "targetId": "usr_inst_1788342774881",
+    "targetName": "Tariq Sensei llll",
+    "performedBy": {
+      "id": "usr_staff_005",
+      "name": "Kamal Hossain",
+      "email": "rangpur.staff@fusion.com",
+      "password": "password123",
+      "role": "staff",
+      "branch": "Rangpur",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "manage_admissions",
+        "counseling",
+        "view_fees"
+      ],
+      "createdAt": "2026-08-25T16:00:00.000Z"
+    },
+    "timestamp": "2026-09-02T09:52:54.891Z"
+  },
+  {
+    "id": "log_1788342603655_e4no",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_005",
+    "targetName": "Kamal Hossain",
+    "performedBy": {
+      "name": "Kamal Hossain",
+      "email": "rangpur.staff@fusion.com",
+      "role": "staff",
+      "branch": "Rangpur"
+    },
+    "timestamp": "2026-09-02T09:50:03.655Z"
+  },
+  {
+    "id": "log_1788342531637_vmpm",
+    "action": "branch_created",
+    "details": "Branch created: thailand",
+    "targetType": "branch",
+    "targetId": "branch_1788342531624",
+    "targetName": "thailand",
+    "performedBy": {
+      "id": "usr_inst_002",
+      "name": "Kenji Sato",
+      "email": "dhaka.instructor@fusion.com",
+      "password": "password123",
+      "role": "instructor",
+      "branch": "Dhaka",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "edit_students",
+        "manage_attendance",
+        "manage_batches",
+        "manage_routines",
+        "manage_academic_progress",
+        "view_documents",
+        "view_fees",
+        "view_reports"
+      ],
+      "createdAt": "2026-08-20T10:30:00.000Z"
+    },
+    "timestamp": "2026-09-02T09:48:51.637Z"
+  },
+  {
+    "id": "log_1788338143185_gnxz",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T08:35:43.185Z"
+  },
+  {
+    "id": "log_1788338138997_vw3b",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_003",
+    "targetName": "Nusrat Jahan",
+    "performedBy": {
+      "name": "Nusrat Jahan",
+      "email": "bogura@fusion.com",
+      "role": "staff",
+      "branch": "Bogura"
+    },
+    "timestamp": "2026-09-02T08:35:38.997Z"
+  },
+  {
+    "id": "log_1788338132786_rpj7",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T08:35:32.786Z"
+  },
+  {
+    "id": "log_1788338128220_e7k9",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T08:35:28.220Z"
+  },
+  {
+    "id": "log_1788338119151_urka",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T08:35:19.151Z"
+  },
+  {
+    "id": "log_1788333131119_t3av",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_002",
+    "targetName": "Kenji Sato",
+    "performedBy": {
+      "name": "Kenji Sato",
+      "email": "dhaka.instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dhaka"
+    },
+    "timestamp": "2026-09-02T07:12:11.119Z"
+  },
+  {
+    "id": "log_1788332932723_pa03",
+    "action": "user_created",
+    "details": "Created instructor account: Tariq Sensei (Bogura)",
+    "targetType": "user",
+    "targetId": "usr_inst_1788332932606",
+    "targetName": "Tariq Sensei",
+    "performedBy": {
+      "name": "System",
+      "email": "system@fusion.com",
+      "role": "system",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T07:08:52.723Z"
+  },
+  {
+    "id": "log_1788332064739_ghu7",
+    "action": "fee_customized",
+    "details": "Customized monthly fee for Rahim from ৳1,000 to ৳700",
+    "targetType": "student",
+    "targetId": "FE-2024-001",
+    "targetName": "Amit Rahman",
+    "performedBy": {
+      "name": "Main Admin",
+      "email": "admin@fusioneducation.com",
+      "role": "admin",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T06:54:24.739Z"
+  },
+  {
+    "id": "log_1788327423406_deu9",
+    "action": "fee_customized",
+    "details": "Customized monthly fee for Rahim from ৳1,000 to ৳700",
+    "targetType": "student",
+    "targetId": "FE-2024-001",
+    "targetName": "Amit Rahman",
+    "performedBy": {
+      "name": "Main Admin",
+      "email": "admin@fusioneducation.com",
+      "role": "admin",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T05:37:03.406Z"
+  },
+  {
+    "id": "log_1788327413825_f4oy",
+    "action": "student_deleted",
+    "details": "Deleted student record FEBD-2026-123",
+    "targetType": "student",
+    "targetId": "FEBD-2026-123",
+    "targetName": "FEBD-2026-123",
+    "performedBy": {
+      "name": "System",
+      "email": "system@fusion.com",
+      "role": "system",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T05:36:53.825Z"
+  },
+  {
+    "id": "log_1788327407687_xuhj",
+    "action": "student_updated",
+    "details": "Updated student record for Automated Walkin Student",
+    "targetType": "student",
+    "targetId": "FEBD-2026-123",
+    "targetName": "Automated Walkin Student",
+    "performedBy": {
+      "name": "System",
+      "email": "system@fusion.com",
+      "role": "system",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T05:36:47.687Z"
+  },
+  {
+    "id": "log_1788327289846_a0mj",
+    "action": "student_created",
+    "details": "Registered walk-in student Automated Walkin Student (FEBD-2026-123)",
+    "targetType": "student",
+    "targetId": "FEBD-2026-123",
+    "targetName": "Automated Walkin Student",
+    "performedBy": {
+      "name": "System",
+      "email": "system@fusion.com",
+      "role": "system",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T05:34:49.846Z"
+  },
+  {
+    "id": "log_1788327034818_ykhy",
+    "action": "user_deleted",
+    "details": "Deleted user Test Instructor",
+    "targetType": "user",
+    "targetId": "usr_inst_1788327019379",
+    "targetName": "Test Instructor",
+    "performedBy": {
+      "name": "System",
+      "email": "system@fusion.com",
+      "role": "system",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T05:30:34.818Z"
+  },
+  {
+    "id": "log_1788327019383_k39a",
+    "action": "user_created",
+    "details": "Created instructor account: Test Instructor (Dhaka)",
+    "targetType": "user",
+    "targetId": "usr_inst_1788327019379",
+    "targetName": "Test Instructor",
+    "performedBy": {
+      "name": "System",
+      "email": "system@fusion.com",
+      "role": "system",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T05:30:19.383Z"
+  },
+  {
+    "id": "log_1788324807437_hsf0",
+    "action": "fee_customized",
+    "details": "Customized monthly fee for Rahim from ৳1,000 to ৳700",
+    "targetType": "student",
+    "targetId": "FE-2024-001",
+    "targetName": "Amit Rahman",
+    "performedBy": {
+      "name": "Main Admin",
+      "email": "admin@fusioneducation.com",
+      "role": "admin",
+      "branch": "all"
+    },
+    "timestamp": "2026-09-02T04:53:27.437Z"
+  },
+  {
+    "id": "log_1788324060763_hnst",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T04:41:00.763Z"
+  },
+  {
+    "id": "log_1788323919704_g4rq",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T04:38:39.704Z"
+  },
+  {
+    "id": "log_1788323796168_wtf8",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T04:36:36.168Z"
+  },
+  {
+    "id": "log_1788323447672_95rt",
+    "action": "fee_customized",
+    "details": "Monthly fee customized for Manik I (FEBD-2026-003). Old: standard, New: 5. Note: N/A",
+    "targetType": "student",
+    "targetId": "FEBD-2026-003",
+    "targetName": "Manik I",
+    "performedBy": {
+      "id": "usr_staff_001",
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "password": "staff123",
+      "role": "staff",
+      "branch": "Dinajpur",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "edit_students",
+        "manage_student_profile",
+        "manage_attendance",
+        "manage_batches",
+        "manage_admissions",
+        "manage_readmissions",
+        "counseling",
+        "view_documents",
+        "manage_documents",
+        "view_fees",
+        "manage_fees",
+        "custom_student_fee",
+        "view_reports",
+        "export_reports"
+      ],
+      "createdAt": "2026-08-01T08:00:00.000Z"
+    },
+    "timestamp": "2026-09-02T04:30:47.672Z"
+  },
+  {
+    "id": "log_1788323427481_zodl",
+    "action": "payment_recorded",
+    "details": "Payment ৳2 recorded for Manik I (FEBD-2026-003)",
+    "targetType": "student",
+    "targetId": "FEBD-2026-003",
+    "targetName": "Manik I",
+    "performedBy": {
+      "id": "usr_staff_001",
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "password": "staff123",
+      "role": "staff",
+      "branch": "Dinajpur",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "edit_students",
+        "manage_student_profile",
+        "manage_attendance",
+        "manage_batches",
+        "manage_admissions",
+        "manage_readmissions",
+        "counseling",
+        "view_documents",
+        "manage_documents",
+        "view_fees",
+        "manage_fees",
+        "custom_student_fee",
+        "view_reports",
+        "export_reports"
+      ],
+      "createdAt": "2026-08-01T08:00:00.000Z"
+    },
+    "timestamp": "2026-09-02T04:30:27.481Z"
+  },
+  {
+    "id": "log_1788323386386_5lnj",
+    "action": "fee_customized",
+    "details": "Monthly fee customized for Manik I (FEBD-2026-003). Old: standard, New: standard. Note: N/A",
+    "targetType": "student",
+    "targetId": "FEBD-2026-003",
+    "targetName": "Manik I",
+    "performedBy": {
+      "id": "usr_staff_001",
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "password": "staff123",
+      "role": "staff",
+      "branch": "Dinajpur",
+      "status": "active",
+      "permissions": [
+        "view_students",
+        "edit_students",
+        "manage_student_profile",
+        "manage_attendance",
+        "manage_batches",
+        "manage_admissions",
+        "manage_readmissions",
+        "counseling",
+        "view_documents",
+        "manage_documents",
+        "view_fees",
+        "manage_fees",
+        "custom_student_fee",
+        "view_reports",
+        "export_reports"
+      ],
+      "createdAt": "2026-08-01T08:00:00.000Z"
+    },
+    "timestamp": "2026-09-02T04:29:46.386Z"
+  },
+  {
+    "id": "log_1788323297025_7j9a",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-02T04:28:17.025Z"
+  },
+  {
     "id": "log_1788290522211_76c1",
     "action": "user_login",
     "details": "Logged in via Staff/Instructor portal (staff)",

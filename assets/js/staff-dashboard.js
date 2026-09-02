@@ -68,54 +68,138 @@ function showToast(message, type = 'success') {
   }, 3500);
 }
 
+// Designation Mapping for Staff and Instructors
+const userDesignations = {
+  'instructor@fusion.com': 'Head Japanese Instructor',
+  'dhaka.instructor@fusion.com': 'Senior Japanese Instructor',
+  'bogura@fusion.com': 'Branch Manager',
+  'dinajpur@fusion.com': 'Academic Coordinator',
+  'staff@fusioneducation.com': 'Branch Counselor',
+  'dhaka.staff@fusion.com': 'Branch Counselor',
+  'rangpur.staff@fusion.com': 'Branch Counselor'
+};
+
+// RBAC Permission Check Helper
+window.hasStaffPermission = function(permKey) {
+  if (!currentStaff) return false;
+  if (currentStaff.role === 'admin') return true;
+  const perms = currentStaff.permissions || [];
+  if (!Array.isArray(perms)) return false;
+  if (perms.includes('*') || perms.includes('all')) return true;
+  return perms.includes(permKey);
+};
+
+function applyStaffPermissions() {
+  const addStudentBtn = document.getElementById('addStudentBtn');
+  if (addStudentBtn) {
+    addStudentBtn.style.display = window.hasStaffPermission('manage_admissions') ? 'inline-flex' : 'none';
+  }
+
+  const printBranchBtn = document.getElementById('printBranchButton');
+  if (printBranchBtn) {
+    printBranchBtn.style.display = (window.hasStaffPermission('view_reports') || window.hasStaffPermission('export_reports')) ? 'inline-flex' : 'none';
+  }
+}
+
+function updateStaffProfileUI() {
+  if (staffNameEl) staffNameEl.textContent = currentStaff.name;
+  if (staffRoleEl) staffRoleEl.textContent = currentStaff.position;
+  if (staffAvatarEl) staffAvatarEl.textContent = (currentStaff.name || 'S').charAt(0).toUpperCase();
+
+  const activeBranchHeaderName = document.getElementById('activeBranchHeaderName');
+  if (activeBranchHeaderName) {
+    activeBranchHeaderName.textContent = currentStaff.branch === 'all' ? 'All Branches' : `${currentStaff.branch} Branch`;
+  }
+
+  if (activeBranchTextEl) {
+    activeBranchTextEl.textContent = currentStaff.branch === 'all' ? 'All Branches' : currentStaff.branch;
+  }
+
+  const portalRoleBadge = document.getElementById('portalRoleBadge');
+  if (portalRoleBadge) {
+    if (currentStaff.role === 'instructor') {
+      portalRoleBadge.innerHTML = `<i class="fas fa-chalkboard-teacher"></i> Instructor Portal`;
+    } else {
+      portalRoleBadge.innerHTML = `<i class="fas fa-shield-alt"></i> Staff Portal`;
+    }
+  }
+}
+
 // ── 1. AUTHENTICATION & INITIALIZATION ─────────────────────────
 async function initStaffSession() {
-  // Read branch & staff info from session storage
-  const savedBranch = sessionStorage.getItem('fusion_staff_branch') || 'all';
-  const savedName = sessionStorage.getItem('fusion_staff_name');
-  const savedEmail = sessionStorage.getItem('fusion_staff_email') || '';
+  // Read branch, staff info & permissions from session storage / local storage
+  const savedBranch = sessionStorage.getItem('fusion_staff_branch') || localStorage.getItem('fusion_staff_branch') || 'Dinajpur';
+  const savedName = sessionStorage.getItem('fusion_staff_name') || localStorage.getItem('fusion_staff_name');
+  const savedEmail = sessionStorage.getItem('fusion_staff_email') || localStorage.getItem('fusion_staff_email') || '';
+  const savedRole = sessionStorage.getItem('fusion_staff_role') || localStorage.getItem('fusion_staff_role') || 'staff';
+  const savedPosition = sessionStorage.getItem('fusion_staff_position') || localStorage.getItem('fusion_staff_position');
+  
+  let savedPerms = [];
+  try {
+    savedPerms = JSON.parse(sessionStorage.getItem('fusion_staff_permissions') || localStorage.getItem('fusion_staff_permissions') || '[]');
+  } catch (_) {}
 
-  currentBranch = savedBranch;
-  if (staffBranchSelector) staffBranchSelector.value = savedBranch;
-  if (activeBranchTextEl) activeBranchTextEl.textContent = savedBranch === 'all' ? 'All Branches' : savedBranch;
+  currentBranch = savedBranch !== 'all' ? savedBranch : 'Dinajpur';
 
-  if (savedName) {
-    currentStaff.name = savedName;
-    currentStaff.email = savedEmail;
-    currentStaff.branch = savedBranch !== 'all' ? savedBranch : 'Dinajpur';
-    if (staffNameEl) staffNameEl.textContent = currentStaff.name;
-    if (staffRoleEl) staffRoleEl.textContent = `${currentStaff.role} (${currentStaff.branch})`;
-    if (staffAvatarEl) staffAvatarEl.textContent = currentStaff.name.charAt(0).toUpperCase();
-  }
+  const position = savedPosition || userDesignations[savedEmail.toLowerCase()] || (savedRole === 'instructor' ? 'Japanese Instructor' : (savedRole === 'admin' ? 'Administrator' : 'Branch Counselor'));
+
+  currentStaff = {
+    name: savedName || (savedEmail ? savedEmail.split('@')[0].toUpperCase() : 'Staff Member'),
+    email: savedEmail,
+    branch: currentBranch,
+    role: savedRole,
+    position: position,
+    permissions: savedPerms
+  };
+
+  updateStaffProfileUI();
 
   try {
     const res = await fetch(getApiUrl('/api/staff/me'), { credentials: 'include' });
     if (res.ok) {
       const data = await res.json();
-      if (data.success) {
+      if (data.success && data.authenticated && data.name) {
+        const email = data.email || savedEmail || '';
+        const truePosition = userDesignations[email.toLowerCase()] || (data.role === 'instructor' ? 'Japanese Instructor' : (data.role === 'admin' ? 'Administrator' : 'Branch Counselor'));
+        
         currentStaff = {
-          name: data.name || savedName || 'Staff Member',
-          email: data.email || savedEmail || '',
-          branch: data.branch || (savedBranch !== 'all' ? savedBranch : 'Dinajpur'),
-          role: data.role || 'Branch Counselor'
+          name: data.name || currentStaff.name,
+          email: email,
+          branch: (data.branch && data.branch !== 'all') ? data.branch : currentBranch,
+          role: data.role || currentStaff.role,
+          position: truePosition,
+          permissions: Array.isArray(data.permissions) && data.permissions.length > 0 ? data.permissions : savedPerms
         };
-        if (staffNameEl) staffNameEl.textContent = currentStaff.name;
-        if (staffRoleEl) staffRoleEl.textContent = `${currentStaff.role} (${currentStaff.branch})`;
-        if (staffAvatarEl) staffAvatarEl.textContent = currentStaff.name.charAt(0).toUpperCase();
+
+        currentBranch = currentStaff.branch;
+        sessionStorage.setItem('fusion_staff_branch', currentBranch);
+        localStorage.setItem('fusion_staff_branch', currentBranch);
+        sessionStorage.setItem('fusion_staff_name', currentStaff.name);
+        localStorage.setItem('fusion_staff_name', currentStaff.name);
+        sessionStorage.setItem('fusion_staff_role', currentStaff.role);
+        localStorage.setItem('fusion_staff_role', currentStaff.role);
+        sessionStorage.setItem('fusion_staff_position', currentStaff.position);
+        localStorage.setItem('fusion_staff_position', currentStaff.position);
+        sessionStorage.setItem('fusion_staff_permissions', JSON.stringify(currentStaff.permissions));
+        localStorage.setItem('fusion_staff_permissions', JSON.stringify(currentStaff.permissions));
+
+        updateStaffProfileUI();
       }
     }
-  } catch (_) {
-    if (!savedName && staffNameEl) staffNameEl.textContent = 'Staff Member';
-  }
+  } catch (_) {}
 
+  applyStaffPermissions();
   await loadStudents();
 }
 
 window.changeActiveBranch = function(branch) {
   currentBranch = branch;
+  currentStaff.branch = branch;
   sessionStorage.setItem('fusion_staff_branch', branch);
-  if (activeBranchTextEl) activeBranchTextEl.textContent = branch === 'all' ? 'All Branches' : branch;
+  localStorage.setItem('fusion_staff_branch', branch);
+  updateStaffProfileUI();
   renderFilteredStudents();
+  updateMetrics();
 };
 
 // ── 2. DATA LOADING & MERGING ──────────────────────────────────
@@ -354,8 +438,20 @@ function renderFilteredStudents() {
         statusLabel = '🔴 Rejected';
       }
 
-      const dateFormatted = s.submittedAt ? new Date(s.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recent';
+      const rawDate = s.admissionDate || s.submittedAt || s.enrollmentDate || s.createdAt;
+      let dateFormatted = 'Today';
+      if (rawDate) {
+        const d = new Date(rawDate);
+        dateFormatted = !isNaN(d.getTime()) ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : String(rawDate);
+      }
       const safeId = s.id || s.applicationNumber;
+
+      const sName = s.fullName || s.name || s.studentName || 'Student Name';
+
+      const canAdmit = !isAdmitted && window.hasStaffPermission('manage_admissions');
+      const canFee = window.hasStaffPermission('view_fees') || window.hasStaffPermission('manage_fees');
+      const canEdit = window.hasStaffPermission('edit_students');
+      const canPrint = window.hasStaffPermission('view_reports') || window.hasStaffPermission('export_reports');
 
       return `
         <tr>
@@ -364,7 +460,7 @@ function renderFilteredStudents() {
             <div class="student-cell">
               <img src="${s.photoUrl}" alt="Photo" class="student-avatar" onerror="this.src='../assets/images/student-placeholder.jpg'">
               <div>
-                <div class="student-cell-name">${s.fullName}</div>
+                <div class="student-cell-name">${sName}</div>
                 <div class="student-cell-id">${s.applicationNumber}</div>
                 <div style="font-size:0.75rem; color:#94a3b8; margin-top:0.1rem;">
                   <i class="fas fa-phone" style="font-size:0.7rem; color:#38bdf8;"></i> ${s.phone || 'No phone'}
@@ -393,27 +489,33 @@ function renderFilteredStudents() {
           </td>
           <td style="text-align: right;">
             <div class="action-group" style="justify-content: flex-end;">
-              ${!isAdmitted ? `
+              ${canAdmit ? `
                 <button type="button" class="act-btn admit-quick" onclick="quickAdmitStudent('${safeId}')" title="Quick Approve & Admit">
                   <i class="fas fa-check"></i> Admit
                 </button>
               ` : ''}
 
-              <button type="button" class="act-btn" style="background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.3); color:#34d399;" onclick="openFeeModal('${safeId}')" title="Tuition & Partial Payments">
-                <i class="fas fa-money-bill-wave"></i> Fees
-              </button>
+              ${canFee ? `
+                <button type="button" class="act-btn" style="background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.3); color:#34d399;" onclick="openFeeModal('${safeId}')" title="Tuition & Partial Payments">
+                  <i class="fas fa-money-bill-wave"></i> Fees
+                </button>
+              ` : ''}
 
-              <button type="button" class="act-btn edit" onclick="openEditModal('${safeId}')" title="Edit Student & Status">
-                <i class="fas fa-edit"></i> Edit
-              </button>
+              ${canEdit ? `
+                <button type="button" class="act-btn edit" onclick="openEditModal('${safeId}')" title="Edit Student & Status">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+              ` : ''}
 
               <button type="button" class="act-btn primary" onclick="showViewModal('${safeId}')" title="View Full Profile">
                 <i class="fas fa-eye"></i> View
               </button>
 
-              <button type="button" class="act-btn" onclick="printStudentById('${safeId}')" title="Print Sheet">
-                <i class="fas fa-print"></i>
-              </button>
+              ${canPrint ? `
+                <button type="button" class="act-btn" onclick="printStudentById('${safeId}')" title="Print Sheet">
+                  <i class="fas fa-print"></i>
+                </button>
+              ` : ''}
             </div>
           </td>
         </tr>
@@ -432,8 +534,9 @@ window.showViewModal = function(id) {
   const body = document.getElementById('viewModalBody');
   const title = document.getElementById('viewModalTitle');
   const badge = document.getElementById('viewStatusBadge');
+  const sName = student.fullName || student.name || student.studentName || 'Student Profile';
 
-  if (title) title.textContent = student.fullName;
+  if (title) title.textContent = sName;
   
   const isAdmitted = student.status === 'admitted' || student.status === 'approved' || student.status === 'active';
   if (badge) {
@@ -455,7 +558,7 @@ window.showViewModal = function(id) {
       <div style="display:flex; gap:1.5rem; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap;">
         <img src="${student.photoUrl}" alt="Photo" style="width:100px; height:100px; border-radius:18px; object-fit:cover; border:2px solid #38bdf8; background:#1e293b;" onerror="this.src='../assets/images/student-placeholder.jpg'">
         <div style="flex:1; min-width:240px;">
-          <h3 style="margin:0 0 0.25rem; font-size:1.35rem; color:#fff;">${student.fullName}</h3>
+          <h3 style="margin:0 0 0.25rem; font-size:1.35rem; color:#fff;">${sName}</h3>
           <p style="margin:0 0 0.5rem; color:#38bdf8; font-weight:700; font-size:0.95rem;">Application Number: ${student.applicationNumber}</p>
           <div style="display:flex; gap:0.5rem; flex-wrap:wrap; font-size:0.85rem; color:#94a3b8;">
             <span>Branch: <strong style="color:#fff;">${student.branch}</strong></span> •
@@ -657,37 +760,70 @@ window.closeNewStudentModal = function() {
 window.saveNewStudent = async function(event) {
   event.preventDefault();
 
+  const customDateInput = document.getElementById('newAdmissionDate')?.value;
+  let dateIso = new Date().toISOString();
+  if (customDateInput && !isNaN(new Date(customDateInput).getTime())) {
+    dateIso = new Date(customDateInput).toISOString();
+  }
+
   const newAppNum = `FEBD-${new Date().getFullYear()}-${String(Math.floor(100 + Math.random() * 900))}`;
   const newStudentObj = {
     id: newAppNum,
+    identifier: newAppNum,
     applicationNumber: newAppNum,
     applicationId: newAppNum,
     fullName: document.getElementById('newFullName').value.trim(),
     phone: document.getElementById('newPhone').value.trim(),
     email: document.getElementById('newEmail').value.trim(),
     course: document.getElementById('newCourse').value,
+    currentCourse: document.getElementById('newCourse').value,
     branch: document.getElementById('newBranch').value,
     status: document.getElementById('newStatus').value,
     batch: document.getElementById('newBatch').value.trim() || 'Batch 01',
     city: document.getElementById('newCity').value.trim(),
     notes: document.getElementById('newNotes').value.trim(),
+    comment: document.getElementById('newNotes').value.trim(),
     photoUrl: '../assets/images/student-placeholder.jpg',
-    submittedAt: new Date().toISOString()
+    photo: '../assets/images/student-placeholder.jpg',
+    submittedAt: dateIso,
+    enrollmentDate: dateIso,
+    admissionDate: customDateInput || dateIso.split('T')[0]
   };
 
   try {
-    if (window.DAO && window.DAO.Admissions) {
-      await window.DAO.Admissions.create(newStudentObj);
+    let apiSuccess = false;
+    try {
+      const resp = await fetch(getApiUrl('/api/staff/students'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(newStudentObj)
+      });
+      if (resp.ok) {
+        const resData = await resp.json();
+        if (resData.success) {
+          apiSuccess = true;
+          if (resData.student) {
+            Object.assign(newStudentObj, resData.student);
+          }
+        }
+      }
+    } catch (_) {}
+
+    if (!apiSuccess && window.DAO && window.DAO.Admissions) {
+      const res = await (window.DAO.Admissions.add ? window.DAO.Admissions.add(newStudentObj) : window.DAO.Admissions.create(newStudentObj));
+      if (res && res.error) throw new Error(res.error);
     }
 
     studentList.unshift(newStudentObj);
+    document.getElementById('newStudentForm')?.reset();
     closeNewStudentModal();
     updateMetrics();
     renderFilteredStudents();
     showToast(`New student ${newStudentObj.fullName} (${newAppNum}) registered successfully!`, 'success');
 
   } catch (err) {
-    showToast('Failed to create student enrollment.', 'error');
+    showToast('Failed to create student enrollment: ' + (err.message || 'Unknown error'), 'error');
   }
 };
 
@@ -961,6 +1097,27 @@ async function refreshFeeData(studentId) {
     // Populate custom rate input
     const customRateInput = document.getElementById('customRateInput');
     if (customRateInput) customRateInput.value = billing.isCustomRate ? billing.effectiveMonthlyRate : '';
+
+    // Enforce modular permissions inside Fee Modal
+    const canManageFees = window.hasStaffPermission('manage_fees');
+    const canCustomFee = window.hasStaffPermission('custom_student_fee');
+
+    const recordForm = document.getElementById('recordPaymentForm');
+    const recordLockedNotice = document.getElementById('recordPaymentLockedNotice');
+    if (recordForm && recordLockedNotice) {
+      if (canManageFees) {
+        recordForm.style.display = 'block';
+        recordLockedNotice.style.display = 'none';
+      } else {
+        recordForm.style.display = 'none';
+        recordLockedNotice.style.display = 'block';
+      }
+    }
+
+    const customPricingPanel = document.getElementById('customPricingPanel');
+    if (customPricingPanel) {
+      customPricingPanel.style.display = canCustomFee ? 'block' : 'none';
+    }
 
     // Render payment history
     const historyBody = document.getElementById('feePaymentHistoryBody');

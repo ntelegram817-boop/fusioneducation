@@ -1230,3 +1230,76 @@ body {
     display: inline-block;
 }
 
+/* ─── High-Contrast Dark Modal & Card Overrides ─── */
+.admin-modal-card,
+.modal-card,
+.modal-card-custom {
+    background: #0f172a !important;
+    border: 1px solid rgba(148, 163, 184, 0.25) !important;
+    color: #e2e8f0 !important;
+}
+
+.admin-modal-card h1, .admin-modal-card h2, .admin-modal-card h3, .admin-modal-card h4, .admin-modal-card h5,
+.modal-card h1, .modal-card h2, .modal-card h3, .modal-card h4, .modal-card h5,
+.modal-card-custom h1, .modal-card-custom h2, .modal-card-custom h3, .modal-card-custom h4, .modal-card-custom h5 {
+    color: #ffffff !important;
+}
+
+.admin-modal-card strong, .admin-modal-card b,
+.modal-card strong, .modal-card b,
+.modal-card-custom strong, .modal-card-custom b {
+    color: #ffffff !important;
+}
+
+.admin-modal-card p,
+.modal-card p,
+.modal-card-custom p {
+    color: #cbd5e1 !important;
+}
+
+.admin-modal-card span,
+.modal-card span,
+.modal-card-custom span {
+    color: #94a3b8;
+}
+
+.admin-modal-card label,
+.modal-card label,
+.modal-card-custom label {
+    color: #cbd5e1 !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.admin-modal-card input, .admin-modal-card select, .admin-modal-card textarea,
+.modal-card input, .modal-card select, .modal-card textarea,
+.modal-card-custom input, .modal-card-custom select, .modal-card-custom textarea {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    color: #ffffff !important;
+}
+
+.item-card {
+    background: #0f172a !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    color: #e2e8f0 !important;
+}
+
+.item-card h3 {
+    color: #ffffff !important;
+}
+
+.item-card strong {
+    color: #ffffff !important;
+}
+
+.item-card p,
+.item-card div {
+    color: #cbd5e1;
+}
+
+.item-card span {
+    color: #94a3b8;
+}
+
+

@@ -1,278 +1,133 @@
 [
   {
+    "identifier": "FEBD-2026-292",
+    "id": "FEBD-2026-292",
+    "applicationNumber": "FEBD-2026-292",
+    "applicationId": "FEBD-2026-292",
+    "fullName": "Sabbir Hossain",
+    "email": "",
+    "phone": "01755123456",
+    "currentCourse": "JLPT N5 - Beginner",
+    "course": "JLPT N5 - Beginner",
+    "courseLevel": "N5",
+    "branch": "Dinajpur",
+    "status": "admitted",
+    "batch": "Batch 01",
+    "city": "",
+    "address": "",
+    "notes": "",
+    "comment": "",
+    "photo": "../assets/images/student-placeholder.jpg",
+    "photoUrl": "../assets/images/student-placeholder.jpg",
+    "submittedAt": "2026-08-20T00:00:00.000Z",
+    "enrollmentDate": "2026-08-20T00:00:00.000Z",
+    "createdAt": "2026-08-20T00:00:00.000Z",
+    "payments": []
+  },
+  {
+    "identifier": "FEBD-2026-565",
+    "id": "FEBD-2026-565",
+    "applicationNumber": "FEBD-2026-565",
+    "applicationId": "FEBD-2026-565",
+    "fullName": "Sabbir Hossain",
+    "email": "",
+    "phone": "01755123456",
+    "currentCourse": "JLPT N5 - Beginner",
+    "course": "JLPT N5 - Beginner",
+    "courseLevel": "N5",
+    "branch": "Dinajpur",
+    "status": "admitted",
+    "batch": "Batch 01",
+    "city": "",
+    "address": "",
+    "notes": "",
+    "comment": "",
+    "photo": "../assets/images/student-placeholder.jpg",
+    "photoUrl": "../assets/images/student-placeholder.jpg",
+    "submittedAt": "+060820-02-01T18:00:00.000Z",
+    "enrollmentDate": "+060820-02-01T18:00:00.000Z",
+    "createdAt": "+060820-02-01T18:00:00.000Z",
+    "payments": []
+  },
+  {
     "identifier": "FEBD-2026-003",
     "email": "manik2025245@gmail.com",
     "password": "password123",
     "fullName": "Manik I",
     "phone": "01723372217",
-    "bloodGroup": "B+",
+    "bloodGroup": "N/A",
     "dateOfBirth": "2006-03-14",
     "address": "Dinajpur 5230",
-    "branch": "Dinajpur",
+    "branch": "dinajpur",
     "photo": "/uploads/photos/1788258943110_t5u450.jpg",
-    "status": "admitted",
-    "courseId": "course-n5",
-    "currentCourse": "JLPT N5 - Beginner",
-    "courseLevel": "Beginner (N5)",
+    "status": "Active Student",
+    "currentCourse": "JLPT N5",
+    "courseLevel": "N5",
     "batch": "Batch 14 - JLPT N5 Morning",
-    "instructor": "Rahim Sensei (Tanaka)",
-    "instructorId": "usr_inst_001",
-    "enrollmentDate": "2026-09-01T00:00:00.000Z",
-    "customMonthlyFee": null,
-    "specialDiscount": 0,
-    "progressPercent": 35,
+    "instructor": "Tanaka Sensei",
+    "progressPercent": 30,
     "nextClass": {
-      "topic": "JLPT N5 Grammar: Lesson 03 & Hiragana Review",
-      "time": "Tomorrow at 09:30 AM",
-      "room": "Room 102, Dinajpur Campus & Zoom"
+      "topic": "Orientation & Basic Japanese Kana",
+      "time": "Sunday & Tuesday 10:00 AM",
+      "room": "Room 102 & Online Zoom"
     },
     "attendance": {
-      "attended": 6,
-      "total": 6,
+      "attended": 2,
+      "total": 2,
       "rate": "100%"
     },
-    "payments": [
-      {
-        "id": "pay_manik_01",
-        "amount": 1000,
-        "date": "2026-09-01T10:00:00.000Z",
-        "recordedBy": "Mahmudul Hasan (Staff)",
-        "note": "Admission deposit",
-        "method": "Recorded"
-      }
-    ],
     "fees": {
-      "total": "2,000 BDT",
-      "paid": "1,000 BDT",
-      "due": "1,000 BDT",
+      "total": "15,000 BDT",
+      "paid": "5,000 BDT",
+      "due": "10,000 BDT",
       "status": "Partially Paid"
     },
     "visaApplication": {
       "status": "Document Verification",
-      "university": "Tokyo International Language Academy",
-      "intake": "October 2026",
       "step": 2,
       "steps": [
-        { "title": "Application Submitted", "done": true, "date": "01 Sep 2026" },
-        { "title": "Document Verification", "done": true, "date": "Verified" },
-        { "title": "Translation & Legalization", "done": false, "date": "In Progress" },
-        { "title": "COE Application to Japan Immigration", "done": false, "date": "Pending" },
-        { "title": "Embassy Visa Stamp", "done": false, "date": "Pending" }
+        {
+          "title": "Application Submitted",
+          "done": true,
+          "date": "2026-09-01"
+        },
+        {
+          "title": "Document Verification",
+          "done": true,
+          "date": "Verified"
+        },
+        {
+          "title": "COE Application",
+          "done": false,
+          "date": "Pending"
+        },
+        {
+          "title": "COE Issuance",
+          "done": false,
+          "date": "Pending"
+        },
+        {
+          "title": "Embassy Visa Stamp",
+          "done": false,
+          "date": "Pending"
+        }
       ]
     },
     "assignments": [
       {
-        "id": "asg_m1",
-        "title": "Hiragana & Katakana Stroke Order Sheet",
-        "dueDate": "In 3 days",
+        "id": "asg_1",
+        "title": "Kana Practice & Basic Phrases",
+        "dueDate": "Next Week",
         "status": "Pending",
         "maxScore": 25
       }
     ],
     "messages": [
       {
-        "from": "Dinajpur Branch Desk",
-        "text": "Your enrollment in Batch 14 - JLPT N5 Morning is confirmed! Counseling verified.",
-        "time": "Today"
+        "from": "Fusion Education Desk",
+        "text": "Welcome! Your student account is active. Check notices for intake updates.",
+        "time": "Recent"
       }
-    ]
-  },
-  {
-    "identifier": "FE-2024-001",
-    "email": "student@fusion.com",
-    "password": "password123",
-    "fullName": "Amit Rahman",
-    "phone": "+880 1712 345678",
-    "bloodGroup": "O+",
-    "dateOfBirth": "2002-05-18",
-    "address": "House 12, Road 4, Dinajpur",
-    "branch": "Dinajpur",
-    "photo": "../assets/images/student-placeholder.jpg",
-    "status": "admitted",
-    "courseId": "course-n4",
-    "currentCourse": "JLPT N4 - Intermediate Japanese",
-    "courseLevel": "Intermediate (N4)",
-    "batch": "Batch 2024-N4-D01",
-    "instructor": "Rahim Sensei (Tanaka)",
-    "instructorId": "usr_inst_001",
-    "enrollmentDate": "2026-06-01T00:00:00.000Z",
-    "customMonthlyFee": 1200,
-    "specialDiscount": 0,
-    "progressPercent": 68,
-    "nextClass": {
-      "topic": "Grammar: Lesson 14 (~te kudasai / ~nakereba narimasen)",
-      "time": "Tomorrow at 10:00 AM",
-      "room": "Room 203 (Lab 1) & Zoom Online"
-    },
-    "attendance": {
-      "attended": 28,
-      "total": 32,
-      "rate": "87.5%"
-    },
-    "payments": [
-      {
-        "id": "pay_amit_01",
-        "amount": 1000,
-        "date": "2026-06-01T10:00:00.000Z",
-        "recordedBy": "Staff Desk",
-        "note": "Admission Registration Fee",
-        "method": "Recorded"
-      },
-      {
-        "id": "pay_amit_02",
-        "amount": 3600,
-        "date": "2026-07-05T14:30:00.000Z",
-        "recordedBy": "Mahmudul Hasan (Staff)",
-        "note": "Months 1-3 Tuition Fee (Special Rate ৳1,200/mo)",
-        "method": "Recorded"
-      }
-    ],
-    "fees": {
-      "total": "4,600 BDT",
-      "paid": "4,600 BDT",
-      "due": "0 BDT",
-      "status": "Paid"
-    },
-    "visaApplication": {
-      "status": "COE Applied",
-      "university": "Tokyo International Language Academy",
-      "intake": "October 2026",
-      "step": 3,
-      "steps": [
-        { "title": "Document Verification", "done": true, "date": "10 Jan 2026" },
-        { "title": "Translation & Legalization", "done": true, "date": "02 Feb 2026" },
-        { "title": "COE Application to Japan Immigration", "done": true, "date": "15 Feb 2026" },
-        { "title": "COE Issuance", "done": false, "date": "Expected April 2026" },
-        { "title": "Embassy Visa Stamp", "done": false, "date": "Pending" }
-      ]
-    },
-    "assignments": [
-      { "id": "asg_1", "title": "Kanji Practice: Chapters 8-10", "dueDate": "In 2 days", "status": "Pending", "maxScore": 25 },
-      { "id": "asg_2", "title": "Listening Comprehension: Monologue & Dialogues N4", "dueDate": "Next Monday", "status": "Pending", "maxScore": 50 },
-      { "id": "asg_3", "title": "JLPT N4 Mock Test 1", "dueDate": "Completed", "status": "Graded", "score": "86/100" }
-    ],
-    "messages": [
-      { "from": "Rahim Sensei (Instructor)", "text": "Great job in yesterday's speaking session. Please memorize Kanji list 9.", "time": "Yesterday" },
-      { "from": "Visa Desk (Admin)", "text": "Your academic transcript translation is verified. COE submission in progress.", "time": "3 days ago" }
-    ]
-  },
-  {
-    "identifier": "FEBD-2026-002",
-    "email": "shakil@example.com",
-    "password": "password123",
-    "fullName": "Md Shakil",
-    "phone": "01712345678",
-    "bloodGroup": "O+",
-    "address": "House 12, Road 4, Dinajpur",
-    "branch": "Dinajpur",
-    "photo": "/uploads/photos/1788258781808_6d8v97.jpg",
-    "status": "pending",
-    "courseId": "course-n5",
-    "currentCourse": "JLPT N5 - Beginner",
-    "courseLevel": "Beginner (N5)",
-    "batch": "Upcoming Intake",
-    "instructor": "Assigned upon class start",
-    "enrollmentDate": "2026-09-01T00:00:00.000Z",
-    "customMonthlyFee": null,
-    "specialDiscount": 0,
-    "progressPercent": 15,
-    "nextClass": {
-      "topic": "Orientation Briefing & Class Routine",
-      "time": "Schedule will be announced soon",
-      "room": "Campus & Online"
-    },
-    "attendance": { "attended": 0, "total": 0, "rate": "100%" },
-    "payments": [
-      {
-        "id": "pay_shakil_01",
-        "amount": 500,
-        "date": "2026-09-01T11:00:00.000Z",
-        "recordedBy": "Mahmudul Hasan (Staff)",
-        "note": "Initial application fee deposit",
-        "method": "Recorded"
-      }
-    ],
-    "fees": {
-      "total": "2,000 BDT",
-      "paid": "500 BDT",
-      "due": "1,500 BDT",
-      "status": "Partially Paid"
-    },
-    "visaApplication": {
-      "status": "Document Verification",
-      "step": 1,
-      "steps": [
-        { "title": "Application Submitted", "done": true, "date": "Recent" },
-        { "title": "Document Verification", "done": false, "date": "In Review" },
-        { "title": "COE Application", "done": false, "date": "Pending" }
-      ]
-    },
-    "assignments": [],
-    "messages": [
-      { "from": "Admin Desk", "text": "Welcome to Fusion Education BD! Your admission application is being processed.", "time": "Recent" }
-    ]
-  },
-  {
-    "identifier": "FE-2024-002",
-    "email": "student2@fusion.com",
-    "password": "password123",
-    "fullName": "Sofia Khan",
-    "phone": "+880 1733 445566",
-    "bloodGroup": "A+",
-    "address": "Jaleshwaritola, Bogura",
-    "branch": "Bogura",
-    "photo": "../assets/images/student-placeholder.jpg",
-    "status": "admitted",
-    "courseId": "course-n5",
-    "currentCourse": "JLPT N5 - Beginner",
-    "courseLevel": "Beginner (N5)",
-    "batch": "Bogura Batch 01",
-    "instructor": "Nusrat Jahan",
-    "enrollmentDate": "2026-08-01T00:00:00.000Z",
-    "customMonthlyFee": 800,
-    "specialDiscount": 0,
-    "progressPercent": 40,
-    "nextClass": {
-      "topic": "Hiragana & Basic Particles",
-      "time": "Tomorrow at 11:00 AM",
-      "room": "Room 101, Bogura Campus"
-    },
-    "attendance": { "attended": 8, "total": 8, "rate": "100%" },
-    "payments": [
-      {
-        "id": "pay_sofia_01",
-        "amount": 1000,
-        "date": "2026-08-01T10:00:00.000Z",
-        "recordedBy": "Nusrat Jahan (Staff)",
-        "note": "Admission Fee",
-        "method": "Recorded"
-      },
-      {
-        "id": "pay_sofia_02",
-        "amount": 1600,
-        "date": "2026-08-15T15:00:00.000Z",
-        "recordedBy": "Nusrat Jahan (Staff)",
-        "note": "2 Months Tuition @ ৳800/mo",
-        "method": "Recorded"
-      }
-    ],
-    "fees": {
-      "total": "2,600 BDT",
-      "paid": "2,600 BDT",
-      "due": "0 BDT",
-      "status": "Paid"
-    },
-    "visaApplication": {
-      "status": "Document Verification",
-      "step": 1,
-      "steps": [
-        { "title": "Application Submitted", "done": true, "date": "01 Aug 2026" },
-        { "title": "Document Verification", "done": true, "date": "In Progress" }
-      ]
-    },
-    "assignments": [],
-    "messages": [
-      { "from": "Bogura Branch Desk", "text": "Welcome to Bogura Japanese Language Batch.", "time": "2 weeks ago" }
     ]
   }
 ]

@@ -29,19 +29,86 @@ router.post(
     submitAdmission
 );
 
-// GET /api/admission / GET /api/admission/list
+// GET /api/admission / GET /api/admission/list / GET /api/admissions
 const fs = require('fs');
 const path = require('path');
 const ADMISSIONS_FILE = path.join(__dirname, '../data/admissions.json');
+const STUDENTS_FILE = path.join(__dirname, '../data/students.json');
 
 const getAdmissionsList = (req, res) => {
     try {
+        let admissions = [];
+        let students = [];
+
         if (fs.existsSync(ADMISSIONS_FILE)) {
-            const data = JSON.parse(fs.readFileSync(ADMISSIONS_FILE, 'utf8'));
-            return res.json({ success: true, admissions: data });
+            try {
+                admissions = JSON.parse(fs.readFileSync(ADMISSIONS_FILE, 'utf8'));
+                if (!Array.isArray(admissions)) admissions = [];
+            } catch (_) {}
         }
-    } catch (_) {}
-    return res.json({ success: true, admissions: [] });
+
+        if (fs.existsSync(STUDENTS_FILE)) {
+            try {
+                students = JSON.parse(fs.readFileSync(STUDENTS_FILE, 'utf8'));
+                if (!Array.isArray(students)) students = [];
+            } catch (_) {}
+        }
+
+        // Normalize admissions list
+        const normalizedAdmissions = admissions.map(a => ({
+            ...a,
+            id: a.id || a.applicationNumber || a.applicationId,
+            applicationNumber: a.applicationNumber || a.applicationId || a.id,
+            fullName: a.fullName || a.name || a.studentName || 'Student Name',
+            email: a.email || '',
+            phone: a.phone || '',
+            course: a.course || a.courseName || 'Japanese Language Course',
+            courseLevel: a.courseLevel || (a.course && a.course.includes('N4') ? 'N4' : (a.course && a.course.includes('N3') ? 'N3' : 'N5')),
+            branch: a.branch || 'dinajpur',
+            status: a.status || 'pending',
+            photoUrl: a.photoUrl || a.photo || a.avatar || '../assets/images/student-placeholder.jpg',
+            submittedAt: a.submittedAt || a.enrollmentDate || a.createdAt || new Date().toISOString()
+        }));
+
+        // Merge any admitted students from students.json that aren't already in admissions.json
+        const existingIds = new Set(normalizedAdmissions.map(a => String(a.applicationNumber || a.id).toLowerCase()));
+
+        students.forEach(s => {
+            const safeAppNo = s.applicationNumber || s.identifier || s.id || `STU-${Date.now()}`;
+            if (!existingIds.has(String(safeAppNo).toLowerCase()) && !existingIds.has(String(s.id).toLowerCase())) {
+                existingIds.add(String(safeAppNo).toLowerCase());
+                normalizedAdmissions.push({
+                    id: s.id || safeAppNo,
+                    applicationId: safeAppNo,
+                    applicationNumber: safeAppNo,
+                    fullName: s.fullName || s.name || s.studentName || 'Student Name',
+                    email: s.email || '',
+                    phone: s.phone || '',
+                    dateOfBirth: s.dateOfBirth || '',
+                    gender: s.gender || 'male',
+                    address: s.address || '',
+                    city: s.city || (s.branch ? `${s.branch} City` : 'Dinajpur'),
+                    district: s.district || s.branch || 'Dinajpur',
+                    highestEducation: s.highestEducation || 'HSC',
+                    course: s.course || s.courseName || 'JLPT N5',
+                    courseLevel: s.courseLevel || 'N5',
+                    branch: (s.branch || 'dinajpur').toLowerCase(),
+                    batch: s.batch || 'Batch 01',
+                    status: s.status || 'admitted',
+                    photoUrl: s.photoUrl || s.photo || s.avatar || '../assets/images/student-placeholder.jpg',
+                    submittedAt: s.enrollmentDate || s.submittedAt || new Date().toISOString(),
+                    documents: s.documents || [],
+                    payments: s.payments || [],
+                    notes: s.notes || ''
+                });
+            }
+        });
+
+        return res.json({ success: true, admissions: normalizedAdmissions });
+    } catch (err) {
+        console.error('Error fetching admissions list:', err);
+        return res.json({ success: true, admissions: [] });
+    }
 };
 
 router.get('/', getAdmissionsList);

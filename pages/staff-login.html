@@ -141,7 +141,10 @@
       </div>
       <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.5rem;">
         <button type="button" onclick="fillStaff('instructor@fusion.com', 'password123', 'Dinajpur')" style="background: rgba(168, 85, 247, 0.25); border: 1px solid rgba(168, 85, 247, 0.5); color: #e9d5ff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
-          👨‍🏫 Dinajpur Sensei (Instructor)
+          👨‍🏫 Dinajpur Sensei
+        </button>
+        <button type="button" onclick="fillStaff('dhaka.instructor@fusion.com', 'password123', 'Dhaka')" style="background: rgba(168, 85, 247, 0.25); border: 1px solid rgba(168, 85, 247, 0.5); color: #e9d5ff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
+          👨‍🏫 Dhaka Sensei
         </button>
         <button type="button" onclick="fillStaff('staff@fusioneducation.com', 'staff123', 'Dinajpur')" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
           💼 Dinajpur Staff
@@ -149,8 +152,8 @@
         <button type="button" onclick="fillStaff('bogura@fusion.com', 'password123', 'Bogura')" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
           💼 Bogura Staff
         </button>
-        <button type="button" onclick="fillStaff('dhaka.instructor@fusion.com', 'password123', 'Dhaka')" style="background: rgba(168, 85, 247, 0.25); border: 1px solid rgba(168, 85, 247, 0.5); color: #e9d5ff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
-          👨‍🏫 Dhaka Sensei
+        <button type="button" onclick="fillStaff('rangpur.staff@fusion.com', 'password123', 'Rangpur')" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
+          💼 Rangpur Staff
         </button>
       </div>
       <div style="font-size: 0.76rem; color: #94a3b8;">
@@ -173,7 +176,9 @@
         <label for="staffBranch">Active Branch</label>
         <select id="staffBranch" required>
           <option value="Dinajpur">Dinajpur Branch</option>
+          <option value="Dhaka">Dhaka Branch</option>
           <option value="Bogura">Bogura Branch</option>
+          <option value="Rangpur">Rangpur Branch</option>
         </select>
       </div>
 
@@ -200,9 +205,62 @@
     }
 
     const demoStaffDirectory = {
-      'staff@fusioneducation.com': { password: 'staff123', name: 'Mahmudul Hasan', branch: 'Dinajpur', role: 'Branch Counselor' },
-      'dinajpur@fusion.com': { password: 'password123', name: 'Tariqul Islam', branch: 'Dinajpur', role: 'Academic Coordinator' },
-      'bogura@fusion.com': { password: 'password123', name: 'Nusrat Jahan', branch: 'Bogura', role: 'Branch Manager' }
+      'staff@fusioneducation.com': { 
+        password: 'staff123', 
+        name: 'Mahmudul Hasan', 
+        branch: 'Dinajpur', 
+        role: 'staff',
+        position: 'Branch Counselor',
+        permissions: ['view_students', 'edit_students', 'manage_admissions', 'counseling', 'view_fees', 'manage_fees', 'view_reports']
+      },
+      'instructor@fusion.com': { 
+        password: 'password123', 
+        name: 'Rahim Sensei (Tanaka)', 
+        branch: 'Dinajpur', 
+        role: 'instructor',
+        position: 'Head Japanese Instructor',
+        permissions: ['view_students', 'edit_students', 'manage_attendance', 'manage_batches', 'manage_routines', 'manage_academic_progress', 'manage_admissions', 'manage_readmissions', 'counseling', 'view_fees', 'manage_fees', 'custom_student_fee', 'view_documents', 'manage_documents', 'view_staff', 'edit_staff', 'manage_staff_permissions', 'view_reports', 'export_reports']
+      },
+      'dinajpur@fusion.com': { 
+        password: 'password123', 
+        name: 'Tariqul Islam', 
+        branch: 'Dinajpur', 
+        role: 'staff',
+        position: 'Academic Coordinator',
+        permissions: ['view_students', 'manage_admissions', 'counseling', 'view_fees', 'view_reports']
+      },
+      'dhaka.instructor@fusion.com': { 
+        password: 'password123', 
+        name: 'Kenji Sato', 
+        branch: 'Dhaka', 
+        role: 'instructor',
+        position: 'Senior Japanese Instructor',
+        permissions: ['view_students', 'edit_students', 'manage_attendance', 'manage_batches', 'manage_routines', 'manage_academic_progress', 'view_documents', 'view_fees', 'view_reports']
+      },
+      'dhaka.staff@fusion.com': { 
+        password: 'password123', 
+        name: 'Farhana Ahmed', 
+        branch: 'Dhaka', 
+        role: 'staff',
+        position: 'Branch Counselor',
+        permissions: ['view_students', 'edit_students', 'manage_admissions', 'counseling', 'view_fees', 'manage_fees']
+      },
+      'bogura@fusion.com': { 
+        password: 'password123', 
+        name: 'Nusrat Jahan', 
+        branch: 'Bogura', 
+        role: 'staff',
+        position: 'Branch Manager',
+        permissions: ['view_students', 'edit_students', 'manage_admissions', 'counseling', 'view_fees', 'manage_fees', 'view_reports', 'export_reports']
+      },
+      'rangpur.staff@fusion.com': { 
+        password: 'password123', 
+        name: 'Kamal Hossain', 
+        branch: 'Rangpur', 
+        role: 'staff',
+        position: 'Branch Counselor',
+        permissions: ['view_students', 'manage_admissions', 'counseling', 'view_fees']
+      }
     };
 
     const loginForm = document.getElementById('staffLoginForm');
@@ -246,20 +304,37 @@
           }
         }
 
+        const cleanEmail = email.toLowerCase();
+        const demoStaff = demoStaffDirectory[cleanEmail];
+
         if (response && response.ok) {
           const result = await response.json();
+          const staffName = (result.staff && result.staff.name) ? result.staff.name : (demoStaff?.name || email.split('@')[0].toUpperCase());
+          const staffRole = (result.staff && result.staff.role) ? result.staff.role : (demoStaff?.role || 'staff');
+          const staffPermissions = (result.staff && result.staff.permissions && result.staff.permissions.length > 0) ? result.staff.permissions : (demoStaff?.permissions || []);
+          const staffPosition = demoStaff?.position || (staffRole === 'instructor' ? 'Japanese Instructor' : 'Branch Counselor');
+          
           sessionStorage.setItem('fusion_staff_session', 'true');
           sessionStorage.setItem('fusion_staff_email', email);
           sessionStorage.setItem('fusion_staff_branch', branch);
-          if (result.staff && result.staff.name) {
-            sessionStorage.setItem('fusion_staff_name', result.staff.name);
-          }
+          sessionStorage.setItem('fusion_staff_name', staffName);
+          sessionStorage.setItem('fusion_staff_role', staffRole);
+          sessionStorage.setItem('fusion_staff_position', staffPosition);
+          sessionStorage.setItem('fusion_staff_permissions', JSON.stringify(staffPermissions));
+
+          localStorage.setItem('fusion_staff_branch', branch);
+          localStorage.setItem('fusion_staff_email', email);
+          localStorage.setItem('fusion_staff_name', staffName);
+          localStorage.setItem('fusion_staff_role', staffRole);
+          localStorage.setItem('fusion_staff_position', staffPosition);
+          localStorage.setItem('fusion_staff_permissions', JSON.stringify(staffPermissions));
+
           loginAlert.className = 'alert alert--success';
-          loginAlert.textContent = 'Login successful! Redirecting to Staff Portal...';
+          loginAlert.textContent = `Welcome ${staffName}! Redirecting to ${staffPosition} Portal (${branch} Branch)...`;
           loginAlert.style.display = 'block';
           setTimeout(() => {
             window.location.href = 'staff-dashboard.html';
-          }, 400);
+          }, 350);
           return;
         } else if (response && response.status !== 404) {
           const result = await response.json().catch(() => ({}));
@@ -272,8 +347,6 @@
         }
 
         // Offline / Live Server Static Mode Fallback
-        const cleanEmail = email.toLowerCase();
-        const demoStaff = demoStaffDirectory[cleanEmail];
         const validPasses = ['staff123', 'password123', 'admin123', '123456'];
         if (demoStaff && demoStaff.password) validPasses.unshift(demoStaff.password);
 
@@ -287,17 +360,31 @@
         }
 
         const staffName = demoStaff ? demoStaff.name : email.split('@')[0].toUpperCase();
+        const staffRole = demoStaff ? demoStaff.role : 'staff';
+        const staffPosition = demoStaff?.position || (staffRole === 'instructor' ? 'Japanese Instructor' : 'Branch Counselor');
+        const staffPermissions = demoStaff?.permissions || [];
+
         sessionStorage.setItem('fusion_staff_session', 'true');
         sessionStorage.setItem('fusion_staff_email', email);
         sessionStorage.setItem('fusion_staff_branch', branch);
         sessionStorage.setItem('fusion_staff_name', staffName);
+        sessionStorage.setItem('fusion_staff_role', staffRole);
+        sessionStorage.setItem('fusion_staff_position', staffPosition);
+        sessionStorage.setItem('fusion_staff_permissions', JSON.stringify(staffPermissions));
+
+        localStorage.setItem('fusion_staff_branch', branch);
+        localStorage.setItem('fusion_staff_email', email);
+        localStorage.setItem('fusion_staff_name', staffName);
+        localStorage.setItem('fusion_staff_role', staffRole);
+        localStorage.setItem('fusion_staff_position', staffPosition);
+        localStorage.setItem('fusion_staff_permissions', JSON.stringify(staffPermissions));
 
         loginAlert.className = 'alert alert--success';
-        loginAlert.textContent = `Welcome ${staffName}! Redirecting to Staff Dashboard...`;
+        loginAlert.textContent = `Welcome ${staffName}! Redirecting to ${staffPosition} Portal (${branch} Branch)...`;
         loginAlert.style.display = 'block';
         setTimeout(() => {
           window.location.href = 'staff-dashboard.html';
-        }, 400);
+        }, 350);
 
       } catch (error) {
         sessionStorage.setItem('fusion_staff_session', 'true');

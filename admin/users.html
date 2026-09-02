@@ -375,7 +375,10 @@
                         <div class="form-group">
                             <label>Assigned Branch *</label>
                             <select id="userBranch" required class="form-control">
-                                <!-- Populated dynamically -->
+                                <option value="Dinajpur">Dinajpur Branch</option>
+                                <option value="Dhaka">Dhaka Branch</option>
+                                <option value="Bogura">Bogura Branch</option>
+                                <option value="Rangpur">Rangpur Branch</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -685,7 +688,11 @@
 
         async function deleteUser(userId, userName) {
             if (confirm(`Are you sure you want to delete account for ${userName}?`)) {
-                await DAO.Users.delete(userId);
+                const res = await DAO.Users.delete(userId);
+                if (res && res.error) {
+                    showToast(res.error, 'error');
+                    return;
+                }
                 showToast(`User ${userName} deleted successfully.`, 'success');
                 await loadUsers();
             }
@@ -744,11 +751,13 @@
 
             try {
                 if (userId) {
-                    await DAO.Users.update(userId, payload);
+                    const res = await DAO.Users.update(userId, payload);
+                    if (res && res.error) throw new Error(res.error);
                     showToast('User account updated successfully!', 'success');
                 } else {
                     payload.password = password || 'password123';
-                    await DAO.Users.add(payload);
+                    const res = await DAO.Users.add(payload);
+                    if (res && res.error) throw new Error(res.error);
                     showToast('New user account created successfully!', 'success');
                 }
                 closeUserModal();

@@ -38,5 +38,15 @@
     "phone": "+880 1733 000333",
     "email": "rangpur@fusioneducationbd.com",
     "status": "active"
+  },
+  {
+    "id": "branch_1788342531624",
+    "name": "thailand",
+    "displayName": "thailend 1",
+    "city": "sdfghj",
+    "address": "sdfghj",
+    "phone": "01723372217",
+    "email": "",
+    "status": "active"
   }
 ]

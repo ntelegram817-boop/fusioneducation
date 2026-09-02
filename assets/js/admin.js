@@ -1353,6 +1353,7 @@
             const branchStr = adm.branch ? (adm.branch.charAt(0).toUpperCase() + adm.branch.slice(1) + ' Branch') : 'Dinajpur Branch';
             const status = (adm.status || 'pending').toLowerCase();
             const isAdmitted = status === 'admitted' || status === 'approved' || status === 'active';
+            const studentName = adm.fullName || adm.name || adm.studentName || 'Student Name';
 
             const statusBadgeHtml = isAdmitted
                 ? `<span class="badge" style="background:rgba(16,185,129,0.2); color:#6ee7b7; border:1px solid rgba(16,185,129,0.4);"><i class="fas fa-check-circle"></i> Admitted Student</span>`
@@ -1369,47 +1370,47 @@
                   `).join('')
                 : '<span style="color:var(--text-secondary); font-size:0.8rem;">No documents</span>';
 
-            const safeId = adm.id || adm.applicationNumber;
+            const safeId = adm.id || adm.applicationNumber || adm.applicationId;
 
             return `
-                <div class="item-card" style="display:flex; gap:1.25rem; align-items:flex-start; padding:1.35rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-light); border-radius:16px; margin-bottom:1.1rem; flex-wrap:wrap;">
-                    <img src="${photoSrc}" alt="Applicant Photo" style="width:75px; height:75px; border-radius:14px; object-fit:cover; border:2px solid ${isAdmitted ? '#10b981' : '#f59e0b'}; flex-shrink:0; background:#1e293b;">
+                <div class="item-card" style="display:flex; gap:1.25rem; align-items:flex-start; padding:1.35rem; background:#0f172a; border:1px solid rgba(148,163,184,0.25); border-radius:16px; margin-bottom:1.1rem; flex-wrap:wrap;">
+                    <img src="${photoSrc}" alt="Applicant Photo" style="width:75px; height:75px; border-radius:14px; object-fit:cover; border:2px solid ${isAdmitted ? '#10b981' : '#f59e0b'}; flex-shrink:0; background:#1e293b;" onerror="this.src='../assets/images/student-placeholder.jpg'">
                     <div style="flex:1; min-width:260px;">
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.4rem;">
                             <div>
                                 <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
-                                    <h3 style="margin:0; font-size:1.18rem; color:#fff;">${adm.fullName || 'Student Name'}</h3>
+                                    <h3 style="margin:0; font-size:1.18rem; color:#ffffff !important; font-weight:700;">${studentName}</h3>
                                     ${statusBadgeHtml}
                                 </div>
                                 <div style="margin-top:0.25rem;">
-                                    <span style="font-size:0.82rem; color:var(--primary); font-weight:700; letter-spacing:0.02em;">${adm.applicationNumber || adm.id || 'FEBD-APP'}</span>
-                                    <span style="color:var(--text-secondary); font-size:0.78rem; margin-left:0.5rem;">• Submitted: ${dateStr}</span>
+                                    <span style="font-size:0.82rem; color:#38bdf8; font-weight:700; letter-spacing:0.02em;">${adm.applicationNumber || adm.id || 'FEBD-APP'}</span>
+                                    <span style="color:#94a3b8; font-size:0.78rem; margin-left:0.5rem;">• Submitted: ${dateStr}</span>
                                 </div>
                             </div>
                             <span class="badge" style="background:rgba(37,99,235,0.2); color:#93c5fd; font-size:0.75rem; padding:0.25rem 0.65rem;">${branchStr}</span>
                         </div>
                         
-                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:0.5rem; font-size:0.85rem; color:var(--text-secondary); margin:0.85rem 0;">
-                            <div><i class="fas fa-book" style="color:var(--primary); width:16px;"></i> <strong>Course:</strong> ${adm.course || 'N/A'} ${adm.courseLevel ? `(${adm.courseLevel})` : ''}</div>
-                            <div><i class="fas fa-envelope" style="color:var(--primary); width:16px;"></i> <strong>Email:</strong> ${adm.email || 'N/A'}</div>
-                            <div><i class="fas fa-phone" style="color:var(--primary); width:16px;"></i> <strong>Phone:</strong> ${adm.phone || 'N/A'}</div>
-                            <div><i class="fas fa-passport" style="color:var(--primary); width:16px;"></i> <strong>Visa:</strong> ${adm.visaType ? adm.visaType.toUpperCase() : 'N/A'}</div>
-                            <div><i class="fas fa-map-marker-alt" style="color:var(--primary); width:16px;"></i> <strong>Location:</strong> ${adm.city || ''}${adm.district ? ', ' + adm.district : ''}</div>
-                            <div><i class="fas fa-user-shield" style="color:var(--primary); width:16px;"></i> <strong>Emergency:</strong> ${adm.emergencyName || 'N/A'} (${adm.emergencyPhone || ''})</div>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:0.5rem; font-size:0.85rem; color:#cbd5e1; margin:0.85rem 0;">
+                            <div><i class="fas fa-book" style="color:#38bdf8; width:16px;"></i> <span style="color:#94a3b8;">Course:</span> <strong style="color:#ffffff;">${adm.course || 'N/A'} ${adm.courseLevel ? `(${adm.courseLevel})` : ''}</strong></div>
+                            <div><i class="fas fa-envelope" style="color:#38bdf8; width:16px;"></i> <span style="color:#94a3b8;">Email:</span> <strong style="color:#ffffff;">${adm.email || 'N/A'}</strong></div>
+                            <div><i class="fas fa-phone" style="color:#38bdf8; width:16px;"></i> <span style="color:#94a3b8;">Phone:</span> <strong style="color:#ffffff;">${adm.phone || 'N/A'}</strong></div>
+                            <div><i class="fas fa-passport" style="color:#38bdf8; width:16px;"></i> <span style="color:#94a3b8;">Visa:</span> <strong style="color:#ffffff;">${adm.visaType ? adm.visaType.toUpperCase() : 'N/A'}</strong></div>
+                            <div><i class="fas fa-map-marker-alt" style="color:#38bdf8; width:16px;"></i> <span style="color:#94a3b8;">Location:</span> <strong style="color:#ffffff;">${adm.city || ''}${adm.district ? ', ' + adm.district : ''}</strong></div>
+                            <div><i class="fas fa-user-shield" style="color:#38bdf8; width:16px;"></i> <span style="color:#94a3b8;">Emergency:</span> <strong style="color:#ffffff;">${adm.emergencyName || 'N/A'} (${adm.emergencyPhone || ''})</strong></div>
                         </div>
 
-                        <div style="margin-top:0.85rem; padding-top:0.85rem; border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+                        <div style="margin-top:0.85rem; padding-top:0.85rem; border-top:1px solid rgba(148,163,184,0.15); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
                             <div style="display:flex; align-items:center; flex-wrap:wrap;">
-                                <strong style="font-size:0.8rem; color:#fff; margin-right:0.5rem;"><i class="fas fa-paperclip"></i> Documents (${docs.length}):</strong>
+                                <strong style="font-size:0.8rem; color:#ffffff; margin-right:0.5rem;"><i class="fas fa-paperclip"></i> Documents (${docs.length}):</strong>
                                 ${docsHtml}
                             </div>
                             
                             <!-- Admin Actions (View & Delete only - Staff handles Edit) -->
                             <div style="display:flex; gap:0.5rem; align-items:center;">
-                                <button type="button" class="btn outline" onclick="openAdminViewModal('${safeId}')" style="font-size:0.78rem; padding:0.4rem 0.85rem; background:rgba(37,99,235,0.12); color:#93c5fd; border-color:rgba(37,99,235,0.35);">
+                                <button type="button" class="btn outline" onclick="openAdminViewModal('${safeId}')" style="font-size:0.78rem; padding:0.4rem 0.85rem; background:rgba(37,99,235,0.18); color:#93c5fd; border-color:rgba(37,99,235,0.4); cursor:pointer;">
                                     <i class="fas fa-eye"></i> View Profile
                                 </button>
-                                <button type="button" class="btn danger" onclick="deleteAdmission('${safeId}')" style="font-size:0.78rem; padding:0.4rem 0.75rem;">
+                                <button type="button" class="btn danger" onclick="deleteAdmission('${safeId}')" style="font-size:0.78rem; padding:0.4rem 0.75rem; cursor:pointer;">
                                     <i class="fas fa-trash-alt"></i> Delete
                                 </button>
                             </div>
@@ -1482,8 +1483,9 @@
 
         const status = (student.status || 'pending').toLowerCase();
         const isAdmitted = status === 'admitted' || status === 'approved' || status === 'active';
+        const studentName = student.fullName || student.name || student.studentName || 'Student Profile';
 
-        if (nameEl) nameEl.textContent = student.fullName || 'Student Profile';
+        if (nameEl) nameEl.textContent = studentName;
         if (badgeEl) {
             badgeEl.className = isAdmitted ? 'badge badge-success' : 'badge badge-warning';
             badgeEl.style.background = isAdmitted ? 'rgba(16,185,129,0.2)' : 'rgba(245,158,11,0.2)';
@@ -1500,28 +1502,28 @@
                     <i class="fas fa-file-download"></i> ${d.name || `Document ${i+1}`}
                 </a>
               `).join('')
-            : '<span style="color:var(--text-secondary); font-size:0.88rem;">No documents uploaded.</span>';
+            : '<span style="color:#94a3b8; font-size:0.88rem;">No documents uploaded.</span>';
 
         if (modalBody) {
             modalBody.innerHTML = `
                 <div style="display:flex; gap:1.5rem; align-items:flex-start; margin-bottom:1.5rem; flex-wrap:wrap;">
-                    <img src="${photoSrc}" alt="Photo" style="width:100px; height:100px; border-radius:18px; object-fit:cover; border:2px solid var(--primary); background:#1e293b;">
+                    <img src="${photoSrc}" alt="Photo" style="width:100px; height:100px; border-radius:18px; object-fit:cover; border:2px solid #38bdf8; background:#1e293b;" onerror="this.src='../assets/images/student-placeholder.jpg'">
                     <div style="flex:1; min-width:240px;">
-                        <h3 style="margin:0 0 0.25rem; font-size:1.35rem; color:#fff;">${student.fullName || 'Student Name'}</h3>
-                        <p style="margin:0 0 0.5rem; color:var(--primary); font-weight:700; font-size:0.95rem;">Application Number: ${student.applicationNumber || student.id || 'N/A'}</p>
-                        <p style="margin:0; color:var(--text-secondary); font-size:0.85rem;">Branch: <strong>${student.branch ? (student.branch.toUpperCase() + ' Branch') : 'Dinajpur Branch'}</strong> • Applied: <strong>${student.submittedAt ? new Date(student.submittedAt).toLocaleDateString('en-GB') : 'Recent'}</strong></p>
+                        <h3 style="margin:0 0 0.25rem; font-size:1.35rem; color:#ffffff !important; font-weight:700;">${studentName}</h3>
+                        <p style="margin:0 0 0.5rem; color:#38bdf8; font-weight:700; font-size:0.95rem;">Application Number: ${student.applicationNumber || student.id || 'N/A'}</p>
+                        <p style="margin:0; color:#94a3b8; font-size:0.85rem;">Branch: <strong style="color:#ffffff;">${student.branch ? (student.branch.toUpperCase() + ' Branch') : 'Dinajpur Branch'}</strong> • Applied: <strong style="color:#ffffff;">${student.submittedAt ? new Date(student.submittedAt).toLocaleDateString('en-GB') : 'Recent'}</strong></p>
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; background:rgba(255,255,255,0.02); padding:1.25rem; border-radius:14px; border:1px solid var(--border-light); margin-bottom:1.25rem;">
-                    <div><span style="color:var(--text-secondary); font-size:0.8rem; display:block;">EMAIL</span><strong>${student.email || 'N/A'}</strong></div>
-                    <div><span style="color:var(--text-secondary); font-size:0.8rem; display:block;">PHONE</span><strong>${student.phone || 'N/A'}</strong></div>
-                    <div><span style="color:var(--text-secondary); font-size:0.8rem; display:block;">DATE OF BIRTH</span><strong>${student.dateOfBirth || 'N/A'} (${student.gender || 'N/A'})</strong></div>
-                    <div><span style="color:var(--text-secondary); font-size:0.8rem; display:block;">LOCATION</span><strong>${student.city || ''}${student.district ? ', ' + student.district : ''}</strong></div>
-                    <div><span style="color:var(--text-secondary); font-size:0.8rem; display:block;">COURSE APPLIED</span><strong>${student.course || 'N/A'} ${student.courseLevel ? `(${student.courseLevel})` : ''}</strong></div>
-                    <div><span style="color:var(--text-secondary); font-size:0.8rem; display:block;">VISA TYPE</span><strong>${student.visaType ? student.visaType.toUpperCase() : 'N/A'}</strong></div>
-                    <div><span style="color:var(--text-secondary); font-size:0.8rem; display:block;">HIGHEST EDUCATION</span><strong>${student.highestEducation ? student.highestEducation.toUpperCase() : 'N/A'}</strong></div>
-                    <div><span style="color:var(--text-secondary); font-size:0.8rem; display:block;">EMERGENCY CONTACT</span><strong>${student.emergencyName || 'N/A'} (${student.emergencyPhone || ''})</strong></div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:14px; border:1px solid rgba(148,163,184,0.18); margin-bottom:1.25rem;">
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">EMAIL ADDRESS</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.email || 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">PHONE NUMBER</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.phone || 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">DATE OF BIRTH / GENDER</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.dateOfBirth || 'N/A'} (${student.gender || 'N/A'})</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">LOCATION / ADDRESS</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.city || ''}${student.district ? ', ' + student.district : ''}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">COURSE ENROLLED</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.course || 'N/A'} ${student.courseLevel ? `(${student.courseLevel})` : ''}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">VISA TARGET</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.visaType ? student.visaType.toUpperCase() : 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">HIGHEST EDUCATION</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.highestEducation ? student.highestEducation.toUpperCase() : 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">EMERGENCY CONTACT</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.emergencyName || 'N/A'} (${student.emergencyPhone || ''})</strong></div>
                 </div>
 
                 <div style="margin-bottom:1.25rem;">
@@ -1530,13 +1532,13 @@
                 </div>
 
                 ${student.comment ? `
-                    <div style="background:rgba(255,255,255,0.02); padding:1rem; border-radius:10px; border:1px solid var(--border-light); margin-bottom:1.25rem;">
-                        <span style="color:var(--text-secondary); font-size:0.8rem; display:block;">STUDENT COMMENTS / NOTES</span>
+                    <div style="background:rgba(255,255,255,0.02); padding:1rem; border-radius:10px; border:1px solid rgba(148,163,184,0.18); margin-bottom:1.25rem;">
+                        <span style="color:#94a3b8; font-size:0.75rem; font-weight:600; display:block; text-transform:uppercase;">STUDENT COMMENTS / NOTES</span>
                         <p style="margin:0.25rem 0 0; color:#e2e8f0; font-size:0.9rem;">${student.comment}</p>
                     </div>
                 ` : ''}
 
-                <div style="background:rgba(56,189,248,0.06); padding:0.85rem; border-radius:10px; border:1px solid rgba(56,189,248,0.2); font-size:0.82rem; color:#bae6fd;">
+                <div style="background:rgba(56,189,248,0.08); padding:0.85rem 1rem; border-radius:10px; border:1px solid rgba(56,189,248,0.25); font-size:0.85rem; color:#bae6fd;">
                     <i class="fas fa-lock"></i> <strong>Read-Only View:</strong> To edit student records or update status to Admitted, please access the <strong>Staff Dashboard</strong>.
                 </div>
             `;

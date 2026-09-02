@@ -1,12 +1,53 @@
 [
   {
+    "id": "usr_inst_1788342774881",
+    "name": "Tariq Sensei llll",
+    "email": "tariq.senseib@fusion.com",
+    "password": "74107410",
+    "role": "instructor",
+    "branch": "thailand",
+    "status": "active"
+  },
+  {
+    "id": "usr_inst_1788332932606",
+    "name": "Tariq Sensei",
+    "email": "tariq.sensei@fusion.com",
+    "password": "password123",
+    "role": "instructor",
+    "branch": "Bogura",
+    "status": "active"
+  },
+  {
+    "id": "usr_inst_001",
+    "name": "Rahim Sensei (Tanaka)",
+    "email": "instructor@fusion.com",
+    "password": "password123",
+    "role": "instructor",
+    "branch": "Dinajpur",
+    "status": "active"
+  },
+  {
+    "id": "usr_inst_002",
+    "name": "Kenji Sato",
+    "email": "dhaka.instructor@fusion.com",
+    "password": "password123",
+    "role": "instructor",
+    "branch": "Dhaka",
+    "status": "active"
+  },
+  {
     "id": "usr_staff_001",
     "name": "Mahmudul Hasan",
     "email": "staff@fusioneducation.com",
     "password": "staff123",
     "role": "staff",
     "branch": "Dinajpur",
-    "status": "active"
+    "status": "active",
+    "permissions": [
+      "view_students"
+    ],
+    "createdAt": "2026-08-01T08:00:00.000Z",
+    "updatedAt": "2026-09-02T11:08:51.092Z"
   },
   {
     "id": "usr_staff_002",
@@ -27,12 +68,21 @@
     "status": "active"
   },
   {
-    "id": "usr_inst_001",
-    "name": "Rahim Sensei (Tanaka)",
-    "email": "instructor@fusion.com",
+    "id": "usr_staff_004",
+    "name": "Farhana Ahmed",
+    "email": "dhaka.staff@fusion.com",
     "password": "password123",
-    "role": "instructor",
-    "branch": "Dinajpur",
+    "role": "staff",
+    "branch": "Dhaka",
+    "status": "active"
+  },
+  {
+    "id": "usr_staff_005",
+    "name": "Kamal Hossain",
+    "email": "rangpur.staff@fusion.com",
+    "password": "password123",
+    "role": "staff",
+    "branch": "Rangpur",
     "status": "active"
   }
 ]

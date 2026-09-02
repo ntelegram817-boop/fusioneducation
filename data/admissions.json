@@ -1,5 +1,81 @@
 [
   {
+    "id": "FEBD-2026-292",
+    "applicationNumber": "FEBD-2026-292",
+    "fullName": "Sabbir Hossain",
+    "email": "",
+    "phone": "01755123456",
+    "course": "JLPT N5 - Beginner",
+    "branch": "Dinajpur",
+    "status": "admitted",
+    "batch": "Batch 01",
+    "city": "",
+    "comment": "",
+    "photoUrl": "../assets/images/student-placeholder.jpg",
+    "submittedAt": "2026-08-20T00:00:00.000Z"
+  },
+  {
+    "id": "FEBD-2026-565",
+    "applicationNumber": "FEBD-2026-565",
+    "fullName": "Sabbir Hossain",
+    "email": "",
+    "phone": "01755123456",
+    "course": "JLPT N5 - Beginner",
+    "branch": "Dinajpur",
+    "status": "admitted",
+    "batch": "Batch 01",
+    "city": "",
+    "comment": "",
+    "photoUrl": "../assets/images/student-placeholder.jpg",
+    "submittedAt": "+060820-02-01T18:00:00.000Z"
+  },
+  {
+    "id": "FEBD-2026-004",
+    "applicationId": "FEBD-2026-004",
+    "applicationNumber": "FEBD-2026-004",
+    "submittedAt": "2026-09-02T04:38:30.625Z",
+    "fullName": "Manik Ill",
+    "email": "manik2025245@gmail.com",
+    "phone": "01723372217",
+    "dateOfBirth": "2000-12-12",
+    "gender": "female",
+    "address": "Dinajpur 5230",
+    "city": "Dinajpur",
+    "district": "Dinajpur",
+    "highestEducation": "hsc",
+    "course": "JLPT N3 - Advanced",
+    "courseLevel": "N3",
+    "branch": "dinajpur",
+    "japaneseExperience": "self-study",
+    "visaType": "ssw",
+    "emergencyName": "Manik I",
+    "emergencyPhone": "01723372217",
+    "comment": "",
+    "feeInfo": {
+      "course": "JLPT N3 - Advanced",
+      "level": "N3",
+      "baseFee": 2000,
+      "finalFee": 2000
+    },
+    "photoUrl": "/uploads/photos/1788323910619_youncs.png",
+    "documentUrl": "/uploads/documents/1788323910620_hrx2nw.png",
+    "documentUrls": [
+      "/uploads/documents/1788323910620_hrx2nw.png"
+    ],
+    "documents": [
+      {
+        "name": "Screenshot (7).png",
+        "url": "/uploads/documents/1788323910620_hrx2nw.png",
+        "size": 1165863,
+        "type": "image/png"
+      }
+    ],
+    "status": "admitted",
+    "ipAddress": "::1",
+    "admittedAt": "2026-09-02T04:38:58.802Z",
+    "updatedAt": "2026-09-02T04:38:58.830Z"
+  },
+  {
     "id": "FEBD-2026-003",
     "applicationId": "FEBD-2026-003",
     "applicationNumber": "FEBD-2026-003",
@@ -22,10 +98,10 @@
     "emergencyPhone": "01723372217",
     "comment": "",
     "feeInfo": {
-      "course": "JLPT N5",
-      "level": "Beginner",
-      "baseFee": 15000,
-      "finalFee": 1000
+      "total": "2,000 BDT",
+      "paid": "1,002 BDT",
+      "due": "998 BDT",
+      "status": "Partially Paid"
     },
     "photoUrl": "/uploads/photos/1788258943110_t5u450.jpg",
     "documentUrl": "/uploads/documents/1788258943111_uikzvj.pdf",
@@ -44,34 +120,24 @@
     "ipAddress": "::1",
     "batch": "Batch 14 - JLPT N5 Morning",
     "notes": "Counseling verified. Approved for N5 intake.",
-    "updatedAt": "2026-09-01T11:38:17.157Z"
-  },
-  {
-    "applicationNumber": "FEBD-2026-001",
-    "submittedAt": "2026-09-01T10:30:12.574Z",
-    "fullName": "Md Shakil",
-    "email": "shakil@example.com",
-    "phone": "01712345678",
-    "dateOfBirth": "2001-05-15",
-    "gender": "male",
-    "address": "House 12, Road 4",
-    "city": "Dinajpur Sadar",
-    "district": "Dinajpur",
-    "highestEducation": "bachelor",
-    "course": "JLPT N5 - Beginner",
-    "courseLevel": "N5",
-    "branch": "dinajpur",
-    "japaneseExperience": "self-study",
-    "visaType": "student",
-    "emergencyName": "Md Ali",
-    "emergencyPhone": "01912345678",
-    "comment": "I want to study in Japan.",
-    "feeInfo": null,
-    "photoUrl": "/uploads/photos/1788258612567_1g381l.jpg",
-    "documentUrl": null,
-    "documentUrls": [],
-    "documents": [],
-    "status": "pending",
-    "ipAddress": "::1"
+    "updatedAt": "2026-09-01T11:38:17.157Z",
+    "payments": [
+      {
+        "id": "pay_1788323427475_wevu",
+        "amount": 2,
+        "date": "2026-09-02",
+        "recordedBy": "Mahmudul Hasan (staff)",
+        "note": "samiul",
+        "method": "Recorded"
+      },
+      {
+        "id": "pay_manik_01",
+        "amount": 1000,
+        "date": "2026-09-01T10:00:00.000Z",
+        "recordedBy": "Mahmudul Hasan (Staff)",
+        "note": "Admission deposit",
+        "method": "Recorded"
+      }
+    ]
   }
 ]
