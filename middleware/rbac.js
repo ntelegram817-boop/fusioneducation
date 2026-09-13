@@ -1,7 +1,7 @@
 // ============================================================
 // FUSION EDUCATION BD — RBAC & FEE ENGINE MIDDLEWARE
 // ============================================================
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 const dataDir = path.join(__dirname, '..', 'data');
@@ -90,7 +90,7 @@ function getAuthenticatedUser(req) {
   if (studentId) {
     const students = readJson('students.json', []);
     const cleanId = String(studentId).toLowerCase();
-    const st = students.find(s => 
+    const st = students.find(s =>
       (s.identifier && s.identifier.toLowerCase() === cleanId) ||
       (s.email && s.email.toLowerCase() === cleanId)
     );
@@ -150,27 +150,87 @@ function calculateActiveMonths(enrollmentDate, targetDate = new Date()) {
  */
 function calculateStudentFees(student, course = null, targetDate = new Date()) {
   const courses = readJson('courses.json', []);
-  const associatedCourse = course || courses.find(c => c.id === student.courseId || c.title === student.currentCourse) || courses[0];
+  const associatedCourse = course || courses.find(c =>
+    (student.courseId && c.id === student.courseId) ||
+    (c.title && student.currentCourse && c.title.toLowerCase() === student.currentCourse.toLowerCase()) ||
+    (c.title && student.course && c.title.toLowerCase() === student.course.toLowerCase()) ||
+    (c.level && student.courseLevel && c.level.toLowerCase() === student.courseLevel.toLowerCase())
+  ) || courses[0];
 
-  const initialDurationMonths = associatedCourse?.initialDurationMonths || 3;
-  const standardMonthlyFee = associatedCourse?.monthlyFee !== undefined ? Number(associatedCourse.monthlyFee) : 1000;
-  const admissionFee = associatedCourse?.admissionFee !== undefined ? Number(associatedCourse.admissionFee) : 1000;
+  const parseFee = val => typeof val === 'number' ? val : (parseInt(String(val || 0).replace(/[^\d]/g, ''), 10) || 0);
 
-  // Student specific custom rate or course standard
-  const effectiveMonthlyRate = (student.customMonthlyFee !== null && student.customMonthlyFee !== undefined && !isNaN(Number(student.customMonthlyFee)))
-    ? Number(student.customMonthlyFee)
-    : standardMonthlyFee;
-
+  const billingPlan = student.billingPlan || student.feeInfo?.billingPlan || associatedCourse?.billingType || 'course_fee';
+  const initialDurationMonths = student.enrolledDurationMonths || student.durationMonths || student.feeInfo?.durationMonths || student.feeInfo?.initialDurationMonths || associatedCourse?.durationMonths || associatedCourse?.initialDurationMonths || 3;
+  const activeMonths = calculateActiveMonths(student.enrollmentDate || student.submittedAt, targetDate);
   const specialDiscount = Number(student.specialDiscount || 0);
-  const activeMonths = calculateActiveMonths(student.enrollmentDate, targetDate);
-
-  // Total Accrued Fee = Admission Fee + (Active Months * Effective Monthly Rate) - Special Discount
-  const totalTuitionAccrued = activeMonths * effectiveMonthlyRate;
-  const totalAccruedFee = Math.max(0, admissionFee + totalTuitionAccrued - specialDiscount);
-
-  // Sum all payments
   const payments = Array.isArray(student.payments) ? student.payments : [];
   const totalPaid = payments.reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+
+  if (billingPlan === 'course_fee') {
+    // ── Full Course Package Billing Plan ──
+    const courseRegularFee = Number(associatedCourse?.regularFee) || parseFee(associatedCourse?.fee) || 15000;
+    const lockedCourseFee = (student.feeInfo?.finalFee !== undefined && !isNaN(Number(student.feeInfo.finalFee)))
+      ? Number(student.feeInfo.finalFee)
+      : (student.enrolledCourseFee !== undefined ? Number(student.enrolledCourseFee) : courseRegularFee);
+
+    const totalAccruedFee = Math.max(0, lockedCourseFee - specialDiscount);
+    const balanceDue = Math.max(0, totalAccruedFee - totalPaid);
+
+    let status = 'Unpaid';
+    if (balanceDue === 0 && totalPaid > 0) {
+      status = 'Paid';
+    } else if (totalPaid > 0 && balanceDue > 0) {
+      status = 'Partially Paid';
+    }
+
+    return {
+      courseId: associatedCourse?.id || 'course-n5',
+      courseTitle: associatedCourse?.title || student.currentCourse || student.course,
+      billingPlan: 'course_fee',
+      initialDurationMonths,
+      activeMonths,
+      totalCourseFee: lockedCourseFee,
+      standardCourseFee: courseRegularFee,
+      effectiveMonthlyRate: 0,
+      admissionFee: 0,
+      specialDiscount,
+      totalTuitionAccrued: totalAccruedFee,
+      totalAccruedFee,
+      totalPaid,
+      balanceDue,
+      status,
+      payments
+    };
+  }
+
+  // ── Monthly Recurring Billing Plan (Event-Driven) ──
+  const courseMonthlyFee = associatedCourse?.monthlyEvent?.monthlyFee !== undefined 
+    ? Number(associatedCourse.monthlyEvent.monthlyFee) 
+    : (associatedCourse?.monthlyFee !== undefined ? Number(associatedCourse.monthlyFee) : 1500);
+  const courseAdmissionFee = associatedCourse?.monthlyEvent?.admissionFee !== undefined 
+    ? Number(associatedCourse.monthlyEvent.admissionFee) 
+    : (associatedCourse?.admissionFee !== undefined ? Number(associatedCourse.admissionFee) : 1000);
+
+  let lockedAdmissionFee = courseAdmissionFee;
+  if (student.enrolledAdmissionFee !== undefined && student.enrolledAdmissionFee !== null && !isNaN(Number(student.enrolledAdmissionFee))) {
+    lockedAdmissionFee = Number(student.enrolledAdmissionFee);
+  } else if (student.feeInfo?.admissionFee !== undefined && !isNaN(Number(student.feeInfo.admissionFee))) {
+    lockedAdmissionFee = Number(student.feeInfo.admissionFee);
+  }
+
+  let lockedMonthlyFee = courseMonthlyFee;
+  if (student.enrolledMonthlyFee !== undefined && student.enrolledMonthlyFee !== null && !isNaN(Number(student.enrolledMonthlyFee))) {
+    lockedMonthlyFee = Number(student.enrolledMonthlyFee);
+  } else if (student.feeInfo?.monthlyFee !== undefined && !isNaN(Number(student.feeInfo.monthlyFee))) {
+    lockedMonthlyFee = Number(student.feeInfo.monthlyFee);
+  }
+
+  const effectiveMonthlyRate = (student.customMonthlyFee !== null && student.customMonthlyFee !== undefined && !isNaN(Number(student.customMonthlyFee)))
+    ? Number(student.customMonthlyFee)
+    : lockedMonthlyFee;
+
+  const totalTuitionAccrued = activeMonths * effectiveMonthlyRate;
+  const totalAccruedFee = Math.max(0, lockedAdmissionFee + totalTuitionAccrued - specialDiscount);
   const balanceDue = Math.max(0, totalAccruedFee - totalPaid);
 
   let status = 'Unpaid';
@@ -182,13 +242,14 @@ function calculateStudentFees(student, course = null, targetDate = new Date()) {
 
   return {
     courseId: associatedCourse?.id || 'course-n5',
-    courseTitle: associatedCourse?.title || student.currentCourse,
+    courseTitle: associatedCourse?.title || student.currentCourse || student.course,
+    billingPlan: 'monthly_pay',
     initialDurationMonths,
     activeMonths,
-    standardMonthlyFee,
+    standardMonthlyFee: lockedMonthlyFee,
     effectiveMonthlyRate,
-    isCustomRate: effectiveMonthlyRate !== standardMonthlyFee,
-    admissionFee,
+    isCustomRate: (student.customMonthlyFee !== null && student.customMonthlyFee !== undefined) || (effectiveMonthlyRate !== courseMonthlyFee),
+    admissionFee: lockedAdmissionFee,
     specialDiscount,
     totalTuitionAccrued,
     totalAccruedFee,
@@ -205,6 +266,13 @@ function calculateStudentFees(student, course = null, targetDate = new Date()) {
 function recordAuditLog(action, details, targetType, targetId, targetName, performedBy) {
   try {
     const logs = readJson('auditLogs.json', []);
+    // Strip password from performedBy if it exists
+    let cleanPerformedBy = performedBy;
+    if (performedBy && performedBy.password) {
+      const { password, ...rest } = performedBy;
+      cleanPerformedBy = rest;
+    }
+
     const newEntry = {
       id: 'log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
       action,
@@ -212,7 +280,7 @@ function recordAuditLog(action, details, targetType, targetId, targetName, perfo
       targetType: targetType || 'general',
       targetId: targetId || 'n/a',
       targetName: targetName || 'n/a',
-      performedBy: performedBy || {
+      performedBy: cleanPerformedBy || {
         name: 'System',
         email: 'system@fusion.com',
         role: 'system',

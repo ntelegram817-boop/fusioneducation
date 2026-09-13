@@ -7,12 +7,24 @@ const { body, validationResult } = require('express-validator');
 const BD_PHONE_REGEX = /^(\+880|880|0)?1[3-9]\d{8}$/;
 
 const admissionValidationRules = [
-    // ── Personal Info ─────────────────────────────────────────
+    // ── Personal & Family Info ───────────────────────────────
     body('fullName')
         .trim()
         .escape()
         .notEmpty().withMessage('Full name is required.')
         .isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters.'),
+
+    body('fatherName')
+        .trim()
+        .escape()
+        .notEmpty().withMessage("Father's name is required.")
+        .isLength({ min: 2, max: 100 }).withMessage("Father's name must be between 2 and 100 characters."),
+
+    body('motherName')
+        .trim()
+        .escape()
+        .notEmpty().withMessage("Mother's name is required.")
+        .isLength({ min: 2, max: 100 }).withMessage("Mother's name must be between 2 and 100 characters."),
 
     body('email')
         .trim()
@@ -40,22 +52,64 @@ const admissionValidationRules = [
         .trim()
         .isIn(['male', 'female', 'other']).withMessage('Please select a valid gender.'),
 
+    body('nidBirthCert')
+        .optional({ checkFalsy: true })
+        .trim()
+        .escape()
+        .isLength({ max: 50 }).withMessage('National ID / Birth Certificate number is too long.'),
+
+    body('bloodGroup')
+        .optional({ checkFalsy: true })
+        .trim()
+        .isIn(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-', '']).withMessage('Please select a valid blood group.'),
+
+    body('occupation')
+        .trim()
+        .escape()
+        .notEmpty().withMessage('Occupation is required.')
+        .isLength({ max: 100 }),
+
+    body('religion')
+        .trim()
+        .escape()
+        .notEmpty().withMessage('Religion is required.')
+        .isLength({ max: 50 }),
+
+    // ── Address Information ───────────────────────────────────
     body('address')
         .trim()
         .escape()
-        .notEmpty().withMessage('Address is required.')
+        .notEmpty().withMessage('Residential address is required.')
         .isLength({ max: 300 }).withMessage('Address is too long.'),
 
     body('city')
         .trim()
         .escape()
-        .notEmpty().withMessage('City is required.')
+        .notEmpty().withMessage('Residential city / upazila is required.')
         .isLength({ max: 100 }),
 
     body('district')
         .trim()
         .escape()
-        .notEmpty().withMessage('District is required.')
+        .notEmpty().withMessage('Residential district is required.')
+        .isLength({ max: 100 }),
+
+    body('permanentAddress')
+        .trim()
+        .escape()
+        .notEmpty().withMessage('Permanent address is required.')
+        .isLength({ max: 300 }).withMessage('Permanent address is too long.'),
+
+    body('permanentCity')
+        .trim()
+        .escape()
+        .notEmpty().withMessage('Permanent city / upazila is required.')
+        .isLength({ max: 100 }),
+
+    body('permanentDistrict')
+        .trim()
+        .escape()
+        .notEmpty().withMessage('Permanent district is required.')
         .isLength({ max: 100 }),
 
     // ── Educational & Course Info ─────────────────────────────
@@ -76,7 +130,7 @@ const admissionValidationRules = [
 
     body('branch')
         .trim()
-        .isIn(['dinajpur', 'bogura']).withMessage('Please select a valid branch.'),
+        .notEmpty().withMessage('Please select a valid branch.'),
 
     body('japaneseExperience')
         .trim()

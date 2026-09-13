@@ -10,16 +10,6 @@
     "status": "active"
   },
   {
-    "id": "branch_dhaka",
-    "name": "Dhaka",
-    "displayName": "Dhaka Branch",
-    "city": "Dhaka",
-    "address": "House 45, Road 11, Banani, Dhaka 1213",
-    "phone": "+880 1711 000111",
-    "email": "dhaka@fusioneducationbd.com",
-    "status": "active"
-  },
-  {
     "id": "branch_bogura",
     "name": "Bogura",
     "displayName": "Bogura Branch",
@@ -27,26 +17,6 @@
     "address": "Jaleshwaritola, Bogura 5800",
     "phone": "+880 1722 000222",
     "email": "bogura@fusioneducationbd.com",
-    "status": "active"
-  },
-  {
-    "id": "branch_rangpur",
-    "name": "Rangpur",
-    "displayName": "Rangpur Branch",
-    "city": "Rangpur",
-    "address": "Station Road, Rangpur 5400",
-    "phone": "+880 1733 000333",
-    "email": "rangpur@fusioneducationbd.com",
-    "status": "active"
-  },
-  {
-    "id": "branch_1788342531624",
-    "name": "thailand",
-    "displayName": "thailend 1",
-    "city": "sdfghj",
-    "address": "sdfghj",
-    "phone": "01723372217",
-    "email": "",
     "status": "active"
   }
 ]

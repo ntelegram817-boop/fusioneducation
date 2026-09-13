@@ -9,6 +9,9 @@ const cors         = require('cors');
 const cookieParser = require('cookie-parser');
 const path         = require('path');
 const fs           = require('fs');
+const bcrypt       = require('bcrypt');
+
+const IS_DEV = (process.env.NODE_ENV || 'development') === 'development';
 
 const admissionRoutes = require('./routes/admission');
 const {
@@ -21,6 +24,7 @@ const {
     calculateStudentFees,
     recordAuditLog
 } = require('./middleware/rbac');
+const { handleUpload, saveUploadedFile } = require('./middleware/upload');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -38,6 +42,15 @@ app.use(cors({
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser());
+
+// ── Block sensitive directories from public access ───────────
+app.use('/data', (req, res) => {
+    return res.status(403).json({ success: false, error: 'Access denied.' });
+});
+app.use('/.env', (req, res) => {
+    return res.status(403).json({ success: false, error: 'Access denied.' });
+});
+
 app.use(express.static(__dirname));
 
 // ── Trust proxy (for correct IP in rate limiter) ─────────────
@@ -53,6 +66,17 @@ if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
 }
 
+// ── Synchronous file write lock to prevent race conditions ──
+const _fileLocks = new Set();
+function acquireLockSync(filename) {
+    // Spin-wait (sync) — safe for single-process Node with sync writes
+    while (_fileLocks.has(filename)) { /* busy wait */ }
+    _fileLocks.add(filename);
+}
+function releaseLock(filename) {
+    _fileLocks.delete(filename);
+}
+
 // Helper to read data from local JSON
 const readData = (filename, defaultValue = []) => {
     try {
@@ -64,17 +88,169 @@ const readData = (filename, defaultValue = []) => {
     return defaultValue;
 };
 
-// Helper to write data to local JSON
+// Helper to write data to local JSON (with synchronous lock)
 const writeData = (filename, data) => {
     try {
+        acquireLockSync(filename);
         const file = path.join(dataDir, filename);
         fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
+        releaseLock(filename);
         return true;
     } catch (e) {
+        releaseLock(filename);
         console.error(`Error writing ${filename}:`, e.message);
         return false;
     }
 };
+
+// ── Auth guard middleware for destructive endpoints ──────────
+function requireAuth(requiredRole = 'staff') {
+    return (req, res, next) => {
+        const user = getAuthenticatedUser(req);
+        if (!user) {
+            return res.status(401).json({ success: false, error: 'Authentication required. Please log in.' });
+        }
+        if (requiredRole === 'admin' && user.role !== 'admin') {
+            return res.status(403).json({ success: false, error: 'Admin access required.' });
+        }
+        req.authUser = user;
+        next();
+    };
+}
+
+// ── Bcrypt helper ────────────────────────────────────────────
+async function hashPassword(plaintext) {
+    return bcrypt.hash(plaintext, 10);
+}
+async function verifyPassword(plaintext, stored) {
+    // If stored password is a bcrypt hash, compare properly
+    if (stored && stored.startsWith('$2')) {
+        return bcrypt.compare(plaintext, stored);
+    }
+    // Fallback: plaintext comparison for legacy passwords
+    return plaintext === stored;
+}
+
+// ── COURSE LIFECYCLE & DATA MODEL HELPERS ────────────────────
+function calculateCourseDurationMonths(courseLevelOrTitle) {
+  const str = String(courseLevelOrTitle || '').toUpperCase();
+  if (str.includes('N3')) return 5;
+  if (str.includes('N4')) return 4;
+  return 3; // N5 default: 3 months
+}
+
+function calculateCourseEndDate(startDateStr, durationMonths = 3) {
+  if (!startDateStr) return '';
+  const d = new Date(startDateStr);
+  if (isNaN(d.getTime())) return '';
+  d.setMonth(d.getMonth() + Number(durationMonths || 3));
+  return d.toISOString().split('T')[0];
+}
+
+function buildStudentFromAdmission(adm) {
+  const appNum = adm.applicationNumber || adm.id || `FEBD-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+  const courseLevel = adm.courseLevel || (adm.course && adm.course.includes('N4') ? 'N4' : (adm.course && adm.course.includes('N3') ? 'N3' : 'N5'));
+  
+  let durationMonths = calculateCourseDurationMonths(courseLevel);
+  if (adm.feeInfo?.durationMonths) durationMonths = Number(adm.feeInfo.durationMonths);
+
+  const startDate = adm.classStartDate || '';
+  let endDate = adm.courseEndDate || '';
+  if (startDate && !endDate) {
+    endDate = calculateCourseEndDate(startDate, durationMonths);
+  }
+
+  let courseStatus = adm.courseStatus || 'enrolled';
+  if (startDate && endDate && courseStatus !== 'completed') {
+    const today = new Date().toISOString().split('T')[0];
+    if (today > endDate) courseStatus = 'awaiting_completion';
+    else if (today >= startDate) courseStatus = 'ongoing';
+    else courseStatus = 'upcoming';
+  }
+
+  return {
+    id: appNum,
+    identifier: appNum,
+    applicationNumber: appNum,
+    applicationId: appNum,
+    email: adm.email || '',
+    // Password not stored in student profile object for security
+    fullName: adm.fullName || 'Student Name',
+    fatherName: adm.fatherName || '',
+    motherName: adm.motherName || '',
+    phone: adm.phone || '',
+    bloodGroup: adm.bloodGroup || '',
+    nidBirthCert: adm.nidBirthCert || adm.nid || '',
+    occupation: adm.occupation || '',
+    religion: adm.religion || '',
+    dateOfBirth: adm.dateOfBirth || '',
+    address: adm.address || adm.presentAddress || '',
+    city: adm.city || '',
+    district: adm.district || '',
+    permanentAddress: adm.permanentAddress || adm.address || '',
+    permanentCity: adm.permanentCity || adm.city || '',
+    permanentDistrict: adm.permanentDistrict || adm.district || '',
+    branch: adm.branch || 'Dinajpur',
+    photo: adm.photoUrl || adm.photo || '../assets/images/student-placeholder.jpg',
+    photoUrl: adm.photoUrl || adm.photo || '../assets/images/student-placeholder.jpg',
+    status: adm.status || 'admitted',
+    currentCourse: adm.course || 'JLPT N5 - Beginner',
+    course: adm.course || 'JLPT N5 - Beginner',
+    courseLevel: courseLevel,
+    batch: adm.batch || 'Batch 01 (Upcoming Intake)',
+    instructor: adm.instructor || 'Assigned upon class start',
+    progressPercent: adm.progressPercent || 0,
+    classStartDate: startDate,
+    classSchedule: adm.classSchedule || '',
+    courseEndDate: endDate,
+    courseStatus: courseStatus,
+    durationMonths: durationMonths,
+    enrolledDurationMonths: durationMonths,
+    feeInfo: adm.feeInfo || null,
+    payments: Array.isArray(adm.payments) ? adm.payments : [],
+    customMonthlyFee: adm.customMonthlyFee !== undefined ? adm.customMonthlyFee : null,
+    specialDiscount: adm.specialDiscount || 0,
+    examInfo: adm.examInfo || {
+      examType: 'JLPT',
+      examCenter: 'Dhaka, Bangladesh',
+      examDate: '',
+      registrationNumber: '',
+      score: '',
+      resultStatus: 'not_applied',
+      certificateUrl: '',
+      notes: ''
+    },
+    nextClass: adm.nextClass || {
+      topic: 'Orientation & Class Routine Briefing',
+      time: adm.classSchedule || (startDate ? `Starts on ${startDate}` : 'Schedule will be announced soon'),
+      room: 'Main Campus & Online'
+    },
+    attendance: adm.attendance || {
+      attended: 0,
+      total: 0,
+      rate: '100%'
+    },
+    visaApplication: adm.visaApplication || {
+      status: 'Japanese Language Course Phase (Dhaka Exam Planned)',
+      step: 1,
+      steps: [
+        { title: 'Japanese Language Course & Exam (Dhaka)', done: false, date: 'Ongoing' },
+        { title: 'Certificate Submission & Assessment', done: false, date: 'Pending' },
+        { title: 'Japanese Institute Selection & COE Application', done: false, date: 'Pending' },
+        { title: 'COE Issuance & Tuition Transfer', done: false, date: 'Pending' },
+        { title: 'Embassy of Japan Visa Stamping', done: false, date: 'Pending' }
+      ]
+    },
+    assignments: adm.assignments || [],
+    messages: adm.messages || [
+      {
+        from: 'Fusion Education Desk',
+        text: 'Welcome to Fusion Education BD! Your enrollment has been confirmed.',
+        date: new Date().toISOString().split('T')[0]
+      }
+    ]
+  };
+}
 
 // ── COURSES CRUD ─────────────────────────────────────────────
 app.get('/api/courses', (req, res) => {
@@ -88,14 +264,8 @@ const handleSaveCourse = (req, res) => {
     }
     const courses = readData('courses.json');
     const newCourse = {
+        ...courseData,
         id: courseData.id || ('course_' + Date.now()),
-        title: courseData.title || '',
-        level: courseData.level || '',
-        duration: courseData.duration || '',
-        students: courseData.students || '',
-        fee: courseData.fee || '',
-        description: courseData.description || '',
-        link: courseData.link || '',
         discountType: courseData.discountType || 'none',
         discountValue: courseData.discountValue ? parseFloat(courseData.discountValue) : 0,
         createdAt: new Date().toISOString()
@@ -105,10 +275,10 @@ const handleSaveCourse = (req, res) => {
     res.json({ success: true, message: 'Course created successfully', course: newCourse, id: newCourse.id });
 };
 
-app.post('/api/courses', handleSaveCourse);
-app.post('/api/courses/add', handleSaveCourse);
+app.post('/api/courses', requireAuth(), handleSaveCourse);
+app.post('/api/courses/add', requireAuth(), handleSaveCourse);
 
-app.put('/api/courses/:id', (req, res) => {
+app.put('/api/courses/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const courses = readData('courses.json');
     const index = courses.findIndex(c => String(c.id) === String(id));
@@ -125,7 +295,7 @@ app.put('/api/courses/:id', (req, res) => {
     res.json({ success: true, message: 'Course updated successfully', course: courses[index] });
 });
 
-app.delete('/api/courses/:id', (req, res) => {
+app.delete('/api/courses/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     let courses = readData('courses.json');
     const filtered = courses.filter(c => String(c.id) !== String(id));
@@ -157,10 +327,10 @@ const handleSavePost = (req, res) => {
     res.json({ success: true, message: 'Post created successfully', post: newPost, id: newPost.id });
 };
 
-app.post('/api/posts', handleSavePost);
-app.post('/api/posts/add', handleSavePost);
+app.post('/api/posts', requireAuth(), handleSavePost);
+app.post('/api/posts/add', requireAuth(), handleSavePost);
 
-app.put('/api/posts/:id', (req, res) => {
+app.put('/api/posts/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const posts = readData('posts.json');
     const index = posts.findIndex(p => String(p.id) === String(id));
@@ -172,7 +342,7 @@ app.put('/api/posts/:id', (req, res) => {
     res.json({ success: true, message: 'Post updated successfully', post: posts[index] });
 });
 
-app.delete('/api/posts/:id', (req, res) => {
+app.delete('/api/posts/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const posts = readData('posts.json');
     writeData('posts.json', posts.filter(p => String(p.id) !== String(id)));
@@ -184,7 +354,7 @@ app.get('/api/faqs', (req, res) => {
     res.json({ success: true, faqs: readData('faqs.json') });
 });
 
-app.post('/api/faqs', (req, res) => {
+app.post('/api/faqs', requireAuth(), (req, res) => {
     const faqs = readData('faqs.json');
     const newFaq = {
         id: req.body.id || ('faq_' + Date.now()),
@@ -198,7 +368,7 @@ app.post('/api/faqs', (req, res) => {
     res.json({ success: true, message: 'FAQ created successfully', faq: newFaq, id: newFaq.id });
 });
 
-app.put('/api/faqs/:id', (req, res) => {
+app.put('/api/faqs/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const faqs = readData('faqs.json');
     const index = faqs.findIndex(f => String(f.id) === String(id));
@@ -208,7 +378,7 @@ app.put('/api/faqs/:id', (req, res) => {
     res.json({ success: true, message: 'FAQ updated successfully', faq: faqs[index] });
 });
 
-app.delete('/api/faqs/:id', (req, res) => {
+app.delete('/api/faqs/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const faqs = readData('faqs.json');
     writeData('faqs.json', faqs.filter(f => String(f.id) !== String(id)));
@@ -220,7 +390,7 @@ app.get('/api/testimonials', (req, res) => {
     res.json({ success: true, testimonials: readData('testimonials.json') });
 });
 
-app.post('/api/testimonials', (req, res) => {
+app.post('/api/testimonials', requireAuth(), (req, res) => {
     const testimonials = readData('testimonials.json');
     const newTestimonial = {
         id: req.body.id || ('test_' + Date.now()),
@@ -236,7 +406,7 @@ app.post('/api/testimonials', (req, res) => {
     res.json({ success: true, message: 'Testimonial added successfully', testimonial: newTestimonial, id: newTestimonial.id });
 });
 
-app.put('/api/testimonials/:id', (req, res) => {
+app.put('/api/testimonials/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const testimonials = readData('testimonials.json');
     const index = testimonials.findIndex(t => String(t.id) === String(id));
@@ -246,7 +416,7 @@ app.put('/api/testimonials/:id', (req, res) => {
     res.json({ success: true, message: 'Testimonial updated successfully', testimonial: testimonials[index] });
 });
 
-app.delete('/api/testimonials/:id', (req, res) => {
+app.delete('/api/testimonials/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const testimonials = readData('testimonials.json');
     writeData('testimonials.json', testimonials.filter(t => String(t.id) !== String(id)));
@@ -258,7 +428,7 @@ app.get('/api/gallery', (req, res) => {
     res.json({ success: true, gallery: readData('gallery.json') });
 });
 
-app.post('/api/gallery', (req, res) => {
+app.post('/api/gallery', requireAuth(), (req, res) => {
     const gallery = readData('gallery.json');
     const newItem = {
         id: req.body.id || ('gal_' + Date.now()),
@@ -272,7 +442,7 @@ app.post('/api/gallery', (req, res) => {
     res.json({ success: true, message: 'Gallery item added successfully', item: newItem, id: newItem.id });
 });
 
-app.delete('/api/gallery/:id', (req, res) => {
+app.delete('/api/gallery/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const gallery = readData('gallery.json');
     writeData('gallery.json', gallery.filter(g => String(g.id) !== String(id)));
@@ -284,7 +454,7 @@ app.get('/api/settings', (req, res) => {
     res.json({ success: true, settings: readData('settings.json', {}) });
 });
 
-app.post('/api/settings', (req, res) => {
+app.post('/api/settings', requireAuth('admin'), (req, res) => {
     const current = readData('settings.json', {});
     const updated = { ...current, ...req.body };
     writeData('settings.json', updated);
@@ -312,7 +482,7 @@ app.post('/api/contactMessages', (req, res) => {
     res.json({ success: true, message: 'Message sent successfully', messageId: newMsg.id });
 });
 
-app.delete('/api/contactMessages/:id', (req, res) => {
+app.delete('/api/contactMessages/:id', requireAuth(), (req, res) => {
     const { id } = req.params;
     const messages = readData('contactMessages.json');
     writeData('contactMessages.json', messages.filter(m => String(m.id) !== String(id)));
@@ -320,107 +490,15 @@ app.delete('/api/contactMessages/:id', (req, res) => {
 });
 
 // ── ADMISSIONS CRUD ──────────────────────────────────────────
-app.get(['/api/admissions', '/api/admission'], (req, res) => {
-    res.json({ success: true, admissions: readData('admissions.json') });
-});
+// NOTE: GET/PUT/DELETE for /api/admission(s) are handled by the admission router (routes/admission.js)
+// mounted at lines 60-61. No duplicate routes needed here.
 
-app.put(['/api/admissions/:id', '/api/admission/:id', '/api/staff/students/:id'], (req, res) => {
-    const { id } = req.params;
-    const updateData = req.body || {};
-    const admissions = readData('admissions.json', []);
-    
-    const index = admissions.findIndex(a => 
-        String(a.id) === String(id) || 
-        String(a.applicationNumber) === String(id) || 
-        String(a.applicationId) === String(id)
-    );
-
-    if (index === -1) {
-        return res.status(404).json({ success: false, error: 'Admission / Student record not found' });
-    }
-
-    admissions[index] = {
-        ...admissions[index],
-        ...updateData,
-        updatedAt: new Date().toISOString()
-    };
-
-    writeData('admissions.json', admissions);
-    res.json({ success: true, message: 'Student record updated successfully', admission: admissions[index] });
-});
-
-app.delete(['/api/admissions/:id', '/api/admission/:id'], (req, res) => {
-    const { id } = req.params;
-    const admissions = readData('admissions.json');
-    writeData('admissions.json', admissions.filter(a => 
-        String(a.id) !== String(id) && 
-        String(a.applicationNumber) !== String(id) && 
-        String(a.applicationId) !== String(id)
-    ));
-    res.json({ success: true, message: 'Admission application deleted successfully' });
-});
-
-// ── Static file serving ──────────────────────────────────────
+// ── Static file serving (uploads only — main static already mounted above) ──
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(express.static(path.join(__dirname, '.')));
 
-// Serve index.html for root
-
-// Helper to construct a student model from admission application
-const buildStudentFromAdmission = (adm) => {
-  const isAdmitted = (adm.status || '').toLowerCase() === 'admitted';
-  const cleanAppNum = adm.applicationNumber || adm.applicationId || ('FEBD-' + (adm.id || Date.now()));
-  return {
-    identifier: cleanAppNum,
-    email: adm.email || `${cleanAppNum.toLowerCase()}@student.fusioneducation.com`,
-    password: 'password123',
-    fullName: adm.fullName || 'Student Applicant',
-    phone: adm.phone || '',
-    bloodGroup: adm.bloodGroup || 'N/A',
-    dateOfBirth: adm.dateOfBirth || '',
-    address: adm.address || '',
-    branch: adm.branch || 'Dinajpur',
-    photo: adm.photoUrl || '../assets/images/student-placeholder.jpg',
-    status: isAdmitted ? 'Active Student' : (adm.status || 'Application Under Review'),
-    currentCourse: adm.course || 'Japanese Language Course',
-    courseLevel: adm.courseLevel || 'N5 / Pre-intermediate',
-    batch: adm.batch || 'Batch 01 (Upcoming Intake)',
-    instructor: isAdmitted ? 'Tanaka Sensei' : 'Assigned upon class start',
-    progressPercent: isAdmitted ? 30 : 10,
-    nextClass: {
-      topic: isAdmitted ? 'Orientation & Basic Japanese Kana' : 'Application Review & Routine Briefing',
-      time: isAdmitted ? 'Sunday & Tuesday 10:00 AM' : 'Schedule will be announced soon',
-      room: isAdmitted ? 'Room 102 & Online Zoom' : 'Main Campus & Online'
-    },
-    attendance: { attended: isAdmitted ? 2 : 0, total: isAdmitted ? 2 : 0, rate: '100%' },
-    fees: adm.feeInfo ? {
-      total: `${(adm.feeInfo.baseFee || 15000).toLocaleString()} BDT`,
-      paid: `${(adm.feeInfo.finalFee || 5000).toLocaleString()} BDT`,
-      due: `${Math.max(0, (adm.feeInfo.baseFee || 15000) - (adm.feeInfo.finalFee || 5000)).toLocaleString()} BDT`,
-      status: (adm.feeInfo.finalFee >= (adm.feeInfo.baseFee || 15000)) ? 'Paid' : 'Partially Paid'
-    } : { total: '15,000 BDT', paid: '5,000 BDT (Deposit)', due: '10,000 BDT', status: 'Partially Paid' },
-    visaApplication: {
-      status: isAdmitted ? 'Document Verification' : 'Application Submitted',
-      step: isAdmitted ? 2 : 1,
-      steps: [
-        { title: 'Application Submitted', done: true, date: adm.submittedAt ? adm.submittedAt.slice(0, 10) : 'Recent' },
-        { title: 'Document Verification', done: isAdmitted, date: isAdmitted ? 'Verified' : 'In Review' },
-        { title: 'COE Application', done: false, date: 'Pending' },
-        { title: 'COE Issuance', done: false, date: 'Pending' },
-        { title: 'Embassy Visa Stamp', done: false, date: 'Pending' }
-      ]
-    },
-    assignments: [
-      { id: 'asg_1', title: 'Kana Practice & Basic Phrases', dueDate: 'Next Week', status: 'Pending', maxScore: 25 }
-    ],
-    messages: [
-      { from: 'Fusion Education Desk', text: 'Welcome! Your student account is active. Check notices for intake updates.', time: 'Recent' }
-    ]
-  };
-};
 
 // ── STUDENT AUTH & PROFILE ENDPOINTS ──────────────────────────────
-app.post('/api/student/login', (req, res) => {
+app.post('/api/student/login', async (req, res) => {
   const { identifier, password } = req.body;
   if (!identifier || !password) {
     return res.status(400).json({ success: false, error: 'Registration number / Email and password are required.' });
@@ -455,8 +533,8 @@ app.post('/api/student/login', (req, res) => {
     }
   }
 
-  // 3. Fallback for testing demo accounts
-  if (!student) {
+  // 3. Fallback for testing demo accounts (dev mode only)
+  if (!student && IS_DEV) {
     if (cleanId === 'demo' || cleanId === 'student' || cleanId === 'fe-2024-001') {
       student = students[0];
     }
@@ -469,20 +547,27 @@ app.post('/api/student/login', (req, res) => {
     });
   }
 
-  // Verify password (accept student.password, or default demo passwords 'password123', '123456', 'student123')
-  const validPasswords = ['password123', '123456', 'student123'];
-  if (student.password) validPasswords.unshift(student.password);
+  // Verify password
+  let passwordValid = false;
+  if (student.password) {
+    passwordValid = await verifyPassword(password, student.password);
+  }
+  // In development mode only, allow demo passwords for testing
+  if (!passwordValid && IS_DEV) {
+    const demoPasswords = ['password123', '123456', 'student123'];
+    passwordValid = demoPasswords.includes(password);
+  }
 
-  if (!validPasswords.includes(password)) {
+  if (!passwordValid) {
     return res.status(401).json({ 
       success: false, 
-      error: 'Invalid password. Please check your password (Demo password: password123).' 
+      error: 'Invalid password. Please check your password.' 
     });
   }
 
   // Set session cookie
   res.cookie('fusion_student_id', student.identifier, { 
-    httpOnly: false, 
+    httpOnly: true, 
     sameSite: 'lax',
     maxAge: 86400000 
   });
@@ -507,8 +592,7 @@ app.get('/api/student/profile', (req, res) => {
   const students = readData('students.json', []);
   
   if (!identifier) {
-    if (students.length > 0) return res.json({ success: true, student: students[0] });
-    return res.status(400).json({ success: false, error: 'Missing student identifier.' });
+    return res.status(400).json({ success: false, error: 'Missing student identifier. Please log in.' });
   }
 
   const cleanId = String(identifier).trim().toLowerCase();
@@ -537,7 +621,6 @@ app.get('/api/student/profile', (req, res) => {
   }
 
   if (!student) {
-    if (students.length > 0) return res.json({ success: true, student: students[0] });
     return res.status(404).json({ success: false, error: 'Student profile not found.' });
   }
 
@@ -573,13 +656,111 @@ app.put('/api/student/profile', (req, res) => {
   return res.json({ success: true, message: 'Profile updated successfully', student: students[index] });
 });
 
+app.post('/api/student/submit-exam-result', (req, res) => {
+  const { identifier, studentId, id, examType, examDate, registrationNumber, rollNumber, score, resultStatus, certificateUrl, notes } = req.body;
+  const targetId = identifier || studentId || id || req.cookies?.fusion_student_id;
+
+  if (!targetId) {
+    return res.status(400).json({ success: false, error: 'Student identifier is required.' });
+  }
+
+  if (!examType || !resultStatus) {
+    return res.status(400).json({ success: false, error: 'Exam type (JLPT/NAT-TEST) and result status (passed/failed) are required.' });
+  }
+
+  const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
+  const cleanId = String(targetId).trim().toLowerCase();
+
+  let sIdx = students.findIndex(s => 
+    (s.identifier && s.identifier.toLowerCase() === cleanId) ||
+    (s.email && s.email.toLowerCase() === cleanId) ||
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId)
+  );
+
+  let aIdx = admissions.findIndex(a => 
+    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
+    (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
+    (a.id && String(a.id).toLowerCase() === cleanId) ||
+    (a.email && a.email.toLowerCase() === cleanId)
+  );
+
+  if (sIdx === -1 && aIdx === -1) {
+    return res.status(404).json({ success: false, error: 'Student record not found.' });
+  }
+
+  if (sIdx === -1 && aIdx !== -1) {
+    const stRecord = buildStudentFromAdmission(admissions[aIdx]);
+    students.unshift(stRecord);
+    sIdx = 0;
+  }
+
+  const nowIso = new Date().toISOString();
+  const examRecord = {
+    examType: examType || 'JLPT',
+    examCenter: 'Dhaka, Bangladesh',
+    examDate: examDate || nowIso.split('T')[0],
+    registrationNumber: registrationNumber || rollNumber || '',
+    score: score || 'Passed',
+    resultStatus: resultStatus || 'passed',
+    certificateUrl: certificateUrl || '',
+    notes: notes || '',
+    submittedAt: nowIso
+  };
+
+  students[sIdx].examInfo = examRecord;
+
+  // If passed, activate and update the Japan Visa & COE Roadmap!
+  if (resultStatus === 'passed') {
+    students[sIdx].courseStatus = 'graduated';
+    students[sIdx].status = 'graduated';
+    
+    students[sIdx].visaApplication = {
+      status: 'Japanese Institute Selection & COE Application in Progress',
+      university: students[sIdx].visaApplication?.university || 'Tokyo International Language Academy',
+      intake: students[sIdx].visaApplication?.intake || 'October 2026 Intake',
+      step: 3,
+      steps: [
+        { title: 'JLPT / NAT-TEST Official Exam (Dhaka)', done: true, date: examDate || nowIso.split('T')[0] },
+        { title: 'Official Certificate Verified & Assessed', done: true, date: nowIso.split('T')[0] },
+        { title: 'Japanese Institute Selection & COE Application', done: false, date: 'In Progress' },
+        { title: 'COE Issuance & Tuition Transfer to Japan', done: false, date: 'Pending' },
+        { title: 'Embassy of Japan Visa Stamping & Departure', done: false, date: 'Pending' }
+      ]
+    };
+  }
+
+  students[sIdx].updatedAt = nowIso;
+  writeData('students.json', students);
+
+  if (aIdx !== -1) {
+    admissions[aIdx].examInfo = examRecord;
+    if (resultStatus === 'passed') {
+      admissions[aIdx].status = 'graduated';
+      admissions[aIdx].courseStatus = 'graduated';
+    }
+    admissions[aIdx].updatedAt = nowIso;
+    writeData('admissions.json', admissions);
+  }
+
+  res.json({
+    success: true,
+    message: resultStatus === 'passed' 
+      ? 'অভিনন্দন! আপনার অফিসিয়াল পরীক্ষার ফলাফল ও সার্টিফিকেট সফলভাবে জমা হয়েছে। জাপান ভিসা ও COE প্রসেসিং শুরু করা হয়েছে।'
+      : 'পরীক্ষার তথ্য সফলভাবে সংরক্ষিত হয়েছে।',
+    examInfo: examRecord,
+    student: students[sIdx]
+  });
+});
+
 app.post('/api/student/logout', (req, res) => {
   res.clearCookie('fusion_student_id');
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
-// ── STAFF & INSTRUCTOR AUTH & DASHBOARD ENDPOINTS ──────────────────
-app.post('/api/staff/login', (req, res) => {
+// ── STAFF / INSTRUCTOR LOGIN ─────────────────────────────────
+app.post('/api/staff/login', async (req, res) => {
   const { email, password, branch } = req.body;
   if (!email || !password) {
     return res.status(400).json({ success: false, error: 'Email and password are required.' });
@@ -595,29 +776,30 @@ app.post('/api/staff/login', (req, res) => {
     activeUser = staffList.find(s => s.email && s.email.toLowerCase() === cleanEmail);
   }
 
-  const validPasswords = ['staff123', 'password123', 'admin123', '123456'];
-  if (activeUser && activeUser.password) validPasswords.unshift(activeUser.password);
+  // User must exist in the system
+  if (!activeUser) {
+    return res.status(401).json({ success: false, error: 'Account not found. Please contact your administrator.' });
+  }
 
-  if (activeUser && !validPasswords.includes(password)) {
+  // Verify password
+  let passwordValid = false;
+  if (activeUser.password) {
+    passwordValid = await verifyPassword(password, activeUser.password);
+  }
+  // In development mode only, allow demo passwords for testing
+  if (!passwordValid && IS_DEV) {
+    const demoPasswords = ['staff123', 'password123', 'admin123', '123456'];
+    passwordValid = demoPasswords.includes(password);
+  }
+
+  if (!passwordValid) {
     return res.status(401).json({ success: false, error: 'Invalid password. Please check your credentials.' });
   }
 
-  if (!activeUser && !validPasswords.includes(password)) {
-    return res.status(401).json({ success: false, error: 'Invalid credentials. (Demo: instructor@fusion.com / password123)' });
-  }
-
-  const userRecord = activeUser || {
-    id: 'usr_' + Date.now(),
-    email: cleanEmail,
-    name: cleanEmail.split('@')[0].toUpperCase(),
-    branch: branch || 'Dinajpur',
-    role: 'staff',
-    status: 'active',
-    permissions: ['view_students', 'edit_students', 'manage_admissions', 'counseling', 'view_fees', 'manage_fees']
-  };
-
+  const userRecord = activeUser;
   const userBranch = branch || userRecord.branch || 'Dinajpur';
 
+  // Staff cookies need httpOnly:false so client JS (dashboard) can read them for UI
   res.cookie('fusion_staff_email', userRecord.email, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
   res.cookie('fusion_staff_branch', userBranch, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
   res.cookie('fusion_staff_role', userRecord.role || 'staff', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
@@ -692,71 +874,166 @@ app.get('/api/staff/students', (req, res) => {
   const user = getAuthenticatedUser(req);
   let branch = req.query.branch || (user ? user.branch : req.cookies.fusion_staff_branch) || 'all';
 
-  // Branch Isolation: If non-admin user is restricted to a branch, force that branch
-  if (user && user.role !== 'admin' && user.branch && user.branch.toLowerCase() !== 'all') {
+  // Branch Isolation: If non-admin user is restricted to a specific branch and doesn't have view_all_branches permission, enforce user's branch
+  if (user && user.role !== 'admin' && user.branch && user.branch.toLowerCase() !== 'all' && !hasPermission(user, 'view_all_branches') && !hasPermission(user, '*')) {
     branch = user.branch;
   }
 
   const admissions = readData('admissions.json', []);
   const students = readData('students.json', []);
 
-  let list = admissions.map(a => ({
-    id: a.id || a.applicationNumber,
-    applicationNumber: a.applicationNumber || a.id,
-    fullName: a.fullName,
-    email: a.email,
-    phone: a.phone,
-    dateOfBirth: a.dateOfBirth,
-    gender: a.gender,
-    address: a.address,
-    city: a.city,
-    district: a.district,
-    highestEducation: a.highestEducation,
-    course: a.course,
-    courseId: a.courseId || '',
-    courseLevel: a.courseLevel || '',
-    batch: a.batch || 'Upcoming Intake',
-    branch: a.branch || 'Dinajpur',
-    japaneseExperience: a.japaneseExperience,
-    visaType: a.visaType,
-    emergencyName: a.emergencyName,
-    emergencyPhone: a.emergencyPhone,
-    comment: a.comment || '',
-    notes: a.notes || a.comment || '',
-    status: a.status || 'pending',
-    feeInfo: a.feeInfo || null,
-    customMonthlyFee: a.customMonthlyFee !== undefined ? a.customMonthlyFee : null,
-    payments: a.payments || [],
-    photoUrl: a.photoUrl || '',
-    documentPreview: a.photoUrl || '../assets/images/student-placeholder.jpg',
-    documentUrls: a.documentUrls || [],
-    documents: a.documents || [],
-    submittedAt: a.submittedAt || a.createdAt || new Date().toISOString()
-  }));
+  // Build a lookup map of students.json keyed by identifier, applicationNumber, and id
+  const studentMap = new Map();
+  students.forEach(s => {
+    if (s.identifier) studentMap.set(String(s.identifier).toLowerCase().trim(), s);
+    if (s.applicationNumber) studentMap.set(String(s.applicationNumber).toLowerCase().trim(), s);
+    if (s.id) studentMap.set(String(s.id).toLowerCase().trim(), s);
+  });
 
-  // Merge students.json records
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  let list = admissions.map(a => {
+    const key = String(a.applicationNumber || a.id || '').toLowerCase().trim();
+    const st = studentMap.get(key) || {};
+
+    const rawCourse = st.currentCourse || a.course || 'JLPT N5 - Beginner';
+    const courseLevel = st.courseLevel || a.courseLevel || (rawCourse.includes('N4') ? 'N4' : (rawCourse.includes('N3') ? 'N3' : 'N5'));
+
+    const classStartDate = st.classStartDate || a.classStartDate || '';
+    let courseEndDate = st.courseEndDate || a.courseEndDate || '';
+    if (classStartDate && !courseEndDate) {
+      courseEndDate = calculateCourseEndDate(classStartDate, calculateCourseDurationMonths(courseLevel));
+    }
+
+    let courseStatus = st.courseStatus || a.courseStatus || (st.status === 'graduated' || a.status === 'graduated' ? 'completed' : 'enrolled');
+    if (classStartDate && courseEndDate && courseStatus !== 'completed') {
+      if (todayStr > courseEndDate) {
+        courseStatus = 'awaiting_completion';
+      } else if (todayStr >= classStartDate) {
+        courseStatus = 'ongoing';
+      } else {
+        courseStatus = 'upcoming';
+      }
+    }
+
+    let validSubmittedAt = st.enrollmentDate || a.submittedAt || a.createdAt;
+    if (validSubmittedAt) {
+      const d = new Date(validSubmittedAt);
+      if (isNaN(d.getTime()) || d.getFullYear() > 2100 || d.getFullYear() < 2000) {
+        validSubmittedAt = new Date().toISOString();
+      }
+    } else {
+      validSubmittedAt = new Date().toISOString();
+    }
+
+    const merged = {
+      id: a.id || a.applicationNumber || st.identifier,
+      applicationNumber: a.applicationNumber || a.id || st.identifier,
+      fullName: st.fullName || a.fullName || 'Student',
+      email: st.email || a.email || '',
+      phone: st.phone || a.phone || '',
+      dateOfBirth: st.dateOfBirth || a.dateOfBirth || '',
+      gender: st.gender || a.gender || '',
+      address: st.address || a.address || '',
+      city: st.city || a.city || '',
+      district: st.district || a.district || '',
+      highestEducation: st.highestEducation || a.highestEducation || '',
+      course: rawCourse,
+      courseId: st.courseId || a.courseId || '',
+      courseLevel: courseLevel,
+      batch: st.batch || a.batch || 'Batch 01',
+      branch: st.branch || a.branch || 'Dinajpur',
+      japaneseExperience: a.japaneseExperience || 'None',
+      visaType: a.visaType || 'student',
+      emergencyName: a.emergencyName || '',
+      emergencyPhone: a.emergencyPhone || '',
+      comment: a.comment || st.notes || '',
+      notes: st.notes || a.notes || a.comment || '',
+      status: st.status || a.status || 'pending',
+      classStartDate,
+      classSchedule: st.classSchedule || a.classSchedule || '',
+      courseEndDate,
+      courseStatus,
+      examInfo: st.examInfo || a.examInfo || null,
+      feeInfo: st.feeInfo || a.feeInfo || null,
+      customMonthlyFee: st.customMonthlyFee !== undefined ? st.customMonthlyFee : a.customMonthlyFee,
+      payments: (st.payments && st.payments.length ? st.payments : a.payments) || [],
+      photoUrl: st.photo || a.photoUrl || '',
+      documentPreview: st.photo || a.photoUrl || '../assets/images/student-placeholder.jpg',
+      documentUrls: a.documentUrls || [],
+      documents: a.documents || [],
+      submittedAt: validSubmittedAt
+    };
+
+    merged.fees = calculateStudentFees(merged);
+    return merged;
+  });
+
+  // Merge students.json records that weren't in admissions, preventing duplicates by ID and phone
   if (students.length > 0) {
-    const existingIds = new Set(list.map(s => String(s.applicationNumber || s.id)));
+    const existingIds = new Set(list.map(s => String(s.applicationNumber || s.id).toLowerCase().trim()));
+    const existingPhones = new Set(list.map(s => String(s.phone || '').replace(/\D/g, '')).filter(Boolean));
     students.forEach(s => {
-      if (!existingIds.has(String(s.identifier))) {
+      const sId = String(s.identifier || s.id || s.applicationNumber || '').toLowerCase().trim();
+      const sPhone = String(s.phone || '').replace(/\D/g, '');
+      if (sId && !existingIds.has(sId) && (!sPhone || !existingPhones.has(sPhone))) {
+        existingIds.add(sId);
+        if (sPhone) existingPhones.add(sPhone);
+
+        const rawCourse = s.currentCourse || s.course || 'JLPT N5';
+        const courseLevel = s.courseLevel || (rawCourse.includes('N4') ? 'N4' : (rawCourse.includes('N3') ? 'N3' : 'N5'));
+        const classStartDate = s.classStartDate || '';
+        let courseEndDate = s.courseEndDate || '';
+        if (classStartDate && !courseEndDate) {
+          courseEndDate = calculateCourseEndDate(classStartDate, calculateCourseDurationMonths(courseLevel));
+        }
+
+        let courseStatus = s.courseStatus || (s.status === 'graduated' ? 'completed' : 'enrolled');
+        if (classStartDate && courseEndDate && courseStatus !== 'completed') {
+          if (todayStr > courseEndDate) {
+            courseStatus = 'awaiting_completion';
+          } else if (todayStr >= classStartDate) {
+            courseStatus = 'ongoing';
+          } else {
+            courseStatus = 'upcoming';
+          }
+        }
+
+        let sSubmittedAt = s.enrollmentDate || s.submittedAt;
+        if (sSubmittedAt) {
+          const d = new Date(sSubmittedAt);
+          if (isNaN(d.getTime()) || d.getFullYear() > 2100 || d.getFullYear() < 2000) {
+            sSubmittedAt = new Date().toISOString();
+          }
+        } else {
+          sSubmittedAt = new Date().toISOString();
+        }
+
+        const fees = calculateStudentFees(s);
         list.push({
-          id: s.identifier,
-          applicationNumber: s.identifier,
+          id: s.identifier || s.id,
+          applicationNumber: s.identifier || s.id,
           fullName: s.fullName,
           email: s.email,
           phone: s.phone,
-          course: s.currentCourse,
+          course: rawCourse,
           courseId: s.courseId || '',
-          courseLevel: s.courseLevel || 'N5',
+          courseLevel: courseLevel,
           batch: s.batch || 'Batch 01',
           branch: s.branch || 'Dinajpur',
           status: s.status || 'admitted',
+          classStartDate,
+          classSchedule: s.classSchedule || '',
+          courseEndDate,
+          courseStatus,
+          examInfo: s.examInfo || null,
           customMonthlyFee: s.customMonthlyFee !== undefined ? s.customMonthlyFee : null,
           payments: s.payments || [],
+          fees: fees,
           notes: 'Enrolled Student',
           photoUrl: s.photo || '',
           documentPreview: s.photo || '../assets/images/student-placeholder.jpg',
-          submittedAt: s.enrollmentDate || new Date().toISOString()
+          submittedAt: sSubmittedAt
         });
       }
     });
@@ -770,14 +1047,20 @@ app.get('/api/staff/students', (req, res) => {
   return res.json({ success: true, branch, students: list });
 });
 
-// ── WALK-IN STUDENT REGISTRATION (MANUAL ADD) ─────────────────────
-app.post('/api/staff/students', (req, res) => {
+// ── WALK-IN STUDENT REGISTRATION (MANUAL ADD / PAPER CONVERSION) ──
+app.post('/api/staff/students', handleUpload, async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required' });
   }
 
-  const { fullName, phone, email, course, branch, status, batch, city, notes, admissionDate } = req.body;
+  const {
+    fullName, phone, email, course, branch, status, batch, city, notes, admissionDate,
+    fatherName, motherName, dateOfBirth, gender, bloodGroup, religion, nidBirthCert,
+    occupation, highestEducation, presentAddress, permanentAddress, district,
+    emergencyName, emergencyRelation, emergencyPhone, courseLevel
+  } = req.body;
+
   if (!fullName) {
     return res.status(400).json({ success: false, error: 'Student full name is required.' });
   }
@@ -785,7 +1068,7 @@ app.post('/api/staff/students', (req, res) => {
   const students = readData('students.json', []);
   const admissions = readData('admissions.json', []);
 
-  // Determine admission date: custom or auto-current
+  // Determine admission date: custom past date from paper record or auto-current
   let dateIso = new Date().toISOString();
   if (admissionDate && !isNaN(new Date(admissionDate).getTime())) {
     dateIso = new Date(admissionDate).toISOString();
@@ -794,29 +1077,124 @@ app.post('/api/staff/students', (req, res) => {
   const newAppNum = req.body.applicationNumber || req.body.id || `FEBD-${new Date().getFullYear()}-${String(Math.floor(100 + Math.random() * 900))}`;
   const targetBranch = branch || (user ? user.branch : 'Dinajpur');
 
+  // Handle Photo upload if provided
+  let photoUrl = '../assets/images/student-placeholder.jpg';
+  if (req.files && req.files.photo && req.files.photo[0]) {
+    try {
+      const savedPhoto = await saveUploadedFile(req.files.photo[0], 'photos');
+      if (savedPhoto) photoUrl = savedPhoto;
+    } catch (err) {
+      console.error('Photo save error:', err);
+    }
+  } else if (req.body.photoUrl && req.body.photoUrl.trim()) {
+    photoUrl = req.body.photoUrl.trim();
+  }
+
+  // Handle Document uploads (Certificates, NID, Passport, Paper Admission Form scans)
+  const documents = [];
+  const documentUrls = [];
+
+  // 1. Files uploaded via multipart
+  const rawDocs = [
+    ...(req.files?.documents || []),
+    ...(req.files?.educationDoc || []),
+    ...(req.files?.educationDocs || [])
+  ];
+
+  let docNames = req.body.documentNames || req.body.documentTitles;
+  if (typeof docNames === 'string') {
+    try { docNames = JSON.parse(docNames); } catch (_) { docNames = [docNames]; }
+  }
+  if (!Array.isArray(docNames)) docNames = [];
+
+  for (let i = 0; i < rawDocs.length; i++) {
+    const docFile = rawDocs[i];
+    try {
+      const url = await saveUploadedFile(docFile, 'documents');
+      if (url) {
+        documentUrls.push(url);
+        const customName = docNames[i] || docFile.originalname || `Document ${i + 1}`;
+        documents.push({
+          id: 'doc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+          name: customName,
+          originalName: docFile.originalname,
+          url: url,
+          size: docFile.size,
+          type: docFile.mimetype,
+          uploadedAt: new Date().toISOString()
+        });
+      }
+    } catch (docErr) {
+      console.error('Doc save error:', docErr);
+    }
+  }
+
+  // 2. Any existing documents passed in payload
+  if (req.body.existingDocuments) {
+    let parsedExisting = [];
+    try {
+      parsedExisting = typeof req.body.existingDocuments === 'string'
+        ? JSON.parse(req.body.existingDocuments)
+        : req.body.existingDocuments;
+    } catch (_) {}
+    if (Array.isArray(parsedExisting)) {
+      parsedExisting.forEach(d => {
+        if (d && d.url) {
+          documents.push(d);
+          documentUrls.push(d.url);
+        }
+      });
+    }
+  }
+
+  const chosenLevel = courseLevel || (course && course.includes('N4') ? 'N4' : (course && course.includes('N3') ? 'N3' : 'N5'));
+  const durationMonths = calculateCourseDurationMonths(chosenLevel);
+
   const newStudent = {
     identifier: newAppNum,
     id: newAppNum,
     applicationNumber: newAppNum,
     applicationId: newAppNum,
     fullName: fullName.trim(),
+    fatherName: (fatherName || '').trim(),
+    motherName: (motherName || '').trim(),
+    dateOfBirth: dateOfBirth || '',
+    gender: gender || '',
+    bloodGroup: bloodGroup || '',
+    religion: religion || '',
+    nidBirthCert: (nidBirthCert || req.body.nid || '').trim(),
+    occupation: occupation || 'Student',
+    highestEducation: (highestEducation || '').trim(),
     email: (email || '').trim().toLowerCase(),
     phone: (phone || '').trim(),
     currentCourse: course || 'JLPT N5',
     course: course || 'JLPT N5',
-    courseLevel: req.body.courseLevel || 'N5',
+    courseLevel: chosenLevel,
     branch: targetBranch,
     status: status === 'admitted' ? 'admitted' : (status || 'pending'),
-    batch: batch || 'Batch 01',
-    city: city || '',
-    address: req.body.address || city || '',
+    batch: (batch || 'Batch 01').trim(),
+    city: (city || district || '').trim(),
+    address: (presentAddress || city || '').trim(),
+    presentAddress: (presentAddress || '').trim(),
+    permanentAddress: (permanentAddress || '').trim(),
+    district: (district || city || '').trim(),
+    emergencyName: (emergencyName || '').trim(),
+    emergencyRelation: emergencyRelation || 'Father',
+    emergencyPhone: (emergencyPhone || '').trim(),
     notes: notes || '',
     comment: notes || '',
-    photo: '../assets/images/student-placeholder.jpg',
-    photoUrl: '../assets/images/student-placeholder.jpg',
+    photo: photoUrl,
+    photoUrl: photoUrl,
+    documents: documents,
+    documentUrls: documentUrls,
+    documentUrl: documentUrls[0] || null,
     submittedAt: dateIso,
     enrollmentDate: dateIso,
+    admissionDate: admissionDate || dateIso.split('T')[0],
     createdAt: dateIso,
+    courseStatus: status === 'admitted' ? 'enrolled' : 'pending',
+    classStartDate: dateIso.split('T')[0],
+    courseEndDate: calculateCourseEndDate(dateIso.split('T')[0], durationMonths),
     payments: []
   };
 
@@ -825,18 +1203,7 @@ app.post('/api/staff/students', (req, res) => {
 
   // Sync to admissions.json
   const admRecord = {
-    id: newAppNum,
-    applicationNumber: newAppNum,
-    fullName: newStudent.fullName,
-    email: newStudent.email,
-    phone: newStudent.phone,
-    course: newStudent.course,
-    branch: newStudent.branch,
-    status: newStudent.status,
-    batch: newStudent.batch,
-    city: newStudent.city,
-    comment: newStudent.notes,
-    photoUrl: newStudent.photoUrl,
+    ...newStudent,
     submittedAt: dateIso
   };
   admissions.unshift(admRecord);
@@ -851,11 +1218,124 @@ app.post('/api/staff/students', (req, res) => {
   });
 });
 
-// ── UPDATE STUDENT PROFILE OR STATUS ──────────────────────────────
-app.put('/api/staff/students/:id', (req, res) => {
+// ── ATTACH ADDITIONAL DOCUMENTS TO EXISTING STUDENT ───────────────
+app.post('/api/staff/students/:id/documents', handleUpload, async (req, res) => {
   const user = getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
+    return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions or edit_students required' });
+  }
+
   const { id } = req.params;
   const cleanId = String(id).trim().toLowerCase();
+
+  const rawDocs = [
+    ...(req.files?.documents || []),
+    ...(req.files?.educationDoc || []),
+    ...(req.files?.educationDocs || [])
+  ];
+
+  if (rawDocs.length === 0) {
+    return res.status(400).json({ success: false, error: 'No document files provided to upload.' });
+  }
+
+  const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
+
+  let sIdx = students.findIndex(s => 
+    (s.identifier && s.identifier.toLowerCase() === cleanId) ||
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId) ||
+    (s.applicationId && s.applicationId.toLowerCase() === cleanId) ||
+    (s.email && s.email.toLowerCase() === cleanId)
+  );
+
+  let aIdx = admissions.findIndex(a => 
+    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
+    (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
+    (a.id && String(a.id).toLowerCase() === cleanId) ||
+    (a.email && a.email.toLowerCase() === cleanId)
+  );
+
+  if (sIdx === -1 && aIdx === -1) {
+    return res.status(404).json({ success: false, error: 'Student record not found.' });
+  }
+
+  // If in admissions but not students, build student
+  if (sIdx === -1 && aIdx !== -1) {
+    const built = buildStudentFromAdmission(admissions[aIdx]);
+    students.unshift(built);
+    sIdx = 0;
+  }
+
+  const targetStudent = students[sIdx];
+  if (!Array.isArray(targetStudent.documents)) targetStudent.documents = [];
+  if (!Array.isArray(targetStudent.documentUrls)) targetStudent.documentUrls = [];
+
+  let customTitles = req.body.documentNames || req.body.documentTitle || req.body.documentName;
+  if (typeof customTitles === 'string') {
+    try { customTitles = JSON.parse(customTitles); } catch (_) { customTitles = [customTitles]; }
+  }
+  if (!Array.isArray(customTitles)) customTitles = [];
+
+  const addedDocs = [];
+
+  for (let i = 0; i < rawDocs.length; i++) {
+    const docFile = rawDocs[i];
+    try {
+      const url = await saveUploadedFile(docFile, 'documents');
+      if (url) {
+        const docObj = {
+          id: 'doc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+          name: customTitles[i] || req.body.documentName || docFile.originalname || `Document ${targetStudent.documents.length + 1}`,
+          originalName: docFile.originalname,
+          url: url,
+          size: docFile.size,
+          type: docFile.mimetype,
+          uploadedAt: new Date().toISOString(),
+          uploadedBy: user ? `${user.name} (${user.role})` : 'Staff'
+        };
+        targetStudent.documents.push(docObj);
+        targetStudent.documentUrls.push(url);
+        if (!targetStudent.documentUrl) targetStudent.documentUrl = url;
+        addedDocs.push(docObj);
+      }
+    } catch (uploadErr) {
+      console.error('Document save error:', uploadErr);
+    }
+  }
+
+  targetStudent.updatedAt = new Date().toISOString();
+  writeData('students.json', students);
+
+  if (aIdx !== -1) {
+    admissions[aIdx].documents = targetStudent.documents;
+    admissions[aIdx].documentUrls = targetStudent.documentUrls;
+    admissions[aIdx].documentUrl = targetStudent.documentUrl;
+    admissions[aIdx].updatedAt = targetStudent.updatedAt;
+    writeData('admissions.json', admissions);
+  }
+
+  recordAuditLog('document_uploaded', `Attached ${addedDocs.length} document(s) to ${targetStudent.fullName} (${cleanId})`, 'student', cleanId, targetStudent.fullName, user);
+
+  res.json({
+    success: true,
+    message: `${addedDocs.length} document(s) attached successfully.`,
+    documents: targetStudent.documents,
+    addedDocuments: addedDocs,
+    student: targetStudent
+  });
+});
+
+// ── REMOVE ATTACHED DOCUMENT FROM STUDENT ─────────────────────────
+app.delete('/api/staff/students/:id/documents/:docIndex', (req, res) => {
+  const user = getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
+    return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required' });
+  }
+
+  const { id, docIndex } = req.params;
+  const cleanId = String(id).trim().toLowerCase();
+  const idx = parseInt(docIndex, 10);
 
   const students = readData('students.json', []);
   const admissions = readData('admissions.json', []);
@@ -875,11 +1355,92 @@ app.put('/api/staff/students/:id', (req, res) => {
     return res.status(404).json({ success: false, error: 'Student record not found.' });
   }
 
+  if (sIdx !== -1) {
+    const student = students[sIdx];
+    if (Array.isArray(student.documents) && idx >= 0 && idx < student.documents.length) {
+      student.documents.splice(idx, 1);
+    }
+    if (Array.isArray(student.documentUrls) && idx >= 0 && idx < student.documentUrls.length) {
+      student.documentUrls.splice(idx, 1);
+    }
+    student.documentUrl = (student.documentUrls && student.documentUrls[0]) || null;
+    student.updatedAt = new Date().toISOString();
+    writeData('students.json', students);
+  }
+
+  if (aIdx !== -1) {
+    const adm = admissions[aIdx];
+    if (Array.isArray(adm.documents) && idx >= 0 && idx < adm.documents.length) {
+      adm.documents.splice(idx, 1);
+    }
+    if (Array.isArray(adm.documentUrls) && idx >= 0 && idx < adm.documentUrls.length) {
+      adm.documentUrls.splice(idx, 1);
+    }
+    adm.documentUrl = (adm.documentUrls && adm.documentUrls[0]) || null;
+    adm.updatedAt = new Date().toISOString();
+    writeData('admissions.json', admissions);
+  }
+
+  recordAuditLog('document_deleted', `Removed document #${idx + 1} from student (${cleanId})`, 'student', cleanId, cleanId, user);
+
+  const updatedDocs = sIdx !== -1 ? students[sIdx].documents : (aIdx !== -1 ? admissions[aIdx].documents : []);
+  res.json({
+    success: true,
+    message: 'Document removed successfully.',
+    documents: updatedDocs
+  });
+});
+
+// ── UPDATE STUDENT PROFILE OR STATUS ──────────────────────────────
+app.put('/api/staff/students/:id', (req, res) => {
+  const user = getAuthenticatedUser(req);
+  const { id } = req.params;
+  const cleanId = String(id).trim().toLowerCase();
+
+  const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
+
+  let sIdx = students.findIndex(s => 
+    (s.identifier && s.identifier.toLowerCase() === cleanId) ||
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId) ||
+    (s.applicationId && s.applicationId.toLowerCase() === cleanId)
+  );
+
+  let aIdx = admissions.findIndex(a => 
+    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
+    (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
+    (a.id && String(a.id).toLowerCase() === cleanId) ||
+    (a.email && a.email.toLowerCase() === cleanId)
+  );
+
+  if (sIdx === -1 && aIdx === -1) {
+    return res.status(404).json({ success: false, error: 'Student record not found.' });
+  }
+
   // If status is being modified to admitted, verify permission
-  if (req.body.status && (req.body.status === 'admitted' || req.body.status === 'approved')) {
+  const isAdmitting = req.body.status && (req.body.status === 'admitted' || req.body.status === 'approved');
+  if (isAdmitting) {
     if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions')) {
       return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required to admit student' });
     }
+  }
+
+  // Auto-calculate courseEndDate if classStartDate provided
+  if (req.body.classStartDate) {
+    const existingRec = sIdx !== -1 ? students[sIdx] : admissions[aIdx];
+    const courseLevel = req.body.courseLevel || existingRec.courseLevel || 'N5';
+    const durationMonths = calculateCourseDurationMonths(courseLevel);
+    if (!req.body.courseEndDate) {
+      req.body.courseEndDate = calculateCourseEndDate(req.body.classStartDate, durationMonths);
+    }
+  }
+
+  // If being admitted and not yet in students.json, create record in students.json
+  if (sIdx === -1 && aIdx !== -1 && isAdmitting) {
+    const studentRecord = buildStudentFromAdmission({ ...admissions[aIdx], ...req.body, status: 'admitted' });
+    students.unshift(studentRecord);
+    sIdx = 0;
   }
 
   // Update in students.json
@@ -889,6 +1450,9 @@ app.put('/api/staff/students/:id', (req, res) => {
       ...req.body,
       updatedAt: new Date().toISOString()
     };
+    if (req.body.classSchedule && students[sIdx].nextClass) {
+      students[sIdx].nextClass.time = req.body.classSchedule;
+    }
     writeData('students.json', students);
   }
 
@@ -912,6 +1476,94 @@ app.put('/api/staff/students/:id', (req, res) => {
   });
 });
 
+// ── APPROVE COURSE COMPLETION / GRADUATION ────────────────────────
+app.post('/api/staff/students/:id/approve-completion', (req, res) => {
+  const user = getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
+    return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions or edit_students required' });
+  }
+
+  const { id } = req.params;
+  const cleanId = String(id).trim().toLowerCase();
+
+  const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
+
+  let sIdx = students.findIndex(s => 
+    (s.identifier && s.identifier.toLowerCase() === cleanId) ||
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId) ||
+    (s.applicationId && s.applicationId.toLowerCase() === cleanId) ||
+    (s.email && s.email.toLowerCase() === cleanId)
+  );
+
+  let aIdx = admissions.findIndex(a => 
+    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
+    (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
+    (a.id && String(a.id).toLowerCase() === cleanId) ||
+    (a.email && a.email.toLowerCase() === cleanId)
+  );
+
+  if (sIdx === -1 && aIdx === -1) {
+    return res.status(404).json({ success: false, error: 'Student record not found.' });
+  }
+
+  // If not yet in students.json, construct it
+  if (sIdx === -1 && aIdx !== -1) {
+    const stRecord = buildStudentFromAdmission(admissions[aIdx]);
+    students.unshift(stRecord);
+    sIdx = 0;
+  }
+
+  const nowIso = new Date().toISOString();
+  const completionData = {
+    courseStatus: 'completed',
+    status: 'graduated',
+    completedAt: nowIso,
+    completionApprovedBy: user ? `${user.name} (${user.role})` : 'Staff Admin',
+    updatedAt: nowIso
+  };
+
+  const existingSteps = students[sIdx].visaApplication?.steps || [];
+  const updatedSteps = existingSteps.length > 0
+    ? existingSteps.map((st, i) => i === 0 ? { ...st, done: true, date: nowIso.split('T')[0] } : st)
+    : [
+        { title: 'Japanese Language Course & Exam (Dhaka)', done: true, date: nowIso.split('T')[0] },
+        { title: 'Certificate Submission & Assessment', done: false, date: 'Pending' },
+        { title: 'Japanese Institute Selection & COE Application', done: false, date: 'Pending' },
+        { title: 'COE Issuance & Tuition Transfer', done: false, date: 'Pending' },
+        { title: 'Embassy of Japan Visa Stamping', done: false, date: 'Pending' }
+      ];
+
+  students[sIdx] = {
+    ...students[sIdx],
+    ...completionData,
+    visaApplication: {
+      ...(students[sIdx].visaApplication || {}),
+      status: 'Japanese Language Course Completed - Ready for JLPT/NAT in Dhaka',
+      step: 2,
+      steps: updatedSteps
+    }
+  };
+  writeData('students.json', students);
+
+  if (aIdx !== -1) {
+    admissions[aIdx] = {
+      ...admissions[aIdx],
+      ...completionData
+    };
+    writeData('admissions.json', admissions);
+  }
+
+  recordAuditLog('student_graduated', `Approved course completion & graduation for ${students[sIdx].fullName} (${students[sIdx].identifier})`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
+
+  res.json({
+    success: true,
+    message: `Course completion approved for ${students[sIdx].fullName}.`,
+    student: students[sIdx]
+  });
+});
+
 app.post('/api/staff/logout', (req, res) => {
   res.clearCookie('fusion_staff_email');
   res.clearCookie('fusion_staff_branch');
@@ -919,12 +1571,66 @@ app.post('/api/staff/logout', (req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
+// ── DELETE STUDENT RECORD (STAFF / INSTRUCTOR / ADMIN) ─────────────
+app.delete('/api/staff/students/:id', (req, res) => {
+  const user = getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
+    return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions or edit_students required' });
+  }
+
+  const { id } = req.params;
+  const cleanId = String(id).trim().toLowerCase();
+
+  const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
+
+  const sIdx = students.findIndex(s => 
+    (s.identifier && s.identifier.toLowerCase() === cleanId) ||
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId) ||
+    (s.applicationId && s.applicationId.toLowerCase() === cleanId) ||
+    (s.email && s.email.toLowerCase() === cleanId)
+  );
+
+  const aIdx = admissions.findIndex(a => 
+    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
+    (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
+    (a.id && String(a.id).toLowerCase() === cleanId) ||
+    (a.email && a.email.toLowerCase() === cleanId)
+  );
+
+  if (sIdx === -1 && aIdx === -1) {
+    return res.status(404).json({ success: false, error: 'Student record not found.' });
+  }
+
+  let deletedName = cleanId;
+
+  if (sIdx !== -1) {
+    deletedName = students[sIdx].fullName || deletedName;
+    students.splice(sIdx, 1);
+    writeData('students.json', students);
+  }
+
+  if (aIdx !== -1) {
+    deletedName = admissions[aIdx].fullName || deletedName;
+    admissions.splice(aIdx, 1);
+    writeData('admissions.json', admissions);
+  }
+
+  recordAuditLog('student_deleted', `Deleted student record for ${deletedName} (${cleanId})`, 'student', cleanId, deletedName, user);
+
+  return res.json({
+    success: true,
+    message: `Student record for ${deletedName} has been deleted successfully.`
+  });
+});
+
 // ── BRANCHES MANAGEMENT CRUD ──────────────────────────────────────
 app.get('/api/branches', (req, res) => {
   res.json({ success: true, branches: readData('branches.json', []) });
 });
 
-app.post('/api/branches', (req, res) => {
+app.post('/api/branches', requireAuth('admin'), (req, res) => {
   const branches = readData('branches.json', []);
   const newBranch = {
     id: req.body.id || ('branch_' + Date.now()),
@@ -942,7 +1648,7 @@ app.post('/api/branches', (req, res) => {
   res.json({ success: true, message: 'Branch created', branch: newBranch });
 });
 
-app.put('/api/branches/:id', (req, res) => {
+app.put('/api/branches/:id', requireAuth('admin'), (req, res) => {
   const { id } = req.params;
   const branches = readData('branches.json', []);
   const idx = branches.findIndex(b => b.id === id || b.name.toLowerCase() === id.toLowerCase());
@@ -953,16 +1659,8 @@ app.put('/api/branches/:id', (req, res) => {
   res.json({ success: true, message: 'Branch updated', branch: branches[idx] });
 });
 
-app.delete('/api/branches/:id', (req, res) => {
+app.delete('/api/branches/:id', requireAuth('admin'), (req, res) => {
   const { id } = req.params;
-  const { adminPassword } = req.body || {};
-
-  const settings = readData('settings.json', {});
-  const validPass = (settings.adminUser && settings.adminUser.password) || 'admin123';
-
-  if (!adminPassword || adminPassword !== validPass) {
-    return res.status(401).json({ success: false, error: 'Incorrect admin password. Deletion unauthorized.' });
-  }
 
   let branches = readData('branches.json', []);
   const branchToDelete = branches.find(b => b.id === id || b.name.toLowerCase() === id.toLowerCase());
@@ -978,12 +1676,65 @@ app.get('/api/permissions', (req, res) => {
 });
 
 // ── ADMIN USER & PERMISSION MANAGEMENT CRUD ───────────────────────
-app.get('/api/admin/users', (req, res) => {
+app.get('/api/admin/users', requireAuth('admin'), (req, res) => {
   const users = readData('users.json', []);
   res.json({ success: true, users });
 });
 
-app.post('/api/admin/users', (req, res) => {
+// ── ADMIN LOGIN ENDPOINT ───────────────────────────────────────
+app.post('/api/admin/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ success: false, error: 'Email and password are required.' });
+  }
+
+  const cleanEmail = String(email).trim().toLowerCase();
+  const users = readData('users.json', []);
+  const adminUser = users.find(u => u.email && u.email.toLowerCase() === cleanEmail && u.role === 'admin');
+
+  if (!adminUser) {
+    return res.status(401).json({ success: false, error: 'Admin account not found.' });
+  }
+
+  let passwordValid = false;
+  if (adminUser.password) {
+    passwordValid = await verifyPassword(password, adminUser.password);
+  }
+  if (!passwordValid && IS_DEV) {
+    const demoPasswords = ['admin123', 'password123', '123456'];
+    passwordValid = demoPasswords.includes(password);
+  }
+
+  if (!passwordValid) {
+    return res.status(401).json({ success: false, error: 'Invalid password.' });
+  }
+
+  res.cookie('fusion_staff_email', adminUser.email, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
+  res.cookie('fusion_staff_branch', adminUser.branch || 'all', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
+  res.cookie('fusion_staff_role', 'admin', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
+
+  recordAuditLog('admin_login', `Admin logged in: ${adminUser.name}`, 'user', adminUser.id, adminUser.name, {
+    name: adminUser.name,
+    email: adminUser.email,
+    role: 'admin',
+    branch: adminUser.branch || 'all'
+  });
+
+  return res.json({
+    success: true,
+    admin: {
+      id: adminUser.id,
+      name: adminUser.name,
+      email: adminUser.email,
+      branch: adminUser.branch || 'all',
+      role: 'admin',
+      permissions: adminUser.permissions || ['*']
+    },
+    redirect: '/pages/admin-login.html'
+  });
+});
+
+app.post('/api/admin/users', requireAuth('admin'), async (req, res) => {
   const { name, email, password, role, branch, permissions, status } = req.body;
   if (!name || !email) {
     return res.status(400).json({ success: false, error: 'Name and Email are required.' });
@@ -995,7 +1746,8 @@ app.post('/api/admin/users', (req, res) => {
     return res.status(400).json({ success: false, error: 'A user with this email address already exists.' });
   }
 
-  const userPassword = (password && String(password).trim()) ? String(password).trim() : 'password123';
+  const rawPassword = (password && String(password).trim()) ? String(password).trim() : 'password123';
+  const userPassword = await hashPassword(rawPassword);
 
   const newUser = {
     id: req.body.id || ('usr_' + (role === 'instructor' ? 'inst_' : 'staff_') + Date.now()),
@@ -1037,7 +1789,7 @@ app.post('/api/admin/users', (req, res) => {
   res.json({ success: true, message: 'User account created successfully', user: newUser });
 });
 
-app.put('/api/admin/users/:id', (req, res) => {
+app.put('/api/admin/users/:id', requireAuth('admin'), (req, res) => {
   const { id } = req.params;
   const users = readData('users.json', []);
   const idx = users.findIndex(u => u.id === id || u.email.toLowerCase() === id.toLowerCase());
@@ -1069,7 +1821,7 @@ app.put('/api/admin/users/:id', (req, res) => {
   res.json({ success: true, message: 'User updated successfully', user: users[idx] });
 });
 
-app.delete('/api/admin/users/:id', (req, res) => {
+app.delete('/api/admin/users/:id', requireAuth('admin'), (req, res) => {
   const { id } = req.params;
   let users = readData('users.json', []);
   const user = users.find(u => u.id === id || u.email.toLowerCase() === id.toLowerCase());
@@ -1139,13 +1891,19 @@ app.get('/api/students/:id/billing', (req, res) => {
   let student = students.find(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
     (s.email && s.email.toLowerCase() === cleanId) ||
-    (s.id && String(s.id).toLowerCase() === cleanId)
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId) ||
+    (s.applicationId && s.applicationId.toLowerCase() === cleanId) ||
+    (s.phone && s.phone.replace(/\D/g, '') === cleanId.replace(/\D/g, ''))
   );
 
   if (!student) {
     const adm = admissions.find(a => 
       (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
-      (a.id && String(a.id).toLowerCase() === cleanId)
+      (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
+      (a.id && String(a.id).toLowerCase() === cleanId) ||
+      (a.email && a.email.toLowerCase() === cleanId) ||
+      (a.phone && a.phone.replace(/\D/g, '') === cleanId.replace(/\D/g, ''))
     );
     if (adm) {
       student = buildStudentFromAdmission(adm);
@@ -1173,14 +1931,36 @@ app.post('/api/students/:id/payments', (req, res) => {
   }
 
   const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
   const cleanId = String(id).trim().toLowerCase();
-  const sIdx = students.findIndex(s => 
+
+  let sIdx = students.findIndex(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
     (s.email && s.email.toLowerCase() === cleanId) ||
-    (s.id && String(s.id).toLowerCase() === cleanId)
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId) ||
+    (s.applicationId && s.applicationId.toLowerCase() === cleanId) ||
+    (s.phone && s.phone.replace(/\D/g, '') === cleanId.replace(/\D/g, ''))
   );
 
-  if (sIdx === -1) return res.status(404).json({ success: false, error: 'Student not found' });
+  let aIdx = admissions.findIndex(a => 
+    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
+    (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
+    (a.id && String(a.id).toLowerCase() === cleanId) ||
+    (a.email && a.email.toLowerCase() === cleanId) ||
+    (a.phone && a.phone.replace(/\D/g, '') === cleanId.replace(/\D/g, ''))
+  );
+
+  if (sIdx === -1 && aIdx === -1) {
+    return res.status(404).json({ success: false, error: 'Student not found' });
+  }
+
+  // If not found in students.json, construct from admissions.json and persist
+  if (sIdx === -1 && aIdx !== -1) {
+    const studentRecord = buildStudentFromAdmission(admissions[aIdx]);
+    students.unshift(studentRecord);
+    sIdx = 0;
+  }
 
   // Branch check
   if (user && !hasBranchAccess(user, students[sIdx].branch)) {
@@ -1213,14 +1993,16 @@ app.post('/api/students/:id/payments', (req, res) => {
   writeData('students.json', students);
 
   // Also sync admissions.json if exists
-  const admissions = readData('admissions.json', []);
-  const aIdx = admissions.findIndex(a => 
-    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
-    (a.id && String(a.id).toLowerCase() === cleanId)
-  );
   if (aIdx !== -1) {
     admissions[aIdx].payments = students[sIdx].payments;
-    admissions[aIdx].feeInfo = students[sIdx].fees;
+    admissions[aIdx].feeInfo = {
+      ...(admissions[aIdx].feeInfo || {}),
+      ...students[sIdx].fees,
+      total: students[sIdx].fees.total,
+      paid: students[sIdx].fees.paid,
+      due: students[sIdx].fees.due,
+      status: students[sIdx].fees.status
+    };
     writeData('admissions.json', admissions);
   }
 
@@ -1245,13 +2027,34 @@ app.put('/api/students/:id/custom-fee', (req, res) => {
   const { customMonthlyFee, specialDiscount, reason } = req.body;
 
   const students = readData('students.json', []);
+  const admissions = readData('admissions.json', []);
   const cleanId = String(id).trim().toLowerCase();
-  const sIdx = students.findIndex(s => 
+
+  let sIdx = students.findIndex(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
-    (s.id && String(s.id).toLowerCase() === cleanId)
+    (s.id && String(s.id).toLowerCase() === cleanId) ||
+    (s.applicationNumber && s.applicationNumber.toLowerCase() === cleanId) ||
+    (s.applicationId && s.applicationId.toLowerCase() === cleanId) ||
+    (s.email && s.email.toLowerCase() === cleanId)
   );
 
-  if (sIdx === -1) return res.status(404).json({ success: false, error: 'Student not found' });
+  let aIdx = admissions.findIndex(a => 
+    (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
+    (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
+    (a.id && String(a.id).toLowerCase() === cleanId) ||
+    (a.email && a.email.toLowerCase() === cleanId)
+  );
+
+  if (sIdx === -1 && aIdx === -1) {
+    return res.status(404).json({ success: false, error: 'Student not found' });
+  }
+
+  // If not found in students.json, construct from admissions.json and persist
+  if (sIdx === -1 && aIdx !== -1) {
+    const studentRecord = buildStudentFromAdmission(admissions[aIdx]);
+    students.unshift(studentRecord);
+    sIdx = 0;
+  }
 
   // Branch check
   if (user && !hasBranchAccess(user, students[sIdx].branch)) {
@@ -1272,6 +2075,21 @@ app.put('/api/students/:id/custom-fee', (req, res) => {
   };
 
   writeData('students.json', students);
+
+  // Also sync admissions.json if exists
+  if (aIdx !== -1) {
+    admissions[aIdx].customMonthlyFee = students[sIdx].customMonthlyFee;
+    admissions[aIdx].specialDiscount = students[sIdx].specialDiscount;
+    admissions[aIdx].feeInfo = {
+      ...(admissions[aIdx].feeInfo || {}),
+      ...students[sIdx].fees,
+      total: students[sIdx].fees.total,
+      paid: students[sIdx].fees.paid,
+      due: students[sIdx].fees.due,
+      status: students[sIdx].fees.status
+    };
+    writeData('admissions.json', admissions);
+  }
 
   recordAuditLog('fee_customized', `Monthly fee customized for ${students[sIdx].fullName} (${students[sIdx].identifier}). Old: ${oldRate || 'standard'}, New: ${students[sIdx].customMonthlyFee || 'standard'}. Note: ${reason || 'N/A'}`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
 
@@ -1313,7 +2131,7 @@ app.use((req, res) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ success: false, error: 'API endpoint not found.' });
     }
-    res.status(404).sendFile(path.join(__dirname, 'index.html'));
+    res.status(404).json({ success: false, error: 'Page not found.', hint: 'Visit / for the homepage.' });
 });
 
 // ── Global error handler ─────────────────────────────────────

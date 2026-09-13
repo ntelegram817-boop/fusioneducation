@@ -3,350 +3,961 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Portal - Fusion Education BD</title>
+    <title>Student Portal — Fusion Education BD</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
-<body style="background: #080d1a; color: #f8fafc; min-height: 100vh;">
+<body>
 
-    <!-- ── TOPBAR ── -->
-    <header class="student-topbar">
-        <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <!-- ── OVERALL APP SHELL WITH VERTICAL SIDEBAR ── -->
+    <div class="portal-app-shell">
+
+        <!-- Mobile Backdrop Overlay -->
+        <div id="sidebarBackdrop" class="sidebar-mobile-backdrop"></div>
+
+        <!-- ══════════════════════════════════════════════
+             1. VERTICAL LEFT SIDEBAR
+             ══════════════════════════════════════════════ -->
+        <aside id="portalSidebar" class="portal-sidebar">
             
-            <!-- Brand -->
-            <div style="display: flex; align-items: center; gap: 1rem;">
-                <a href="../index.html" style="display: inline-flex; align-items: center; gap: 0.65rem; text-decoration: none;">
-                    <img src="../assets/images/logo.jpg" alt="Fusion Logo" style="height: 38px; width: 38px; border-radius: 10px; object-fit: cover;">
-                    <div style="font-family: 'Poppins', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff;">
-                        Fusion <span style="color: #e60012;">Education</span>
+            <!-- Brand Header -->
+            <div class="sidebar-brand-header">
+                <a href="../index.html" class="sidebar-logo-link">
+                    <img src="../assets/images/logo.jpg" alt="Fusion Logo" class="sidebar-logo-img">
+                    <div>
+                        <div class="sidebar-brand-text">Fusion <span>Education</span></div>
+                        <span class="sidebar-portal-badge"><i class="fas fa-user-graduate"></i> Student Portal</span>
                     </div>
                 </a>
-                <span class="status-pill cyan" style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">
-                    <i class="fas fa-user-graduate"></i> Student Portal
-                </span>
+                <button id="sidebarCloseBtn" type="button" class="sidebar-close-btn" title="Close Menu">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <!-- Header Action Controls -->
-            <div style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap;">
-                <button type="button" id="editProfileBtn" class="btn-secondary" style="font-size: 0.82rem; padding: 0.45rem 0.85rem;">
-                    <i class="fas fa-user-edit" style="color: #38bdf8;"></i> Edit Profile
-                </button>
-                <a href="admission.html" class="btn-primary" style="font-size: 0.82rem; padding: 0.45rem 0.95rem;">
-                    <i class="fas fa-plus-circle"></i> New Course
+            <!-- Student Profile Widget in Sidebar -->
+            <div class="sidebar-user-card">
+                <div class="sidebar-avatar-wrap">
+                    <img id="studentPhoto" class="sidebar-avatar-img" src="../assets/images/student-placeholder.jpg" alt="Student Photo">
+                    <span class="sidebar-status-dot" title="Active"></span>
+                </div>
+                <div class="sidebar-user-info">
+                    <h4 id="studentName" class="sidebar-user-name">Loading Student...</h4>
+                    <span id="studentIdBadge" class="sidebar-user-id">FE-2024-001</span>
+                    <div>
+                        <span id="studentStatusPill" class="sidebar-user-role">
+                            <i class="fas fa-check-circle"></i> Active Student
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vertical Navigation Menu (Clean & Full Width) -->
+            <div class="sidebar-nav-container">
+                <ul class="sidebar-nav-list">
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="sidebar-nav-btn active" data-tab="tab-overview">
+                            <i class="fas fa-th-large"></i>
+                            <span>Overview</span>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="sidebar-nav-btn" data-tab="tab-routine">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Class Routine</span>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="sidebar-nav-btn" data-tab="tab-visa">
+                            <i class="fas fa-plane-departure"></i>
+                            <span>Japan Visa &amp; COE</span>
+                            <span class="sidebar-badge-pill">Info</span>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="sidebar-nav-btn" data-tab="tab-fees">
+                            <i class="fas fa-receipt"></i>
+                            <span>Fees &amp; Ledger</span>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="sidebar-nav-btn" data-tab="tab-materials">
+                            <i class="fas fa-book-reader"></i>
+                            <span>Study Materials</span>
+                        </button>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <button type="button" class="sidebar-nav-btn" data-tab="tab-profile">
+                            <i class="fas fa-user-circle"></i>
+                            <span>My Profile</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div style="font-size: 0.78rem; color: var(--portal-text-muted); display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--portal-primary);"></i>
+                    <span id="studentBranch">Dinajpur Campus</span>
+                </div>
+                <a href="contact.html" class="sidebar-footer-btn">
+                    <i class="fas fa-headset"></i> Student Help Desk
                 </a>
-                <button type="button" id="logoutBtn" class="btn-outline" style="font-size: 0.82rem; padding: 0.45rem 0.85rem; color: #fca5a5; border-color: rgba(239, 68, 68, 0.35);">
+                <button id="logoutBtn" type="button" class="sidebar-footer-btn logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </div>
-        </div>
-    </header>
+        </aside>
 
-    <!-- ── MAIN DASHBOARD CONTAINER ── -->
-    <main class="dashboard-shell">
+        <!-- ══════════════════════════════════════════════
+             2. MAIN CONTENT AREA (RIGHT)
+             ══════════════════════════════════════════════ -->
+        <div class="portal-main-wrap">
 
-        <!-- ── 1. STUDENT HERO PROFILE BANNER ── -->
-        <section class="student-hero-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
-                <div style="display: flex; align-items: center; gap: 1.35rem; flex-wrap: wrap;">
-                    
-                    <!-- Avatar with Blood Group -->
-                    <div style="position: relative; flex-shrink: 0;">
-                        <img id="studentPhoto" class="profile-photo" src="../assets/images/student-placeholder.jpg" alt="Student Photo">
-                        <span id="studentBlood" style="position: absolute; bottom: 0; right: 0; background: #e60012; color: #fff; font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 999px; border: 2px solid #0f172a; box-shadow: 0 2px 6px rgba(0,0,0,0.4);">
-                            O+
-                        </span>
-                    </div>
-
-                    <!-- Details -->
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
-                            <h1 id="studentName" style="margin: 0; font-size: 1.55rem; font-weight: 800; color: #ffffff; font-family: 'Poppins', sans-serif; letter-spacing: -0.01em;">
-                                Loading Student...
-                            </h1>
-                            <span id="studentIdBadge" class="status-pill" style="background: rgba(37,99,235,0.25); color: #93c5fd; font-weight: 700;">
-                                FE-2024-001
-                            </span>
-                            <span id="studentStatusPill" class="status-pill green">
-                                <i class="fas fa-user-check"></i> Active Student
-                            </span>
-                        </div>
-
-                        <!-- Meta Info Chips -->
-                        <div style="display: flex; gap: 1.25rem; flex-wrap: wrap; color: #94a3b8; font-size: 0.85rem;">
-                            <span style="display: inline-flex; align-items: center; gap: 0.4rem;">
-                                <i class="fas fa-envelope" style="color: #38bdf8;"></i> 
-                                <span id="studentEmail" style="color: #e2e8f0;">student@fusion.com</span>
-                            </span>
-                            <span style="display: inline-flex; align-items: center; gap: 0.4rem;">
-                                <i class="fas fa-phone" style="color: #38bdf8;"></i> 
-                                <span id="studentPhone" style="color: #e2e8f0;">+880 1700 000000</span>
-                            </span>
-                            <span style="display: inline-flex; align-items: center; gap: 0.4rem;">
-                                <i class="fas fa-map-marker-alt" style="color: #38bdf8;"></i> 
-                                <span id="studentBranch" style="color: #e2e8f0;">Dinajpur Campus</span>
-                            </span>
-                        </div>
+            <!-- Top Header App Bar -->
+            <header class="portal-topbar student-topbar">
+                <div class="topbar-left">
+                    <button id="mobileMenuToggle" type="button" class="mobile-menu-toggle" aria-label="Toggle Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="topbar-greeting-wrap">
+                        <h2 id="topbarGreeting">Welcome back, Student! 👋</h2>
+                        <p id="topbarSubText">Fusion Education BD • Japanese Language &amp; Visa Advisory Portal</p>
                     </div>
                 </div>
 
-                <!-- Fast Summary Badge -->
-                <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-light); padding: 0.75rem 1.25rem; border-radius: 14px; text-align: center; min-width: 140px;">
-                    <div style="font-size: 0.75rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Student Status</div>
-                    <div id="quickStatusText" style="font-size: 1.1rem; font-weight: 700; color: #34d399; margin-top: 0.2rem;">Enrolled</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ── 2. THREE SUMMARY KPI CARDS ── -->
-        <section class="panel-grid">
-            
-            <!-- Course & Batch Progress -->
-            <article class="panel-card" style="display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                    <div>
-                        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; font-weight: 700;">Enrolled Program</span>
-                        <h3 id="courseTitle" style="margin: 0.25rem 0 0; font-size: 1.15rem; color: #ffffff;">JLPT Japanese Course</h3>
-                    </div>
-                    <span class="status-pill cyan" style="font-size: 0.72rem;">
-                        <i class="fas fa-book-open"></i> In Progress
-                    </span>
-                </div>
-                <p id="courseBatch" style="margin: 0 0 1.25rem; color: #94a3b8; font-size: 0.85rem;">Batch 2024 • Tanaka Sensei</p>
-                
-                <div style="margin-top: auto;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
-                        <span style="color: #94a3b8;">Syllabus Progress</span>
-                        <span id="progressText" style="color: #38bdf8; font-weight: 700;">60% completed</span>
-                    </div>
-                    <div class="custom-progress-track">
-                        <div id="progressBar" class="custom-progress-fill" style="width: 60%;"></div>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Next Class Routine & Attendance -->
-            <article class="panel-card" style="display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                    <div>
-                        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; font-weight: 700;">Next Class Routine</span>
-                        <h3 id="nextClassTime" style="margin: 0.25rem 0 0; font-size: 1.15rem; color: #ffffff;">Tomorrow 10:00 AM</h3>
-                    </div>
-                    <span class="status-pill green" style="font-size: 0.72rem;">
-                        <i class="fas fa-calendar-check"></i> Scheduled
-                    </span>
-                </div>
-                <p id="nextClassTopic" style="margin: 0 0 0.35rem; color: #f1f5f9; font-size: 0.9rem; font-weight: 600;">
-                    Grammar Lesson: ~te kudasai
-                </p>
-                <p id="nextClassRoom" style="margin: 0 0 1rem; color: #94a3b8; font-size: 0.85rem;">
-                    <i class="fas fa-door-open" style="color: #38bdf8; margin-right: 0.35rem;"></i> Room 203 & Online
-                </p>
-                
-                <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #94a3b8;">Attendance Rate:</span>
-                    <strong id="attendanceRate" style="color: #10b981; font-size: 0.95rem;">87.5%</strong>
-                </div>
-            </article>
-
-            <!-- Tuition Fee Status -->
-            <article class="panel-card" style="display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                    <div>
-                        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; font-weight: 700;">Tuition & Fee Status</span>
-                        <h3 id="feeTotal" style="margin: 0.25rem 0 0; font-size: 1.15rem; color: #ffffff;">18,000 BDT</h3>
-                    </div>
-                    <span id="feeStatus" class="status-pill green" style="font-size: 0.72rem;">
-                        <i class="fas fa-check-circle"></i> Paid
-                    </span>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-top: 0.5rem; margin-bottom: 0.75rem;">
-                    <div style="background: rgba(255,255,255,0.03); padding: 0.65rem 0.75rem; border-radius: 10px; border: 1px solid var(--border-light);">
-                        <div style="font-size: 0.72rem; color: #94a3b8; text-transform: uppercase;">Amount Paid</div>
-                        <div id="feePaid" style="font-weight: 700; color: #34d399; font-size: 1rem; margin-top: 0.2rem;">18,000 BDT</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 0.65rem 0.75rem; border-radius: 10px; border: 1px solid var(--border-light);">
-                        <div style="font-size: 0.72rem; color: #94a3b8; text-transform: uppercase;">Balance Due</div>
-                        <div id="feeDue" style="font-weight: 700; color: #38bdf8; font-size: 1rem; margin-top: 0.2rem;">0 BDT</div>
-                    </div>
-                </div>
-
-                <div style="margin-top: auto; text-align: right;">
-                    <a href="contact.html" style="color: #60a5fa; font-size: 0.8rem; text-decoration: none; font-weight: 600;">
-                        Billing & Payment Desk →
+                <div class="topbar-right-actions">
+                    <a href="admission.html" class="topbar-btn primary">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>New Course</span>
                     </a>
+                    <button type="button" id="notifBellBtn" class="topbar-icon-btn" title="Announcements">
+                        <i class="fas fa-bell"></i>
+                        <span class="topbar-badge-dot"></span>
+                    </button>
                 </div>
-            </article>
-        </section>
+            </header>
 
-        <!-- ── 3. MAIN CONTENT GRID (VISA & ASSIGNMENTS vs NOTICES & RESOURCES) ── -->
-        <div class="dashboard-split-grid">
-            
-            <!-- ── LEFT COLUMN ── -->
-            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                
-                <!-- Japan Visa Application Tracker -->
-                <section class="panel-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-                        <div>
-                            <h3 style="color: #ffffff;">
-                                <i class="fas fa-plane-departure" style="color: #e60012;"></i> Japan Visa &amp; COE Tracker
-                            </h3>
-                            <p id="visaUniversity" class="card-subtitle">Tokyo International Language Academy</p>
+            <!-- Dashboard Body -->
+            <main class="portal-content-body">
+
+                <!-- ── 4 HIGH-DENSITY KPI METRIC TILES ── -->
+                <section class="kpi-cards-grid print-hide">
+                    
+                    <!-- 1. Course Progress -->
+                    <article class="kpi-stat-card">
+                        <div class="kpi-card-header">
+                            <span class="kpi-title-text">Course Progress</span>
+                            <div class="kpi-icon-pill blue"><i class="fas fa-graduation-cap"></i></div>
                         </div>
-                        <span id="visaStatusPill" class="status-pill cyan">
-                            <i class="fas fa-passport"></i> COE Applied
+                        <div id="courseTitle" style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.2rem; font-family: 'Poppins', sans-serif;">
+                            JLPT Japanese Language
+                        </div>
+                        <p id="courseBatch" class="kpi-sub-text">Batch 2024 • Tanaka Sensei</p>
+                        
+                        <div class="kpi-progress-bar-wrap">
+                            <div id="progressBar" class="kpi-progress-bar-fill" style="width: 65%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 0.4rem; color: var(--portal-text-muted);">
+                            <span>Syllabus Covered</span>
+                            <span id="progressText" style="color: var(--portal-primary); font-weight: 700;">65% completed</span>
+                        </div>
+                    </article>
+
+                    <!-- 2. Attendance Rate -->
+                    <article class="kpi-stat-card">
+                        <div class="kpi-card-header">
+                            <span class="kpi-title-text">Attendance Rate</span>
+                            <div class="kpi-icon-pill green"><i class="fas fa-user-check"></i></div>
+                        </div>
+                        <div id="attendanceRate" class="kpi-main-metric" style="color: #34d399;">
+                            92%
+                        </div>
+                        <p id="attendanceCount" class="kpi-sub-text">24/26 Classes Attended</p>
+                        <div style="margin-top: auto; padding-top: 0.65rem;">
+                            <span class="status-pill green" style="font-size: 0.7rem;">
+                                <i class="fas fa-shield-alt"></i> Regular Status
+                            </span>
+                        </div>
+                    </article>
+
+                    <!-- 3. Tuition Fee Status -->
+                    <article class="kpi-stat-card">
+                        <div class="kpi-card-header">
+                            <span class="kpi-title-text">Tuition Balance</span>
+                            <div class="kpi-icon-pill red"><i class="fas fa-wallet"></i></div>
+                        </div>
+                        <div id="feeDue" class="kpi-main-metric" style="color: #f87171;">
+                            0 BDT
+                        </div>
+                        <p class="kpi-sub-text">
+                            Total: <strong id="feeTotal" style="color: #e2e8f0;">15,000 BDT</strong> • Paid: <strong id="feePaid" style="color: #34d399;">15,000 BDT</strong>
+                        </p>
+                        <div style="margin-top: auto; padding-top: 0.65rem;">
+                            <span id="feeStatus" class="status-pill green" style="font-size: 0.7rem;">
+                                <i class="fas fa-check-circle"></i> Paid in Full
+                            </span>
+                        </div>
+                    </article>
+
+                    <!-- 4. Next Live Class Routine -->
+                    <article class="kpi-stat-card">
+                        <div class="kpi-card-header">
+                            <span class="kpi-title-text" id="nextClassHeaderTitle">Next Scheduled Class</span>
+                            <div class="kpi-icon-pill amber"><i class="fas fa-clock"></i></div>
+                        </div>
+                        <div id="nextClassTime" style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.2rem;">
+                            Tomorrow 10:00 AM
+                        </div>
+                        <p id="nextClassTopic" class="kpi-sub-text" style="color: #e2e8f0; font-weight: 600;">
+                            Grammar &amp; Vocabulary Practice
+                        </p>
+                        <!-- Countdown timer banner -->
+                        <div id="classCountdownWrap" style="display:none; margin-top:0.4rem; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.35); padding:0.35rem 0.65rem; border-radius:8px; font-size:0.75rem; color:#fde68a; font-weight:700;">
+                            <i class="fas fa-hourglass-half"></i> <span id="classCountdownText">Starts in -- days</span>
+                        </div>
+                        <div id="nextClassRoom" style="font-size: 0.78rem; color: var(--portal-primary); margin-top: auto; padding-top: 0.65rem;">
+                            <i class="fas fa-door-open"></i> Room 102 &amp; Zoom Live
+                        </div>
+                    </article>
+                </section>
+
+
+                <!-- ══════════════════════════════════════════════
+                     TAB 1: OVERVIEW (DEFAULT ACTIVE)
+                     ══════════════════════════════════════════════ -->
+                <section id="tab-overview" class="portal-tab-content active">
+                    <!-- Course Completion & Official Exam Dhaka Guidance Card -->
+                    <article class="portal-glass-card" id="completionBannerCard" style="display: none; background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(168, 85, 247, 0.18)); border: 1px solid rgba(168, 85, 247, 0.45); margin-bottom: 1.5rem; position: relative; overflow: hidden; padding: 1.35rem;">
+                        <div style="display: flex; gap: 1.25rem; align-items: flex-start; flex-wrap: wrap;">
+                            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(168,85,247,0.25); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #c084fc; flex-shrink: 0;">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div style="flex: 1; min-width: 260px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.4rem;">
+                                    <h3 style="color: #fff; margin: 0; font-size: 1.25rem;">🎉 অভিনন্দন! আপনার কোর্স সফলভাবে সম্পন্ন হয়েছে</h3>
+                                    <span id="completionStatusPill" class="status-pill green"><i class="fas fa-check-double"></i> Graduated</span>
+                                </div>
+                                <p style="color: #cbd5e1; font-size: 0.88rem; line-height: 1.6; margin: 0 0 0.85rem;">
+                                    জাপানিজ অথোরাইজেশনের নিয়মানুযায়ী অফিসিয়াল <strong>JLPT / NAT-TEST</strong> পরীক্ষা কেন্দ্রীয়ভাবে <strong>ঢাকায়</strong> অনুষ্ঠিত হয়। আপনি ফিউশন এডুকেশনের মাধ্যমে ভাষা প্রস্তুতি সম্পন্ন করেছেন। এখন ঢাকায় নির্দিষ্ট সেশনের অফিসিয়াল পরীক্ষায় নিজে আবেদন করুন এবং পরীক্ষার প্রবেশপত্র ও ফলাফল সংগ্রহ করুন।
+                                </p>
+                                <div style="display: flex; gap: 0.85rem; flex-wrap: wrap; align-items: center;">
+                                    <button type="button" class="topbar-btn primary" onclick="openExamSubmitModal()" style="font-weight: 700; cursor: pointer;">
+                                        <i class="fas fa-file-upload"></i> অফিসিয়াল পরীক্ষার ফলাফল ও সার্টিফিকেট জমা দিন
+                                    </button>
+                                    <span id="examSubmittedNotice" style="display:none; font-size: 0.85rem; color: #34d399; font-weight: 600;">
+                                        <i class="fas fa-check-circle"></i> সার্টিফিকেট জমা হয়েছে (COE প্রসেসিং চলমান)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <div class="overview-grid-split">
+                        
+                        <!-- Left Main Column -->
+                        <div class="overview-left-col">
+                            
+                            <!-- Weekly Class Routine Quick Grid -->
+                            <article class="portal-glass-card">
+                                <div class="card-title-bar">
+                                    <h3>
+                                        <i class="fas fa-calendar-week"></i> Weekly Class Schedule
+                                    </h3>
+                                    <button type="button" class="topbar-btn" onclick="switchPortalTab('tab-routine')" style="padding: 0.35rem 0.75rem; font-size: 0.76rem;">
+                                        View Full Routine →
+                                    </button>
+                                </div>
+
+                                <div class="routine-table-wrap">
+                                    <table class="routine-grid-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Time Slot</th>
+                                                <th>Subject / Module</th>
+                                                <th>Sensei</th>
+                                                <th>Venue</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong style="color: #ffffff;">Sunday</strong></td>
+                                                <td>10:00 AM - 11:30 AM</td>
+                                                <td><span class="routine-badge n5">JLPT N5 Grammar</span></td>
+                                                <td>Tanaka Sensei</td>
+                                                <td>Room 102 &amp; Zoom</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong style="color: #ffffff;">Tuesday</strong></td>
+                                                <td>10:00 AM - 11:30 AM</td>
+                                                <td><span class="routine-badge kanji">Kanji &amp; Vocabulary</span></td>
+                                                <td>Rahim Sensei</td>
+                                                <td>Room 102 &amp; Zoom</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong style="color: #ffffff;">Thursday</strong></td>
+                                                <td>10:00 AM - 11:30 AM</td>
+                                                <td><span class="routine-badge listening">Listening &amp; Speaking</span></td>
+                                                <td>Tanaka Sensei</td>
+                                                <td>Lab 2 &amp; Online</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </article>
+
+                            <!-- Homework & Assignments -->
+                            <article class="portal-glass-card">
+                                <div class="card-title-bar">
+                                    <h3>
+                                        <i class="fas fa-tasks"></i> Homework &amp; Practice Drills
+                                    </h3>
+                                    <span style="font-size: 0.78rem; color: var(--portal-text-muted);">Current Batch</span>
+                                </div>
+                                <ul id="assignmentsContainer" class="sidebar-nav-list" style="gap: 0.65rem;">
+                                    <!-- Populated dynamically -->
+                                </ul>
+                            </article>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="overview-right-col">
+                            
+                            <!-- Japan Visa & COE Status Showcase (INFORMATIONAL ONLY) -->
+                            <article class="portal-glass-card visa-showcase-box">
+                                <div class="card-title-bar">
+                                    <div>
+                                        <h3 style="color: #ffffff;">
+                                            <i class="fas fa-plane-departure" style="color: var(--portal-brand-red);"></i> Japan Visa &amp; COE Status
+                                        </h3>
+                                        <p id="visaUniversity" style="margin: 0.25rem 0 0; font-size: 0.8rem; color: var(--portal-text-muted);">
+                                            Tokyo International Language Academy
+                                        </p>
+                                    </div>
+                                    <span id="visaStatusPill" class="status-pill cyan">
+                                        <i class="fas fa-passport"></i> COE Applied
+                                    </span>
+                                </div>
+
+                                <div id="visaIntake" style="font-size: 0.85rem; font-weight: 700; color: var(--portal-primary); margin-bottom: 1rem;">
+                                    Target Intake: October 2026
+                                </div>
+
+                                <!-- Step Roadmap -->
+                                <div id="visaTimelineContainer" class="visa-step-roadmap">
+                                    <!-- Dynamically loaded timeline steps -->
+                                </div>
+
+                                <div class="visa-desk-notice-box">
+                                    <i class="fas fa-info-circle" style="font-size: 1.1rem; color: var(--portal-primary); flex-shrink: 0;"></i>
+                                    <span>ভিসা প্রসেসিং ও ডকুমেন্ট ভেরিফিকেশন ফিউশন এডুকেশনের দিনাজপুর ডেস্ক সরাসরি পরিচালনা করছে। কোনো তথ্য জানতে কাউন্সেলরের সাথে যোগাযোগ করুন।</span>
+                                </div>
+                            </article>
+
+                            <!-- Announcements & Live Bulletin -->
+                            <article class="portal-glass-card">
+                                <div class="card-title-bar">
+                                    <h3>
+                                        <i class="fas fa-bullhorn" style="color: var(--portal-warning);"></i> Campus Notices &amp; Updates
+                                    </h3>
+                                    <span class="status-pill yellow" style="font-size: 0.7rem;">Live Bulletin</span>
+                                </div>
+                                <ul id="messagesContainer" class="sidebar-nav-list" style="gap: 0.75rem;">
+                                    <!-- Populated dynamically -->
+                                </ul>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════════════════
+                     TAB 2: CLASS ROUTINE & TIMETABLE
+                     ══════════════════════════════════════════════ -->
+                <section id="tab-routine" class="portal-tab-content">
+                    <article class="portal-glass-card">
+                        <div class="card-title-bar">
+                            <div>
+                                <h3><i class="fas fa-calendar-alt"></i> Complete Academic Class Routine</h3>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.82rem; color: var(--portal-text-muted);">
+                                    Interactive class schedule for all JLPT Japanese courses &amp; JLPT Mock Drills
+                                </p>
+                            </div>
+                            <a href="https://zoom.us" target="_blank" class="topbar-btn primary">
+                                <i class="fas fa-video"></i> Join Zoom Classroom
+                            </a>
+                        </div>
+
+                        <div class="routine-table-wrap">
+                            <table class="routine-grid-table">
+                                <thead>
+                                    <tr>
+                                        <th>Day of Week</th>
+                                        <th>Class Timing</th>
+                                        <th>Curriculum / Topic</th>
+                                        <th>Instructor</th>
+                                        <th>Campus Location</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong style="color: #ffffff;">Sunday</strong></td>
+                                        <td>10:00 AM - 11:30 AM</td>
+                                        <td>
+                                            <span class="routine-badge n5">Minna no Nihongo Lesson 1-5</span>
+                                            <div style="font-size: 0.78rem; color: var(--portal-text-muted); margin-top: 0.2rem;">Basic Grammar Patterns &amp; Particles</div>
+                                        </td>
+                                        <td>Tanaka Sensei</td>
+                                        <td>Room 102 (Main Campus)</td>
+                                        <td><span class="status-pill green" style="font-size: 0.7rem;">Upcoming</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: #ffffff;">Tuesday</strong></td>
+                                        <td>10:00 AM - 11:30 AM</td>
+                                        <td>
+                                            <span class="routine-badge kanji">Kanji Mastery 1-50</span>
+                                            <div style="font-size: 0.78rem; color: var(--portal-text-muted); margin-top: 0.2rem;">Onyomi &amp; Kunyomi Stroke Orders</div>
+                                        </td>
+                                        <td>Rahim Sensei</td>
+                                        <td>Room 102 &amp; Online</td>
+                                        <td><span class="status-pill green" style="font-size: 0.7rem;">Upcoming</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: #ffffff;">Thursday</strong></td>
+                                        <td>10:00 AM - 11:30 AM</td>
+                                        <td>
+                                            <span class="routine-badge listening">Choukai Listening Drills</span>
+                                            <div style="font-size: 0.78rem; color: var(--portal-text-muted); margin-top: 0.2rem;">Native Japanese audio dialogs</div>
+                                        </td>
+                                        <td>Tanaka Sensei</td>
+                                        <td>Language Audio Lab 1</td>
+                                        <td><span class="status-pill cyan" style="font-size: 0.7rem;">Lab Session</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: #ffffff;">Friday (Special)</strong></td>
+                                        <td>03:30 PM - 05:00 PM</td>
+                                        <td>
+                                            <span class="routine-badge n5">Embassy Interview Briefing</span>
+                                            <div style="font-size: 0.78rem; color: var(--portal-text-muted); margin-top: 0.2rem;">Q&amp;A Session for Japanese Student Visa</div>
+                                        </td>
+                                        <td>Admin Visa Desk</td>
+                                        <td>Seminar Hall &amp; Zoom</td>
+                                        <td><span class="status-pill yellow" style="font-size: 0.7rem;">Special Seminar</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </section>
+
+
+                <!-- ══════════════════════════════════════════════
+                     TAB 3: JAPAN VISA & COE (INFORMATIONAL SHOWCASE)
+                     ══════════════════════════════════════════════ -->
+                <section id="tab-visa" class="portal-tab-content">
+                    <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 1.5rem;">
+                        
+                        <!-- Left: Roadmap & Status -->
+                        <article class="portal-glass-card">
+                            <div class="card-title-bar">
+                                <div>
+                                    <h3>
+                                        <i class="fas fa-passport" style="color: var(--portal-brand-red);"></i> Japan Student Visa &amp; COE Processing
+                                    </h3>
+                                    <p style="margin: 0.25rem 0 0; font-size: 0.82rem; color: var(--portal-text-muted);">
+                                        Official Certificate of Eligibility (COE) &amp; Embassy Application Tracker
+                                    </p>
+                                </div>
+                                <span class="status-pill cyan" style="font-size: 0.75rem;">
+                                    <i class="fas fa-info-circle"></i> Informational Showcase
+                                </span>
+                            </div>
+
+                            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--portal-border); border-radius: var(--portal-radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: var(--portal-text-muted); text-transform: uppercase; font-weight: 700;">Partner Japanese Institute</div>
+                                        <div style="font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-top: 0.2rem;">Tokyo International Language Academy</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; color: var(--portal-text-muted); text-transform: uppercase; font-weight: 700;">Target Intake</div>
+                                        <div style="font-size: 1.1rem; font-weight: 700; color: var(--portal-primary); margin-top: 0.2rem;">October 2026 Intake</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="visa-step-roadmap" style="padding: 0.5rem;">
+                                <div class="visa-step-item">
+                                    <div class="visa-step-dot done"><i class="fas fa-check"></i></div>
+                                    <div class="visa-step-info">
+                                        <h4 class="visa-step-title">1. Admission &amp; Profile Screening</h4>
+                                        <div class="visa-step-date">Verified by Fusion Education Academic Wing</div>
+                                    </div>
+                                </div>
+                                <div class="visa-step-item">
+                                    <div class="visa-step-dot done"><i class="fas fa-check"></i></div>
+                                    <div class="visa-step-info">
+                                        <h4 class="visa-step-title">2. Academic Document Translation &amp; Notary</h4>
+                                        <div class="visa-step-date">Translated into Japanese language and verified</div>
+                                    </div>
+                                </div>
+                                <div class="visa-step-item">
+                                    <div class="visa-step-dot current">3</div>
+                                    <div class="visa-step-info">
+                                        <h4 class="visa-step-title">3. COE Application to Japan Immigration</h4>
+                                        <div class="visa-step-date" style="color: var(--portal-primary);">In Progress — Application submitted to Tokyo Immigration Bureau</div>
+                                    </div>
+                                </div>
+                                <div class="visa-step-item">
+                                    <div class="visa-step-dot pending">4</div>
+                                    <div class="visa-step-info">
+                                        <h4 class="visa-step-title">4. COE (Certificate of Eligibility) Issuance</h4>
+                                        <div class="visa-step-date">Awaiting official results from Japanese Immigration</div>
+                                    </div>
+                                </div>
+                                <div class="visa-step-item">
+                                    <div class="visa-step-dot pending">5</div>
+                                    <div class="visa-step-info">
+                                        <h4 class="visa-step-title">5. Japan Embassy Visa Stamping (Dhaka)</h4>
+                                        <div class="visa-step-date">Final visa interview &amp; passport stamp</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- Right: Guidance & Counselor -->
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <article class="portal-glass-card">
+                                <h3 style="color: #ffffff; margin-bottom: 1rem;">
+                                    <i class="fas fa-user-tie" style="color: var(--portal-primary);"></i> Visa Counselor Desk
+                                </h3>
+                                <p style="font-size: 0.85rem; color: var(--portal-text-muted); line-height: 1.6; margin-bottom: 1.25rem;">
+                                    জাপান স্টুডেন্ট ভিসা ও স্পনসর ডকুমেন্টস সংক্রান্ত যেকোনো সহায়তার জন্য দিনাজপুর ব্রাঞ্চের ভিসা কাউন্সেলিং টিমের সাথে সরাসরি যোগাযোগ করুন।
+                                </p>
+                                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--portal-border); border-radius: var(--portal-radius-md); padding: 1rem; font-size: 0.85rem;">
+                                    <div style="color: #ffffff; font-weight: 700; margin-bottom: 0.35rem;">
+                                        <i class="fas fa-building" style="color: var(--portal-primary); margin-right: 0.4rem;"></i> Dinajpur Main Campus
+                                    </div>
+                                    <div style="color: var(--portal-text-muted); font-size: 0.8rem; margin-bottom: 0.5rem;">
+                                        Fusion Education BD, Dinajpur 5230
+                                    </div>
+                                    <div style="color: var(--portal-primary); font-weight: 600;">
+                                        <i class="fas fa-phone-alt" style="margin-right: 0.35rem;"></i> +880 1700-000000
+                                    </div>
+                                </div>
+                            </article>
+
+                            <article class="portal-glass-card">
+                                <h3 style="color: #ffffff; margin-bottom: 0.75rem;">
+                                    <i class="fas fa-clipboard-check" style="color: var(--portal-success);"></i> Required Document List
+                                </h3>
+                                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.84rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 0.6rem;">
+                                    <li><i class="fas fa-check" style="color: var(--portal-success); margin-right: 0.5rem;"></i> Valid Passport Copy</li>
+                                    <li><i class="fas fa-check" style="color: var(--portal-success); margin-right: 0.5rem;"></i> SSC &amp; HSC Transcripts &amp; Certificates</li>
+                                    <li><i class="fas fa-check" style="color: var(--portal-success); margin-right: 0.5rem;"></i> Japanese Language JLPT / NAT Certificate</li>
+                                    <li><i class="fas fa-check" style="color: var(--portal-success); margin-right: 0.5rem;"></i> Sponsor Bank Solvency &amp; Tax Documents</li>
+                                </ul>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════════════════
+                     TAB 4: FEES & PAYMENT LEDGER
+                     ══════════════════════════════════════════════ -->
+                <section id="tab-fees" class="portal-tab-content">
+                    
+                    <!-- Financial Summary Cards -->
+                    <div class="fees-summary-grid">
+                        <div class="fee-stat-tile">
+                            <div class="label">Total Course Fee</div>
+                            <div id="feeTotalTab" class="amount">15,000 BDT</div>
+                        </div>
+                        <div class="fee-stat-tile">
+                            <div class="label">Scholarship / Waiver</div>
+                            <div id="feeDiscountTab" class="amount" style="color: var(--portal-primary);">1,500 BDT</div>
+                        </div>
+                        <div class="fee-stat-tile">
+                            <div class="label">Total Paid</div>
+                            <div id="feePaidTab" class="amount" style="color: var(--portal-success);">13,500 BDT</div>
+                        </div>
+                        <div class="fee-stat-tile">
+                            <div class="label">Balance Remaining Due</div>
+                            <div id="feeDueTab" class="amount" style="color: #f87171;">0 BDT</div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Transaction History Table -->
+                    <article class="portal-glass-card">
+                        <div class="card-title-bar">
+                            <div>
+                                <h3><i class="fas fa-receipt"></i> Official Payment History &amp; Ledger</h3>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.82rem; color: var(--portal-text-muted);">
+                                    All recorded transactions, installments, and receipts for your account
+                                </p>
+                            </div>
+                            <a href="contact.html" class="topbar-btn">
+                                <i class="fas fa-file-invoice"></i> Contact Accounts Desk
+                            </a>
+                        </div>
+
+                        <div class="routine-table-wrap">
+                            <table class="ledger-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Transaction / Receipt ID</th>
+                                        <th>Payment Method</th>
+                                        <th>Amount (BDT)</th>
+                                        <th>Recorded By</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentLedgerBody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </section>
+
+
+                <!-- ══════════════════════════════════════════════
+                     TAB 5: STUDY MATERIALS & DOWNLOADS
+                     ══════════════════════════════════════════════ -->
+                <section id="tab-materials" class="portal-tab-content">
+                    <article class="portal-glass-card">
+                        <div class="card-title-bar">
+                            <div>
+                                <h3><i class="fas fa-book-reader"></i> Japanese Learning Materials &amp; Audio Downloads</h3>
+                                <p style="margin: 0.25rem 0 0; font-size: 0.82rem; color: var(--portal-text-muted);">
+                                    Minna no Nihongo textbook notes, audio MP3s, and visa interview preparation sheets
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="material-items-grid">
+                            <div class="material-card">
+                                <div class="material-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 0.2rem; font-size: 0.95rem; color: #ffffff;">Minna no Nihongo N5 Notes</h4>
+                                    <p style="margin: 0; font-size: 0.78rem; color: var(--portal-text-muted);">Grammar rules, sentence patterns &amp; vocabularies (PDF, 8.4 MB)</p>
+                                </div>
+                                <a href="courses.html" class="topbar-btn primary" style="padding: 0.45rem 0.75rem;"><i class="fas fa-download"></i></a>
+                            </div>
+
+                            <div class="material-card">
+                                <div class="material-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 0.2rem; font-size: 0.95rem; color: #ffffff;">JLPT N5 Kanji Practice Sheets</h4>
+                                    <div style="margin: 0; font-size: 0.78rem; color: var(--portal-text-muted);">103 JLPT Kanji with stroke orders &amp; examples (PDF, 4.2 MB)</div>
+                                </div>
+                                <a href="courses.html" class="topbar-btn primary" style="padding: 0.45rem 0.75rem;"><i class="fas fa-download"></i></a>
+                            </div>
+
+                            <div class="material-card">
+                                <div class="material-icon audio"><i class="fas fa-headphones"></i></div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 0.2rem; font-size: 0.95rem; color: #ffffff;">Choukai Listening MP3 Drills</h4>
+                                    <div style="margin: 0; font-size: 0.78rem; color: var(--portal-text-muted);">Native Japanese dialogues &amp; listening test audio (MP3 ZIP, 45 MB)</div>
+                                </div>
+                                <a href="courses.html" class="topbar-btn primary" style="padding: 0.45rem 0.75rem;"><i class="fas fa-download"></i></a>
+                            </div>
+
+                            <div class="material-card">
+                                <div class="material-icon doc"><i class="fas fa-user-shield"></i></div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 0.2rem; font-size: 0.95rem; color: #ffffff;">Embassy Interview Guide Q&amp;A</h4>
+                                    <div style="margin: 0; font-size: 0.78rem; color: var(--portal-text-muted);">Japan student visa interview questions with standard answers (PDF)</div>
+                                </div>
+                                <a href="contact.html" class="topbar-btn primary" style="padding: 0.45rem 0.75rem;"><i class="fas fa-download"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+
+                <!-- ══════════════════════════════════════════════
+                     TAB 6: MY PROFILE & OFFICIAL RECORDS
+                     ══════════════════════════════════════════════ -->
+                <section id="tab-profile" class="portal-tab-content">
+                    
+                    <!-- Official Verified Locked Notice -->
+                    <div class="profile-locked-notice">
+                        <i class="fas fa-user-shield"></i>
+                        <span>
+                            <strong>Official Verified Student Profile:</strong> আপনার ব্যক্তিগত ও একাডেমিক তথ্যসমূহ ফিউশন এডুকেশন কর্তৃপক্ষ দ্বারা যাচাইকৃত ও সংরক্ষিত। কোনো তথ্য পরিবর্তন বা সংশোধনের প্রয়োজন হলে দিনাজপুর ক্যাম্পাস অফিসে যোগাযোগ করুন।
                         </span>
                     </div>
 
-                    <div style="background: rgba(15, 23, 42, 0.6); padding: 1.25rem; border-radius: 14px; border: 1px solid var(--border-light); margin-bottom: 1rem;">
-                        <div id="visaIntake" style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; margin-bottom: 1.25rem;">
-                            Target Intake: October 2026
+                    <div style="display: grid; grid-template-columns: 1.15fr 1.6fr; gap: 1.75rem; align-items: flex-start;">
+                        
+                        <!-- Left Column: Digital Student ID & Academic Summary -->
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            
+                            <!-- Digital Student ID Card -->
+                            <div class="profile-section-card" style="margin-bottom: 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                                    <h3 style="margin: 0; font-size: 1.05rem; color: #ffffff;"><i class="fas fa-id-badge" style="color: var(--portal-primary);"></i> Digital Student ID Card</h3>
+                                    <button type="button" onclick="window.print()" class="topbar-btn primary" style="font-size: 0.78rem; padding: 0.4rem 0.8rem;">
+                                        <i class="fas fa-print"></i> Print ID
+                                    </button>
+                                </div>
+
+                                <!-- Printable Physical Card Simulation -->
+                                <div class="student-id-card-wrapper">
+                                    <div class="id-card-brand-header">
+                                        <div>
+                                            <div class="id-card-brand-title">Fusion <span>Education</span></div>
+                                            <div style="font-size: 0.65rem; color: var(--portal-text-muted); letter-spacing: 0.08em; text-transform: uppercase;">Japanese Language Academy</div>
+                                        </div>
+                                        <span class="status-pill cyan" style="font-size: 0.65rem; padding: 0.15rem 0.45rem;">STUDENT ID</span>
+                                    </div>
+
+                                    <div class="id-card-body">
+                                        <img id="studentIdCardPhoto" class="id-card-photo" src="../assets/images/student-placeholder.jpg" alt="Student Photo">
+                                        <div class="id-card-details">
+                                            <h4 id="studentIdCardName" class="id-card-student-name">Student Name</h4>
+                                            <div class="id-card-field-row">ID: <strong id="studentIdCardId" style="color: var(--portal-primary);">FE-2024-001</strong></div>
+                                            <div class="id-card-field-row">Course: <strong id="studentIdCardCourse">JLPT Japanese</strong></div>
+                                            <div class="id-card-field-row">Blood Group: <strong id="studentIdCardBlood" style="color: var(--portal-brand-red);">O+</strong></div>
+                                            <div class="id-card-field-row">Branch: <strong id="studentIdCardBranch">Dinajpur</strong></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="id-card-footer">
+                                        <div>
+                                            <div class="id-barcode-mock">||||| | |||| ||||| ||</div>
+                                            <div style="font-size: 0.65rem; color: var(--portal-text-dim); margin-top: 0.15rem;">Authorized Student Card</div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <i class="fas fa-check-circle" style="color: var(--portal-success);"></i> Verified
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Academic Enrollment Summary -->
+                            <div class="profile-section-card" style="margin-bottom: 0;">
+                                <div class="profile-section-header">
+                                    <i class="fas fa-graduation-cap"></i> Academic Enrollment Summary
+                                </div>
+                                <div class="profile-info-grid">
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Registration ID</div>
+                                        <div id="bioId" class="profile-info-value" style="color: var(--portal-primary); font-family: monospace;">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Enrollment Status</div>
+                                        <div id="bioStatusBadge" class="profile-info-value" style="color: var(--portal-success);">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Enrolled Program</div>
+                                        <div id="bioCourse" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Academic Batch</div>
+                                        <div id="bioBatch" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Assigned Sensei</div>
+                                        <div id="bioInstructor" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Target Intake</div>
+                                        <div id="bioIntake" class="profile-info-value" style="color: var(--portal-primary);">-</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div id="visaTimelineContainer">
-                            <!-- Dynamic Timeline Steps -->
+
+                        <!-- Right Column: Personal Details & Contact Info -->
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            
+                            <!-- Personal & Guardian Bio Card -->
+                            <div class="profile-section-card" style="margin-bottom: 0;">
+                                <div class="profile-section-header">
+                                    <i class="fas fa-user"></i> Personal &amp; Family Information
+                                </div>
+                                <div class="profile-info-grid">
+                                    <div class="profile-info-tile full-width">
+                                        <div class="profile-info-label">Full Name</div>
+                                        <div id="bioFullName" class="profile-info-value" style="font-size: 1.05rem; font-weight: 700;">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Father's Name</div>
+                                        <div id="bioFatherName" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Mother's Name</div>
+                                        <div id="bioMotherName" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Date of Birth</div>
+                                        <div id="bioDob" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Blood Group</div>
+                                        <div id="bioBlood" class="profile-info-value" style="color: var(--portal-brand-red); font-weight: 700;">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Occupation</div>
+                                        <div id="bioOccupation" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Religion</div>
+                                        <div id="bioReligion" class="profile-info-value">-</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact & Address Card -->
+                            <div class="profile-section-card" style="margin-bottom: 0;">
+                                <div class="profile-section-header">
+                                    <i class="fas fa-map-marker-alt"></i> Contact &amp; Residential Information
+                                </div>
+                                <div class="profile-info-grid">
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Contact Phone</div>
+                                        <div id="bioPhone" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile">
+                                        <div class="profile-info-label">Email Address</div>
+                                        <div id="bioEmail" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile full-width">
+                                        <div class="profile-info-label">Present Residential Address</div>
+                                        <div id="bioAddress" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile full-width">
+                                        <div class="profile-info-label">Permanent Address</div>
+                                        <div id="bioPermanentAddress" class="profile-info-value">-</div>
+                                    </div>
+                                    <div class="profile-info-tile full-width">
+                                        <div class="profile-info-label">Campus Branch</div>
+                                        <div id="bioBranch" class="profile-info-value" style="color: var(--portal-primary);">Dinajpur Campus</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Verified Documents & Academic Certificates Card -->
+                            <div class="profile-section-card" style="margin-bottom: 0;">
+                                <div class="profile-section-header" style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><i class="fas fa-paperclip"></i> My Verified Documents &amp; Certificates</span>
+                                    <span id="studentDocCountBadge" class="status-pill cyan" style="font-size:0.7rem;">0 Attached</span>
+                                </div>
+                                <p style="font-size:0.8rem; color:var(--portal-text-muted); margin:0.35rem 0 1rem;">
+                                    Official scanned certificates, NID, and admission papers verified by Fusion Education BD.
+                                </p>
+                                <div id="studentDocumentsList" style="display: flex; flex-direction: column; gap: 0.65rem;">
+                                    <!-- Injected via JS -->
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
 
-                    <div style="font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="fas fa-info-circle" style="color: #38bdf8;"></i> 
-                        <span>Counseling and document translation support available at Dinajpur branch.</span>
                     </div>
                 </section>
 
-                <!-- Assignments & Tests Panel -->
-                <section class="panel-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <h3 style="color: #ffffff;">
-                            <i class="fas fa-tasks" style="color: #38bdf8;"></i> Homework &amp; Tests
-                        </h3>
-                        <span style="font-size: 0.78rem; color: #94a3b8;">Current Course</span>
-                    </div>
-                    <ul id="assignmentsContainer" class="activity-list">
-                        <!-- Loaded dynamically -->
-                    </ul>
-                </section>
-            </div>
-
-            <!-- ── RIGHT COLUMN ── -->
-            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                
-                <!-- Notices & Announcements -->
-                <section class="panel-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <h3 style="color: #ffffff;">
-                            <i class="fas fa-bullhorn" style="color: #fbbf24;"></i> Notices &amp; Updates
-                        </h3>
-                        <span class="status-pill yellow" style="font-size: 0.72rem;">Live Bulletin</span>
-                    </div>
-                    <ul id="messagesContainer" class="activity-list">
-                        <!-- Loaded dynamically -->
-                    </ul>
-                </section>
-
-                <!-- Learning Resources & Downloads -->
-                <section class="panel-card">
-                    <h3 style="color: #ffffff; margin-bottom: 1rem;">
-                        <i class="fas fa-book-reader" style="color: #34d399;"></i> Study Materials &amp; Downloads
-                    </h3>
-                    
-                    <div style="display: grid; gap: 0.75rem;">
-                        <a href="courses.html" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); border-radius: 12px; color: #ffffff; text-decoration: none; transition: all 0.2s;">
-                            <span style="display: flex; align-items: center; gap: 0.75rem;">
-                                <i class="fas fa-file-pdf" style="color: #ef4444; font-size: 1.2rem;"></i> 
-                                <span style="font-size: 0.88rem; font-weight: 500;">JLPT N5/N4 Minna no Nihongo Notes</span>
-                            </span>
-                            <i class="fas fa-download" style="color: #94a3b8; font-size: 0.85rem;"></i>
-                        </a>
-
-                        <a href="courses.html" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); border-radius: 12px; color: #ffffff; text-decoration: none; transition: all 0.2s;">
-                            <span style="display: flex; align-items: center; gap: 0.75rem;">
-                                <i class="fas fa-headphones" style="color: #38bdf8; font-size: 1.2rem;"></i> 
-                                <span style="font-size: 0.88rem; font-weight: 500;">Japanese Listening Audio MP3 Files</span>
-                            </span>
-                            <i class="fas fa-play-circle" style="color: #94a3b8; font-size: 0.85rem;"></i>
-                        </a>
-
-                        <a href="contact.html" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); border-radius: 12px; color: #ffffff; text-decoration: none; transition: all 0.2s;">
-                            <span style="display: flex; align-items: center; gap: 0.75rem;">
-                                <i class="fas fa-user-shield" style="color: #34d399; font-size: 1.2rem;"></i> 
-                                <span style="font-size: 0.88rem; font-weight: 500;">Embassy Interview Preparation Q&amp;A</span>
-                            </span>
-                            <i class="fas fa-external-link-alt" style="color: #94a3b8; font-size: 0.85rem;"></i>
-                        </a>
-                    </div>
-                </section>
-            </div>
+            </main>
         </div>
-    </main>
+    </div>
 
-    <!-- ── 4. EDIT PROFILE MODAL ── -->
-    <div id="editProfileModal" class="dashboard-modal-backdrop" style="display: none;">
-        <div class="dashboard-modal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
-                <h3 style="margin: 0; color: #ffffff; font-size: 1.15rem;">
-                    <i class="fas fa-user-edit" style="color: #38bdf8; margin-right: 0.4rem;"></i> Update Profile Details
-                </h3>
-                <button id="closeModalBtn" type="button" style="background: none; border: none; color: #94a3b8; font-size: 1.35rem; cursor: pointer;">&times;</button>
-            </div>
+    <!-- ══════════════════════════════════════════════
+         EXAM RESULT & CERTIFICATE SUBMISSION MODAL
+         ══════════════════════════════════════════════ -->
+    <div class="portal-modal-backdrop" id="examSubmitModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:#0f172a; border:1px solid rgba(148,163,184,0.3); border-radius:20px; max-width:640px; width:100%; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.8);">
             
-            <form id="editProfileForm">
-                <div style="margin-bottom: 1rem;">
-                    <label>Full Name</label>
-                    <input id="editFullName" type="text" required>
+            <div style="padding:1.25rem 1.5rem; border-bottom:1px solid rgba(148,163,184,0.15); display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:0.6rem;">
+                    <div style="width:36px; height:36px; border-radius:10px; background:rgba(37,99,235,0.2); color:#60a5fa; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3 style="margin:0; font-size:1.15rem; color:#fff;">JLPT / NAT-TEST পরীক্ষার সার্টিফিকেট সাবমিট</h3>
                 </div>
-                <div style="margin-bottom: 1rem;">
-                    <label>Phone Number</label>
-                    <input id="editPhone" type="text" required>
+                <button type="button" onclick="closeExamSubmitModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="examSubmitForm" onsubmit="handleExamResultSubmit(event)" style="display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden;">
+                <div style="padding:1.5rem; overflow-y:auto; flex:1;">
+                    <div style="background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-radius:12px; padding:0.85rem 1rem; margin-bottom:1.25rem; font-size:0.82rem; color:#93c5fd; line-height:1.5;">
+                        <i class="fas fa-info-circle"></i> ঢাকায় অনুষ্ঠিত অফিসিয়াল JLPT অথবা NAT-TEST পরীক্ষার ফলাফল বা সার্টিফিকেট তথ্য প্রদান করুন। সার্টিফিকেট ভেরিফিকেশনের পর ফিউশন এডুকেশন সরাসরি আপনার জাপানি ভাষা স্কুল ও ভিসা (COE) ফাইল প্রসেস করবে।
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                        <div>
+                            <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:0.35rem; text-transform:uppercase;">পরীক্ষার ধরন *</label>
+                            <select id="examType" required style="width:100%; background:rgba(15,23,42,0.9); border:1px solid var(--portal-border); border-radius:8px; color:#fff; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none;">
+                                <option value="JLPT">JLPT (Japanese Language Proficiency Test)</option>
+                                <option value="NAT-TEST">NAT-TEST Official Exam</option>
+                                <option value="J-CERT">J-CERT (Communication Test)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:0.35rem; text-transform:uppercase;">পরীক্ষা কেন্দ্র</label>
+                            <input type="text" id="examCenter" value="Dhaka, Bangladesh" readonly style="width:100%; background:rgba(15,23,42,0.6); border:1px solid var(--portal-border); border-radius:8px; color:#94a3b8; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none;">
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                        <div>
+                            <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:0.35rem; text-transform:uppercase;">পরীক্ষার তারিখ / সেশন *</label>
+                            <input type="date" id="examDate" required style="width:100%; background:rgba(15,23,42,0.9); border:1px solid var(--portal-border); border-radius:8px; color:#fff; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none;">
+                        </div>
+
+                        <div>
+                            <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:0.35rem; text-transform:uppercase;">রেজিস্ট্রেশন / রোল নম্বর *</label>
+                            <input type="text" id="examRollNumber" required placeholder="e.g. 24B1020101-50211" style="width:100%; background:rgba(15,23,42,0.9); border:1px solid var(--portal-border); border-radius:8px; color:#fff; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none;">
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                        <div>
+                            <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:0.35rem; text-transform:uppercase;">ফলাফল স্ট্যাটাস *</label>
+                            <select id="examResultStatus" required style="width:100%; background:rgba(15,23,42,0.9); border:1px solid var(--portal-border); border-radius:8px; color:#fff; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none;">
+                                <option value="passed">🟢 Passed (উত্তীর্ণ)</option>
+                                <option value="pending">🟡 Result Awaiting (ফলাফল প্রত্যাশী)</option>
+                                <option value="failed">🔴 Not Passed (পুনরায় চেষ্টা)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:0.35rem; text-transform:uppercase;">প্রাপ্ত নম্বর / স্কোর</label>
+                            <input type="text" id="examScore" placeholder="e.g. 132/180 or A Grade" style="width:100%; background:rgba(15,23,42,0.9); border:1px solid var(--portal-border); border-radius:8px; color:#fff; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:1rem;">
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:0.35rem; text-transform:uppercase;">সার্টিফিকেট / ফলাফল শিটের লিংক বা ড্রাইভ URL</label>
+                        <input type="url" id="examCertUrl" placeholder="https://drive.google.com/... or image link" style="width:100%; background:rgba(15,23,42,0.9); border:1px solid var(--portal-border); border-radius:8px; color:#fff; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none;">
+                    </div>
+
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:0.35rem; text-transform:uppercase;">অতিরিক্ত মন্তব্য / কোনো বিশেষ আবেদন</label>
+                        <textarea id="examNotes" rows="2" placeholder="জাপানের কোন ইনটেকে যেতে আগ্রহী বা কোনো প্রশ্ন থাকলে লিখুন..." style="width:100%; background:rgba(15,23,42,0.9); border:1px solid var(--portal-border); border-radius:8px; color:#fff; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none;"></textarea>
+                    </div>
                 </div>
-                <div style="margin-bottom: 1rem;">
-                    <label>Present Address</label>
-                    <input id="editAddress" type="text">
-                </div>
-                <div style="margin-bottom: 1.5rem;">
-                    <label>Blood Group</label>
-                    <select id="editBloodGroup">
-                        <option value="A+">A+</option>
-                        <option value="A-">A-</option>
-                        <option value="B+">B+</option>
-                        <option value="B-">B-</option>
-                        <option value="O+">O+</option>
-                        <option value="O-">O-</option>
-                        <option value="AB+">AB+</option>
-                        <option value="AB-">AB-</option>
-                    </select>
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-                    <button type="button" onclick="document.getElementById('editProfileModal').style.display='none'" class="btn-secondary">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-save"></i> Save Changes
-                    </button>
+
+                <div style="padding:1rem 1.5rem; border-top:1px solid rgba(148,163,184,0.15); display:flex; justify-content:flex-end; gap:0.75rem; background:rgba(255,255,255,0.02);">
+                    <button type="button" onclick="closeExamSubmitModal()" style="padding:0.65rem 1.15rem; background:rgba(255,255,255,0.05); border:1px solid var(--portal-border); color:#cbd5e1; border-radius:8px; cursor:pointer;">বাতিল</button>
+                    <button type="submit" id="submitExamBtn" style="padding:0.65rem 1.35rem; background:var(--portal-primary); border:none; color:#fff; font-weight:700; border-radius:8px; cursor:pointer;">জমা দিন ও ভিসা প্রসেসিং শুরু করুন</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ── 5. FOOTER ── -->
-    <footer style="background: #060913; border-top: 1px solid var(--border-light); padding: 1.5rem 0; margin-top: 4rem;">
-        <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <p style="margin: 0; color: #94a3b8; font-size: 0.88rem;">
-                © 2026 Fusion Education BD — Student Portal
-            </p>
-            <div style="display: flex; gap: 1.25rem;">
-                <a href="contact.html" style="color: #38bdf8; text-decoration: none; font-size: 0.85rem; font-weight: 500;">Help &amp; Support</a>
-                <a href="../index.html" style="color: #94a3b8; text-decoration: none; font-size: 0.85rem;">Main Website</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
+    <!-- ── Scripts ── -->
     <script src="../assets/js/student-dashboard-data.js"></script>
-    <script src="../assets/js/dao.js"></script>
 </body>
 </html>

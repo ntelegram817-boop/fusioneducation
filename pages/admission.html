@@ -31,6 +31,14 @@
                 <li><a href="visa-support.html">Visa Support</a></li>
                 <li><a href="success-stories.html">Success Stories</a></li>
                 <li><a href="contact.html">Contact</a></li>
+                <li class="nav-dropdown">
+                    <a href="#" class="nav-link-more">More <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="admin-login.html"><i class="fas fa-cog"></i> Admin Panel</a></li>
+                        <li><a href="staff-login.html"><i class="fas fa-sign-in-alt"></i> Staff Login</a></li>
+                        <li><a href="student-login.html"><i class="fas fa-user"></i> Student Login</a></li>
+                    </ul>
+                </li>
             </ul>
             <div class="nav-actions">
                 <a href="admission.html" class="btn btn-primary">Apply Now</a>
@@ -93,6 +101,20 @@
                             <span class="field-error-msg" id="err-fullName"></span>
                         </div>
 
+                        <!-- Father's Name & Mother's Name -->
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="fatherName">Father's Name <span style="color:var(--error);">*</span></label>
+                                <input type="text" id="fatherName" name="fatherName" placeholder="Father's full name">
+                                <span class="field-error-msg" id="err-fatherName"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="motherName">Mother's Name <span style="color:var(--error);">*</span></label>
+                                <input type="text" id="motherName" name="motherName" placeholder="Mother's full name">
+                                <span class="field-error-msg" id="err-motherName"></span>
+                            </div>
+                        </div>
+
                         <!-- Email + Phone -->
                         <div class="grid grid-2">
                             <div class="form-group">
@@ -128,9 +150,67 @@
                             </div>
                         </div>
 
-                        <!-- Address -->
+                        <!-- National ID / Birth Certificate No + Blood Group -->
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="nidBirthCert">National ID / Birth Certificate No <span style="color:var(--text-secondary);font-weight:400;font-size:0.82rem;">(Optional)</span></label>
+                                <input type="text" id="nidBirthCert" name="nidBirthCert" placeholder="NID or Birth Certificate No">
+                                <span class="field-error-msg" id="err-nidBirthCert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="bloodGroup">Blood Group <span style="color:var(--text-secondary);font-weight:400;font-size:0.82rem;">(Optional)</span></label>
+                                <select id="bloodGroup" name="bloodGroup">
+                                    <option value="">Select Blood Group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                                <span class="field-error-msg" id="err-bloodGroup"></span>
+                            </div>
+                        </div>
+
+                        <!-- Occupation + Religion -->
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="occupation">Occupation <span style="color:var(--error);">*</span></label>
+                                <select id="occupation" name="occupation">
+                                    <option value="">Select occupation</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Job / Service (Private)">Job / Service (Private)</option>
+                                    <option value="Government Service">Government Service</option>
+                                    <option value="Business / Entrepreneur">Business / Entrepreneur</option>
+                                    <option value="Freelancer">Freelancer</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <span class="field-error-msg" id="err-occupation"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="religion">Religion <span style="color:var(--error);">*</span></label>
+                                <select id="religion" name="religion">
+                                    <option value="">Select religion</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Hinduism">Hinduism</option>
+                                    <option value="Buddhism">Buddhism</option>
+                                    <option value="Christianity">Christianity</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <span class="field-error-msg" id="err-religion"></span>
+                            </div>
+                        </div>
+
+                        <!-- ── Residential / Present Address ── -->
+                        <div class="section-divider" style="margin-top:1.5rem; margin-bottom:1rem;">
+                            <span class="section-divider-label"><i class="fas fa-home"></i>&nbsp; Residential Address</span>
+                        </div>
+
+                        <!-- Residential Address -->
                         <div class="form-group">
-                            <label for="address">Residential Address <span style="color:var(--error);">*</span></label>
+                            <label for="address">Village / Road / Area <span style="color:var(--error);">*</span></label>
                             <input type="text" id="address" name="address" placeholder="Village / Road / Area" autocomplete="street-address">
                             <span class="field-error-msg" id="err-address"></span>
                         </div>
@@ -146,6 +226,41 @@
                                 <label for="district">District <span style="color:var(--error);">*</span></label>
                                 <input type="text" id="district" name="district" placeholder="e.g. Dinajpur" autocomplete="address-level1">
                                 <span class="field-error-msg" id="err-district"></span>
+                            </div>
+                        </div>
+
+                        <!-- ── Permanent Address Section ── -->
+                        <div class="section-divider" style="margin-top:1.75rem; margin-bottom:1rem;">
+                            <span class="section-divider-label"><i class="fas fa-map-marker-alt"></i>&nbsp; Permanent Address</span>
+                        </div>
+
+                        <div style="background: rgba(37,99,235,0.06); border: 1px solid rgba(37,99,235,0.2); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                            <label for="sameAsResidential" style="display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; margin: 0; font-weight: 600; color: var(--text-primary); font-size: 0.9rem;">
+                                <input type="checkbox" id="sameAsResidential" name="sameAsResidential" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
+                                Same as Residential Address
+                            </label>
+                            <span id="same-address-badge" style="display: none; font-size: 0.75rem; background: rgba(16,185,129,0.15); color: #10b981; padding: 0.2rem 0.55rem; border-radius: 6px; font-weight: 600;">
+                                <i class="fas fa-check-circle"></i> Synced with Residential
+                            </span>
+                        </div>
+
+                        <!-- Permanent Address Fields -->
+                        <div class="form-group">
+                            <label for="permanentAddress">Village / Road / Area <span style="color:var(--error);">*</span></label>
+                            <input type="text" id="permanentAddress" name="permanentAddress" placeholder="Village / Road / Area">
+                            <span class="field-error-msg" id="err-permanentAddress"></span>
+                        </div>
+
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label for="permanentCity">City / Upazila <span style="color:var(--error);">*</span></label>
+                                <input type="text" id="permanentCity" name="permanentCity" placeholder="e.g. Dinajpur Sadar">
+                                <span class="field-error-msg" id="err-permanentCity"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="permanentDistrict">District <span style="color:var(--error);">*</span></label>
+                                <input type="text" id="permanentDistrict" name="permanentDistrict" placeholder="e.g. Dinajpur">
+                                <span class="field-error-msg" id="err-permanentDistrict"></span>
                             </div>
                         </div>
 
@@ -181,7 +296,7 @@
                         <div class="grid grid-2">
                             <div class="form-group">
                                 <label for="course">Select Course <span style="color:var(--error);">*</span></label>
-                                <select id="course" name="course">
+                                <select id="course" name="course" onchange="updateFeeDisplay()">
                                     <option value="">Choose a course</option>
                                     <option value="JLPT N5 - Beginner">JLPT N5 - Beginner</option>
                                     <option value="JLPT N4 - Intermediate">JLPT N4 - Intermediate</option>
@@ -192,7 +307,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="courseLevel">Course Level <span style="color:var(--error);">*</span></label>
-                                <select id="courseLevel" name="courseLevel">
+                                <select id="courseLevel" name="courseLevel" onchange="updateFeeDisplay()">
                                     <option value="">Select Level</option>
                                     <option value="N5">N5 (Beginner)</option>
                                     <option value="N4">N4 (Intermediate)</option>
@@ -204,9 +319,21 @@
                             </div>
                         </div>
 
+                        <!-- Duration (auto-set from course, hidden from student) -->
+                        <input type="hidden" id="courseDurationSelect" name="durationMonths" value="3">
+
+                        <!-- Payment Plan: auto-detected from course active offer, hidden from student -->
+                        <select id="paymentPlanSelect" name="paymentPlan" style="display:none;" aria-hidden="true" tabindex="-1">
+                            <option value="course_fee">Full Course Package</option>
+                            <option value="monthly_pay" id="optMonthlyPay">Monthly Pay Offer</option>
+                        </select>
+
+                        <!-- Active Offer Banner (auto-populated by updateFeeDisplay) -->
+                        <div id="activeOfferBanner" style="display:none; margin-top:0.5rem; margin-bottom:0.25rem;"></div>
+
                         <!-- Fee display (dynamic) -->
-                        <div id="courseFeeDisplay" style="display:none; background:linear-gradient(135deg,rgba(37,99,235,0.08),rgba(230,0,18,0.06)); border-left:4px solid var(--primary); padding:1rem; border-radius:12px; margin-bottom:1.25rem;">
-                            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.4rem;font-weight:600;">COURSE FEE</p>
+                        <div id="courseFeeDisplay" style="display:none; background:linear-gradient(135deg,rgba(30,41,59,0.85),rgba(15,23,42,0.95)); border-left:4px solid var(--primary); padding:1.25rem; border-radius:12px; margin-bottom:1.5rem; border:1px solid rgba(148,163,184,0.15); box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
+                            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.6rem;font-weight:700;letter-spacing:0.04em;">COURSE FEE &amp; PAYMENT BREAKDOWN</p>
                             <div id="courseFeeContent"></div>
                         </div>
 
@@ -214,7 +341,7 @@
                         <div class="grid grid-2">
                             <div class="form-group">
                                 <label for="branch">Preferred Branch <span style="color:var(--error);">*</span></label>
-                                <select id="branch" name="branch">
+                                <select id="branch" name="branch" onchange="updateFeeDisplay()">
                                     <option value="">Choose a branch</option>
                                     <option value="dinajpur">Dinajpur Branch</option>
                                     <option value="dhaka">Dhaka Branch</option>
@@ -357,6 +484,14 @@
                                     <div class="review-item-value" id="rev-fullName">—</div>
                                 </div>
                                 <div class="review-item">
+                                    <div class="review-item-label">Father's Name</div>
+                                    <div class="review-item-value" id="rev-fatherName">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Mother's Name</div>
+                                    <div class="review-item-value" id="rev-motherName">—</div>
+                                </div>
+                                <div class="review-item">
                                     <div class="review-item-label">Email</div>
                                     <div class="review-item-value" id="rev-email" style="word-break:break-all;">—</div>
                                 </div>
@@ -373,8 +508,28 @@
                                     <div class="review-item-value" id="rev-gender">—</div>
                                 </div>
                                 <div class="review-item">
-                                    <div class="review-item-label">Location</div>
-                                    <div class="review-item-value" id="rev-city">—</div>
+                                    <div class="review-item-label">NID / Birth Cert</div>
+                                    <div class="review-item-value" id="rev-nidBirthCert">— (Not provided)</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Blood Group</div>
+                                    <div class="review-item-value" id="rev-bloodGroup">— (Not provided)</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Occupation</div>
+                                    <div class="review-item-value" id="rev-occupation">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Religion</div>
+                                    <div class="review-item-value" id="rev-religion">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Residential Address</div>
+                                    <div class="review-item-value" id="rev-resAddress">—</div>
+                                </div>
+                                <div class="review-item">
+                                    <div class="review-item-label">Permanent Address</div>
+                                    <div class="review-item-value" id="rev-permAddress">—</div>
                                 </div>
                                 <div class="review-item">
                                     <div class="review-item-label">Education</div>

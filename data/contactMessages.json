@@ -1,5 +1,23 @@
 [
   {
+    "id": "msg_1789296782727",
+    "name": "Test",
+    "email": "test@test.com",
+    "phone": "",
+    "subject": "",
+    "message": "Hello",
+    "createdAt": "2026-09-13T10:53:02.728Z"
+  },
+  {
+    "id": "msg_1789191366609",
+    "name": "Test User",
+    "email": "test@example.com",
+    "phone": "01700000000",
+    "subject": "course-inquiry",
+    "message": "Hello, I would like to inquire about Japanese language classes.",
+    "createdAt": "2026-09-12T05:36:06.609Z"
+  },
+  {
     "id": "msg_1788361380463",
     "name": "Manik I",
     "email": "manik2025245@gmail.com",

@@ -7,7 +7,9 @@
     <meta name="description" content="Professional Japanese language training and visa consultation services in Bangladesh">
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,7 +17,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="theme-dark-mandala">
     <!-- Header/Navigation -->
     <header>
         <div class="container">
@@ -43,7 +45,7 @@
                 </ul>
                 
                 <div class="nav-actions">
-                    <a href="pages/admission.html" class="btn btn-primary">Apply Now</a>
+                    <a href="pages/admission.html" class="btn-rgb-glow">Apply Now</a>
                     <div class="hamburger">
                         <span></span>
                         <span></span>
@@ -55,41 +57,37 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero" id="heroSection">
+    <section class="hero" id="heroSection" style="background-image: linear-gradient(180deg, rgba(8, 10, 16, 0.72) 0%, rgba(8, 10, 16, 0.35) 45%, rgba(8, 10, 16, 0.88) 100%), url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1920&auto=format&fit=crop&q=80');">
         <div class="container">
             <div class="hero-content">
-                <h1 id="heroTitle">Learn Japanese, Build Your Future</h1>
+                <h1 id="heroTitle">Learn Japanese , Build Your Future</h1>
                 <p id="heroSubtitle">Master the Japanese language and unlock opportunities for education and employment in Japan with our comprehensive training and visa support services.</p>
                 <div class="hero-actions">
-                    <a id="heroCta" href="pages/admission.html" class="btn btn-primary btn-lg">
-                        <i class="fas fa-rocket"></i> Start Your Journey
-                    </a>
-                    <a id="heroSecondaryCta" href="#contact" class="btn btn-outline btn-lg">
-                        <i class="fas fa-phone"></i> Free Consultation
-                    </a>
+                    <a id="heroCta" href="pages/admission.html" class="btn-rgb-glow">Start Your Journey</a>
+                    <a id="heroSecondaryCta" href="pages/contact.html" class="btn-outline-glass">Free Consultation</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Stats Section -->
-    <section class="section">
+    <section class="stats-overview-section">
         <div class="container">
             <div class="grid grid-4">
-                <div class="stat">
-                    <div class="stat-number">5000</div>
+                <div class="stat-card-modern">
+                    <div class="stat-number">5000<span class="stat-accent">+</span></div>
                     <p class="stat-label">Students Trained</p>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">95</div>
-                    <p class="stat-label">Success Rate %</p>
+                <div class="stat-card-modern">
+                    <div class="stat-number">95<span class="stat-accent">%</span></div>
+                    <p class="stat-label">Success Rate</p>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">500</div>
+                <div class="stat-card-modern">
+                    <div class="stat-number">500<span class="stat-accent">+</span></div>
                     <p class="stat-label">Visas Approved</p>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">10</div>
+                <div class="stat-card-modern">
+                    <div class="stat-number">10<span class="stat-accent">+</span></div>
                     <p class="stat-label">Years Experience</p>
                 </div>
             </div>
@@ -376,9 +374,28 @@
     </div>
 
     <!-- Scripts -->
+    <script src="assets/js/dao.js"></script>
+    <script src="assets/js/discountCalculator.js"></script>
     <script src="assets/js/gallery.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <script src="./assets/js/dao.js"></script>
+    <!-- Theme Initialization Script -->
+    <script>
+        (async function initActiveTheme() {
+            try {
+                const stored = localStorage.getItem('fusion_selected_theme');
+                if (stored) {
+                    document.body.className = stored;
+                }
+                if (window.DAO && window.DAO.Settings) {
+                    const settings = await window.DAO.Settings.get();
+                    if (settings && settings.theme) {
+                        document.body.className = settings.theme;
+                        localStorage.setItem('fusion_selected_theme', settings.theme);
+                    }
+                }
+            } catch(e) {}
+        })();
+    </script>
 </body>
 </html>

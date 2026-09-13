@@ -74,10 +74,36 @@
                 }
                 // Static file fallback for Live Server / offline mode
                 try {
-                    const directRes = await fetch(`../data/${resourceKey}.json`).then(r => r.ok ? r.json() : null).catch(() => null);
+                    let directRes = null;
+                    const pathList = [`data/${resourceKey}.json`, `../data/${resourceKey}.json`, `/data/${resourceKey}.json`];
+                    for (const p of pathList) {
+                        try {
+                            const r = await fetch(p);
+                            if (r.ok) {
+                                const parsed = await r.json();
+                                if (Array.isArray(parsed)) {
+                                    directRes = parsed;
+                                    break;
+                                }
+                            }
+                        } catch (_) {}
+                    }
                     if (Array.isArray(directRes)) {
                         if (resourceKey === 'admissions') {
-                            const studentsData = await fetch('../data/students.json').then(r => r.ok ? r.json() : null).catch(() => null);
+                            let studentsData = null;
+                            const studentPaths = ['data/students.json', '../data/students.json', '/data/students.json'];
+                            for (const sp of studentPaths) {
+                                try {
+                                    const sr = await fetch(sp);
+                                    if (sr.ok) {
+                                        const spData = await sr.json();
+                                        if (Array.isArray(spData)) {
+                                            studentsData = spData;
+                                            break;
+                                        }
+                                    }
+                                } catch (_) {}
+                            }
                             if (Array.isArray(studentsData)) {
                                 const existingIds = new Set(directRes.map(a => String(a.applicationNumber || a.id).toLowerCase()));
                                 studentsData.forEach(s => {
@@ -233,16 +259,40 @@
         document.querySelectorAll('.logo-education').forEach(el => el.style.color = educationColor);
     }
 
+    function applyTheme(theme) {
+        if (!theme) return;
+        // Do not alter admin panel, dashboard layouts, or login/auth pages
+        if (document.querySelector('.admin-layout') ||
+            document.querySelector('.admin-topbar') ||
+            document.body.classList.contains('admin-body') ||
+            document.body.classList.contains('auth-page') ||
+            document.querySelector('.staff-dashboard-shell') ||
+            document.querySelector('.login-shell') ||
+            document.querySelector('#adminLoginForm') ||
+            document.querySelector('#studentLoginForm') ||
+            document.querySelector('#staffLoginForm')) {
+            return;
+        }
+        const themeClasses = ['theme-dark-mandala', 'theme-dark-jali', 'theme-light-floral', 'theme-light-geometric', 'theme-classic'];
+        document.body.classList.remove(...themeClasses);
+        document.body.classList.add(theme);
+        try {
+            localStorage.setItem('fusion_selected_theme', theme);
+        } catch (_) {}
+    }
+
     const Settings = {
         async get() {
             const res = await apiFetch('/api/settings');
             if (res && res.success && res.settings) {
                 setLocal('settings', res.settings);
                 applyBrandColors(res.settings.brandColors);
+                if (res.settings.theme) applyTheme(res.settings.theme);
                 return res.settings;
             }
             const local = getLocal('settings', {});
             applyBrandColors(local.brandColors);
+            if (local.theme) applyTheme(local.theme);
             return local;
         },
         async save(data) {
@@ -250,6 +300,7 @@
             const merged = { ...current, ...data };
             setLocal('settings', merged);
             applyBrandColors(merged.brandColors);
+            if (merged.theme) applyTheme(merged.theme);
             const res = await apiFetch('/api/settings', 'POST', data);
             if (res && res.success) return res;
             return { success: true, message: 'Settings saved locally', settings: merged };
@@ -281,14 +332,19 @@
         AuditLogs,
         Permissions,
         Storage,
-        applyBrandColors
+        applyBrandColors,
+        applyTheme
     };
 
-    // Auto-apply cached brand colors on instant load
+    // Auto-apply cached brand colors and theme on instant load
     try {
         const cachedSettings = getLocal('settings', {});
         if (cachedSettings.brandColors) {
             applyBrandColors(cachedSettings.brandColors);
+        }
+        const initialTheme = cachedSettings.theme || localStorage.getItem('fusion_selected_theme');
+        if (initialTheme) {
+            applyTheme(initialTheme);
         }
     } catch (_) {}
 

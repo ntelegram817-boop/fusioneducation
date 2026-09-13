@@ -126,6 +126,14 @@
         if (!fullName || fullName.length < 2) { showErr('fullName', 'Please enter your full name (min 2 characters).'); valid = false; }
         else clearErr('fullName');
 
+        const fatherName = val('fatherName');
+        if (!fatherName || fatherName.length < 2) { showErr('fatherName', "Please enter father's name (min 2 characters)."); valid = false; }
+        else clearErr('fatherName');
+
+        const motherName = val('motherName');
+        if (!motherName || motherName.length < 2) { showErr('motherName', "Please enter mother's name (min 2 characters)."); valid = false; }
+        else clearErr('motherName');
+
         const email = val('email');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('email', 'Please enter a valid email address.'); valid = false; }
         else clearErr('email');
@@ -147,19 +155,96 @@
         if (!gender) { showErr('gender', 'Please select your gender.'); valid = false; }
         else clearErr('gender');
 
+        // nidBirthCert & bloodGroup are optional - no validation errors required
+
+        const occupation = val('occupation');
+        if (!occupation) { showErr('occupation', 'Please select your occupation.'); valid = false; }
+        else clearErr('occupation');
+
+        const religion = val('religion');
+        if (!religion) { showErr('religion', 'Please select your religion.'); valid = false; }
+        else clearErr('religion');
+
+        // Residential Address
         const address = val('address');
-        if (!address) { showErr('address', 'Please enter your address.'); valid = false; }
+        if (!address) { showErr('address', 'Please enter residential village / road / area.'); valid = false; }
         else clearErr('address');
 
         const city = val('city');
-        if (!city) { showErr('city', 'Please enter your city.'); valid = false; }
+        if (!city) { showErr('city', 'Please enter residential city / upazila.'); valid = false; }
         else clearErr('city');
 
         const district = val('district');
-        if (!district) { showErr('district', 'Please enter your district.'); valid = false; }
+        if (!district) { showErr('district', 'Please enter residential district.'); valid = false; }
         else clearErr('district');
 
+        // Permanent Address
+        const permAddress = val('permanentAddress');
+        if (!permAddress) { showErr('permanentAddress', 'Please enter permanent village / road / area.'); valid = false; }
+        else clearErr('permanentAddress');
+
+        const permCity = val('permanentCity');
+        if (!permCity) { showErr('permanentCity', 'Please enter permanent city / upazila.'); valid = false; }
+        else clearErr('permanentCity');
+
+        const permDistrict = val('permanentDistrict');
+        if (!permDistrict) { showErr('permanentDistrict', 'Please enter permanent district.'); valid = false; }
+        else clearErr('permanentDistrict');
+
         return valid;
+    }
+
+    // ==========================================================
+    // PERMANENT ADDRESS AUTO-FILL ("Same as Residential Address")
+    // ==========================================================
+    function setupAddressAutoFill() {
+        const checkbox = document.getElementById('sameAsResidential');
+        const badge = document.getElementById('same-address-badge');
+        const resAddress = document.getElementById('address');
+        const resCity = document.getElementById('city');
+        const resDistrict = document.getElementById('district');
+
+        const permAddress = document.getElementById('permanentAddress');
+        const permCity = document.getElementById('permanentCity');
+        const permDistrict = document.getElementById('permanentDistrict');
+
+        if (!checkbox) return;
+
+        function syncAddresses() {
+            if (checkbox.checked) {
+                if (permAddress && resAddress) permAddress.value = resAddress.value;
+                if (permCity && resCity) permCity.value = resCity.value;
+                if (permDistrict && resDistrict) permDistrict.value = resDistrict.value;
+
+                if (permAddress) { permAddress.readOnly = true; permAddress.style.backgroundColor = 'rgba(255,255,255,0.03)'; }
+                if (permCity) { permCity.readOnly = true; permCity.style.backgroundColor = 'rgba(255,255,255,0.03)'; }
+                if (permDistrict) { permDistrict.readOnly = true; permDistrict.style.backgroundColor = 'rgba(255,255,255,0.03)'; }
+
+                clearErr('permanentAddress');
+                clearErr('permanentCity');
+                clearErr('permanentDistrict');
+
+                if (badge) badge.style.display = 'inline-flex';
+            } else {
+                if (permAddress) { permAddress.readOnly = false; permAddress.style.backgroundColor = ''; }
+                if (permCity) { permCity.readOnly = false; permCity.style.backgroundColor = ''; }
+                if (permDistrict) { permDistrict.readOnly = false; permDistrict.style.backgroundColor = ''; }
+
+                if (badge) badge.style.display = 'none';
+            }
+        }
+
+        checkbox.addEventListener('change', syncAddresses);
+
+        [resAddress, resCity, resDistrict].forEach(input => {
+            if (input) {
+                input.addEventListener('input', () => {
+                    if (checkbox.checked) {
+                        syncAddresses();
+                    }
+                });
+            }
+        });
     }
 
     // ==========================================================
@@ -377,12 +462,23 @@
             ? docFiles.map((f, i) => `[${i + 1}] ${f.name}`).join(' • ')
             : '— (not uploaded)';
 
+        const resAddr = [val('address'), val('city'), val('district')].filter(Boolean).join(', ');
+        const permAddr = [val('permanentAddress'), val('permanentCity'), val('permanentDistrict')].filter(Boolean).join(', ');
+
         const map = {
             'rev-fullName':          val('fullName'),
+            'rev-fatherName':        val('fatherName') || '—',
+            'rev-motherName':        val('motherName') || '—',
             'rev-email':             val('email'),
             'rev-phone':             val('phone'),
             'rev-dob':               val('dateOfBirth') + (() => { const a = calculateAge(val('dateOfBirth')); return a ? ` (${a.years} yrs)` : ''; })(),
             'rev-gender':            val('gender') ? val('gender').charAt(0).toUpperCase() + val('gender').slice(1) : '—',
+            'rev-nidBirthCert':      val('nidBirthCert') || '— (Not provided)',
+            'rev-bloodGroup':        val('bloodGroup') ? val('bloodGroup') : '— (Not provided)',
+            'rev-occupation':        val('occupation') || '—',
+            'rev-religion':          val('religion') || '—',
+            'rev-resAddress':        resAddr || '—',
+            'rev-permAddress':       permAddr || '—',
             'rev-city':              val('city') + (val('district') ? ', ' + val('district') : ''),
             'rev-education':         val('highestEducation').toUpperCase() || '—',
             'rev-course':            val('course') || '—',
@@ -445,7 +541,8 @@
             const opt = document.createElement('option');
             opt.value = c.title || c.level || `course-${c.id}`;
             opt.dataset.level = c.level || '';
-            opt.textContent = `${c.title || c.level}${c.fee ? ' (' + c.fee + ')' : ''}`;
+            const feeStr = c.regularFee ? `৳ ${Number(c.regularFee).toLocaleString()}` : (c.fee || '');
+            opt.textContent = `${c.title || c.level}${feeStr ? ' (' + feeStr + ')' : ''}`;
             courseSelect.appendChild(opt);
         });
 
@@ -464,6 +561,8 @@
             if (matched) {
                 courseSelect.value = matched.title || matched.level;
                 if (levelSelect && matched.level) levelSelect.value = matched.level;
+                const durSelect = document.getElementById('courseDurationSelect');
+                if (durSelect) durSelect.value = matched.durationMonths || matched.initialDurationMonths || 3;
                 updateFeeDisplay();
             }
         }
@@ -472,6 +571,7 @@
     function syncCourseAndLevel() {
         const courseSelect = document.getElementById('course');
         const levelSelect = document.getElementById('courseLevel');
+        const durationSelect = document.getElementById('courseDurationSelect');
 
         if (courseSelect) {
             courseSelect.addEventListener('change', () => {
@@ -479,12 +579,22 @@
                 if (!selectedVal) return;
 
                 const matched = admissionCourseList.find(c => (c.title || c.level) === selectedVal);
-                if (matched && levelSelect) {
-                    if (matched.level && Array.from(levelSelect.options).some(o => o.value === matched.level)) {
+                if (matched) {
+                    if (levelSelect && matched.level && Array.from(levelSelect.options).some(o => o.value === matched.level)) {
                         levelSelect.value = matched.level;
                         clearErr('courseLevel');
                     }
+                    if (durationSelect && (matched.durationMonths || matched.initialDurationMonths)) {
+                        durationSelect.value = matched.durationMonths || matched.initialDurationMonths;
+                    }
                 }
+                updateFeeDisplay();
+            });
+        }
+
+        const branchSelect = document.getElementById('branch');
+        if (branchSelect) {
+            branchSelect.addEventListener('change', () => {
                 updateFeeDisplay();
             });
         }
@@ -498,6 +608,9 @@
                 if (matched) {
                     courseSelect.value = matched.title || matched.level;
                     clearErr('course');
+                    if (durationSelect && (matched.durationMonths || matched.initialDurationMonths)) {
+                        durationSelect.value = matched.durationMonths || matched.initialDurationMonths;
+                    }
                     updateFeeDisplay();
                 }
             });
@@ -534,14 +647,16 @@
         }
     }
 
-    // ── Course fee display (calls existing discountCalculator fns) ─
+    // ── Course fee display (Auto-Detect Active Offer System) ──────
     function updateFeeDisplay() {
-        if (typeof getCourseDiscountInfo !== 'function') return;
         const selectedVal = val('course');
         const feeDisplay  = document.getElementById('courseFeeDisplay');
         const feeContent  = document.getElementById('courseFeeContent');
+        const planSelect  = document.getElementById('paymentPlanSelect');
+        const optMonthly  = document.getElementById('optMonthlyPay');
+        const durationSel = document.getElementById('courseDurationSelect');
 
-        if (!selectedVal || !feeDisplay) return;
+        if (!selectedVal || !feeDisplay || !feeContent) return;
 
         const selectedCourse = admissionCourseList.find(c => {
             const key = c.title || c.level || `course-${c.id}`;
@@ -550,11 +665,203 @@
 
         if (!selectedCourse) { feeDisplay.style.display = 'none'; return; }
 
-        const discountInfo = getCourseDiscountInfo(selectedCourse);
-        const badge = typeof getDiscountBadgeHTML === 'function' ? getDiscountBadgeHTML(discountInfo) : '';
-        const price = typeof getPriceHTML === 'function' ? getPriceHTML(discountInfo) : '';
-        feeContent.innerHTML = badge + price;
+        const selectedBranch = val('branch');
+
+        // Auto-set duration from course data
+        const courseDuration = selectedCourse.durationMonths || selectedCourse.initialDurationMonths || 3;
+        if (durationSel) {
+            durationSel.value = courseDuration;
+        }
+
+        // Pricing computation with branch-specific discounts
+        const pricing = typeof getCoursePricing === 'function' 
+            ? getCoursePricing(selectedCourse, selectedBranch)
+            : {
+                regularFee: Number(selectedCourse.regularFee) || 15000,
+                finalCourseFee: Number(selectedCourse.regularFee) || 15000,
+                hasDiscount: false,
+                discountInfo: { hasDiscount: false, finalPrice: 15000, originalPrice: 15000 },
+                monthlyEvent: { enabled: false, isActive: false, monthlyFee: 1500, admissionFee: 1000 }
+            };
+
+        // Check if Monthly Pay Event is active
+        const isMonthlyActive = Boolean(pricing.monthlyEvent && pricing.monthlyEvent.isActive);
+
+        // ── AUTO-DETECT ACTIVE OFFER ──────────────────────────────
+        // Silently set the hidden plan select
+        const activePlan = isMonthlyActive ? 'monthly_pay' : 'course_fee';
+        if (planSelect) planSelect.value = activePlan;
+
+        // ── ACTIVE OFFER BANNER ───────────────────────────────────
+        const bannerEl = document.getElementById('activeOfferBanner');
+        if (bannerEl) {
+            if (isMonthlyActive) {
+                const mFee = pricing.monthlyEvent.monthlyFee || 1000;
+                const regFee = typeof formatCurrency === 'function' ? formatCurrency(pricing.regularFee) : `৳ ${pricing.regularFee}`;
+                let countdownBadge = '';
+                if (pricing.monthlyEvent.endDate && typeof isEventActive === 'function' && isEventActive(pricing.monthlyEvent.endDate)) {
+                    countdownBadge = `
+                        <span class="countdown-display" data-countdown-end="${pricing.monthlyEvent.endDate}"
+                            style="font-size:0.75rem; font-weight:800; color:#fbbf24; background:rgba(0,0,0,0.35); padding:0.15rem 0.5rem; border-radius:5px; font-family:monospace;">
+                            <i class="fas fa-stopwatch"></i> <span class="countdown-text">${typeof formatCountdown === 'function' ? formatCountdown(pricing.monthlyEvent.endDate) : ''}</span>
+                        </span>`;
+                }
+                bannerEl.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; background:linear-gradient(135deg,rgba(245,158,11,0.14),rgba(239,68,68,0.08)); border:1px solid rgba(245,158,11,0.4); border-radius:10px; padding:0.6rem 0.9rem;">
+                        <i class="fas fa-fire" style="color:#f59e0b;"></i>
+                        <span style="font-size:0.84rem; font-weight:700; color:#fbbf24;">${pricing.monthlyEvent.eventTitle || 'মাসিক ফি অফার'}</span>
+                        <span style="font-size:0.8rem; color:#94a3b8; text-decoration:line-through;">${regFee}</span>
+                        <span style="font-size:0.9rem; font-weight:800; color:#f59e0b;">৳ ${mFee.toLocaleString()}<span style="font-size:0.72rem; font-weight:500; color:#cbd5e1;"> / মাস</span></span>
+                        ${countdownBadge}
+                    </div>`;
+                bannerEl.style.display = 'block';
+            } else if (pricing.hasDiscount) {
+                const discInfo = pricing.discountInfo;
+                const discLabel = discInfo.discountType === 'percentage'
+                    ? `${discInfo.discountPercent}% OFF`
+                    : `৳ ${discInfo.discountAmount.toLocaleString()} OFF`;
+                let countdownBadge = '';
+                if (pricing.discountEndDate && typeof isEventActive === 'function' && isEventActive(pricing.discountEndDate)) {
+                    countdownBadge = `
+                        <span class="countdown-display" data-countdown-end="${pricing.discountEndDate}"
+                            style="font-size:0.75rem; font-weight:800; color:#fbbf24; background:rgba(0,0,0,0.35); padding:0.15rem 0.5rem; border-radius:5px; font-family:monospace;">
+                            <i class="fas fa-stopwatch"></i> <span class="countdown-text">${typeof formatCountdown === 'function' ? formatCountdown(pricing.discountEndDate) : ''}</span>
+                        </span>`;
+                }
+                bannerEl.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(56,189,248,0.08)); border:1px solid rgba(16,185,129,0.38); border-radius:10px; padding:0.6rem 0.9rem;">
+                        <i class="fas fa-tag" style="color:#10b981;"></i>
+                        <span style="font-size:0.84rem; font-weight:700; color:#6ee7b7;">কোর্স ফি ডিসকাউন্ট অফার</span>
+                        <span style="font-size:0.8rem; color:#94a3b8; text-decoration:line-through;">${typeof formatCurrency === 'function' ? formatCurrency(pricing.regularFee) : `৳ ${pricing.regularFee}`}</span>
+                        <span style="font-size:0.9rem; font-weight:800; color:#10b981;">${typeof formatCurrency === 'function' ? formatCurrency(pricing.finalCourseFee) : `৳ ${pricing.finalCourseFee}`}</span>
+                        <span style="background:rgba(16,185,129,0.18); border:1px solid rgba(16,185,129,0.3); color:#6ee7b7; font-size:0.72rem; font-weight:700; padding:0.18rem 0.5rem; border-radius:5px;">${discLabel}</span>
+                        ${countdownBadge}
+                    </div>`;
+                bannerEl.style.display = 'block';
+            } else {
+                bannerEl.style.display = 'none';
+            }
+        }
+
+        const durationMonths = courseDuration;
+
+        let html = '';
+        let lockedFeeData = {};
+
+        if (activePlan === 'course_fee') {
+            const discountBadge = typeof getDiscountBadgeHTML === 'function' ? getDiscountBadgeHTML(pricing.discountInfo) : '';
+            const priceHtml = typeof getPriceHTML === 'function' ? getPriceHTML(pricing.discountInfo) : `৳ ${pricing.finalCourseFee.toLocaleString()}`;
+
+            let timerBadge = '';
+            if (pricing.isDiscountActive && pricing.discountEndDate && typeof isEventActive === 'function' && isEventActive(pricing.discountEndDate)) {
+                timerBadge = `
+                    <div style="margin-top: 0.5rem; font-size: 0.82rem; color: #38bdf8; display:flex; align-items:center; gap:0.4rem;" data-countdown-end="${pricing.discountEndDate}">
+                        <i class="fas fa-stopwatch"></i> <span>Discount Ends in: <strong class="countdown-text">${formatCountdown(pricing.discountEndDate)}</strong></span>
+                    </div>
+                `;
+            }
+
+            let branchFeedback = '';
+            if (pricing.discountInfo.isBranchRestricted) {
+                if (pricing.discountInfo.isBranchMatch) {
+                    branchFeedback = `
+                        <div style="margin-top: 0.55rem; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 0.45rem 0.75rem; font-size: 0.8rem; color: #6ee7b7; display:flex; align-items:center; gap:0.4rem;">
+                            <i class="fas fa-check-circle" style="color:#10b981;"></i>
+                            <span><strong>${pricing.discountInfo.applicableBranch} ব্রাঞ্চের</strong> বিশেষ ছাড় সফলভাবে কার্যকর হয়েছে!</span>
+                        </div>
+                    `;
+                } else if (selectedBranch) {
+                    branchFeedback = `
+                        <div style="margin-top: 0.55rem; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 0.45rem 0.75rem; font-size: 0.8rem; color: #fbbf24; display:flex; align-items:center; gap:0.4rem;">
+                            <i class="fas fa-info-circle" style="color:#f59e0b;"></i>
+                            <span>এই স্পেশাল ডিসকাউন্ট অফারটি শুধুমাত্র <strong>${pricing.discountInfo.applicableBranch} ব্রাঞ্চের</strong> জন্য প্রযোজ্য।</span>
+                        </div>
+                    `;
+                } else {
+                    branchFeedback = `
+                        <div style="margin-top: 0.55rem; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 0.45rem 0.75rem; font-size: 0.8rem; color: #7dd3fc; display:flex; align-items:center; gap:0.4rem;">
+                            <i class="fas fa-map-marker-alt" style="color:#38bdf8;"></i>
+                            <span><strong>${pricing.discountInfo.applicableBranch} ব্রাঞ্চের</strong> জন্য বিশেষ ছাড় রয়েছে। নিচে ব্রাঞ্চ নির্বাচন করলে ছাড় প্রযোজ্য হবে।</span>
+                        </div>
+                    `;
+                }
+            }
+
+            html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #94a3b8; font-weight: 700; margin-bottom: 0.35rem; letter-spacing: 0.05em;">PLAN: <span style="color:#ffffff;">FULL COURSE PACKAGE</span></div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                            ${priceHtml}
+                            ${discountBadge}
+                        </div>
+                        ${timerBadge}
+                    </div>
+                </div>
+                ${branchFeedback}
+                <div style="margin-top: 0.95rem; padding-top: 0.75rem; border-top: 1px solid rgba(148,163,184,0.15); font-size: 0.85rem; color: #cbd5e1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                    <span><i class="fas fa-calendar-alt" style="color: #38bdf8;"></i> Duration: <strong style="color:#ffffff;">${durationMonths} Months</strong></span>
+                    <span><i class="fas fa-receipt" style="color: #38bdf8;"></i> Total Course Fee: <strong style="color: #38bdf8; font-size: 1.05rem;">${formatCurrency(pricing.finalCourseFee)}</strong></span>
+                </div>
+            `;
+
+            lockedFeeData = {
+                course: selectedCourse.title || selectedCourse.level,
+                level: selectedCourse.level || val('courseLevel'),
+                billingPlan: 'course_fee',
+                offerType: pricing.hasDiscount ? 'discount_offer' : 'regular',
+                durationMonths,
+                regularFee: pricing.regularFee,
+                discount: pricing.discountInfo?.discountAmount || 0,
+                baseFee: pricing.regularFee,
+                finalFee: pricing.finalCourseFee,
+                monthlyFee: 0,
+                admissionFee: 0
+            };
+
+        } else if (activePlan === 'monthly_pay') {
+            const mEvent = pricing.monthlyEvent;
+            const admFee = mEvent.admissionFee || 0;
+            const mFee = mEvent.monthlyFee || 1000;
+            const initialPayment = admFee > 0 ? (admFee + mFee) : mFee;
+            const totalProjected = admFee + (durationMonths * mFee);
+
+            html = `
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(148,163,184,0.2); border-radius: 10px; padding: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; font-size: 0.88rem; color: #cbd5e1;">
+                        <div>
+                            <div style="font-size: 0.75rem; color: #94a3b8;">Initial Payment:</div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #10b981;">${formatCurrency(initialPayment)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: #94a3b8;">Monthly Fee:</div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #f59e0b;">${formatCurrency(mFee)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            lockedFeeData = {
+                course: selectedCourse.title || selectedCourse.level,
+                level: selectedCourse.level || val('courseLevel'),
+                billingPlan: 'monthly_pay',
+                offerType: 'monthly_offer',
+                durationMonths,
+                regularFee: pricing.regularFee,
+                discount: 0,
+                baseFee: admFee,
+                finalFee: initialPayment,
+                monthlyFee: mFee,
+                admissionFee: admFee
+            };
+        }
+
+        feeContent.innerHTML = html;
         feeDisplay.style.display = 'block';
+
+        if (typeof initLiveCountdowns === 'function') {
+            initLiveCountdowns();
+        }
 
         // Store fee info for submission
         let feeInput = document.getElementById('courseFeeInfo');
@@ -565,13 +872,9 @@
             feeInput.name = 'feeInfo';
             document.getElementById('admissionForm').appendChild(feeInput);
         }
-        feeInput.value = JSON.stringify({
-            course: selectedCourse.title || selectedCourse.level,
-            level: selectedCourse.level || val('courseLevel'),
-            baseFee: discountInfo.originalPrice,
-            finalFee: discountInfo.finalPrice
-        });
+        feeInput.value = JSON.stringify(lockedFeeData);
     }
+    window.updateFeeDisplay = updateFeeDisplay;
 
     // ==========================================================
     // FORM SUBMISSION (Online & Resilient Local Storage Fallback)
@@ -585,15 +888,26 @@
 
         const formData = new FormData();
 
-        // Personal
-        formData.append('fullName',    val('fullName'));
-        formData.append('email',       val('email'));
-        formData.append('phone',       val('phone'));
-        formData.append('dateOfBirth', val('dateOfBirth'));
-        formData.append('gender',      val('gender'));
-        formData.append('address',     val('address'));
-        formData.append('city',        val('city'));
-        formData.append('district',    val('district'));
+        // Personal & Family
+        formData.append('fullName',          val('fullName'));
+        formData.append('fatherName',        val('fatherName'));
+        formData.append('motherName',        val('motherName'));
+        formData.append('email',             val('email'));
+        formData.append('phone',             val('phone'));
+        formData.append('dateOfBirth',       val('dateOfBirth'));
+        formData.append('gender',            val('gender'));
+        formData.append('nidBirthCert',      val('nidBirthCert'));
+        formData.append('bloodGroup',        val('bloodGroup'));
+        formData.append('occupation',        val('occupation'));
+        formData.append('religion',          val('religion'));
+
+        // Addresses
+        formData.append('address',           val('address'));
+        formData.append('city',              val('city'));
+        formData.append('district',          val('district'));
+        formData.append('permanentAddress',  val('permanentAddress'));
+        formData.append('permanentCity',     val('permanentCity'));
+        formData.append('permanentDistrict', val('permanentDistrict'));
 
         // Course
         formData.append('highestEducation',   val('highestEducation'));
@@ -663,13 +977,22 @@
                         applicationNumber: responseJson.applicationNumber,
                         applicationId: responseJson.applicationNumber,
                         fullName: val('fullName'),
+                        fatherName: val('fatherName'),
+                        motherName: val('motherName'),
                         email: val('email'),
                         phone: val('phone'),
                         dateOfBirth: val('dateOfBirth'),
                         gender: val('gender'),
+                        nidBirthCert: val('nidBirthCert'),
+                        bloodGroup: val('bloodGroup'),
+                        occupation: val('occupation'),
+                        religion: val('religion'),
                         address: val('address'),
                         city: val('city'),
                         district: val('district'),
+                        permanentAddress: val('permanentAddress'),
+                        permanentCity: val('permanentCity'),
+                        permanentDistrict: val('permanentDistrict'),
                         highestEducation: val('highestEducation'),
                         course: val('course'),
                         courseLevel: val('courseLevel'),
@@ -711,13 +1034,22 @@
                 applicationNumber: generatedAppNumber,
                 submittedAt: new Date().toISOString(),
                 fullName: val('fullName'),
+                fatherName: val('fatherName'),
+                motherName: val('motherName'),
                 email: val('email'),
                 phone: val('phone'),
                 dateOfBirth: val('dateOfBirth'),
                 gender: val('gender'),
+                nidBirthCert: val('nidBirthCert'),
+                bloodGroup: val('bloodGroup'),
+                occupation: val('occupation'),
+                religion: val('religion'),
                 address: val('address'),
                 city: val('city'),
                 district: val('district'),
+                permanentAddress: val('permanentAddress'),
+                permanentCity: val('permanentCity'),
+                permanentDistrict: val('permanentDistrict'),
                 highestEducation: val('highestEducation'),
                 course: val('course'),
                 courseLevel: val('courseLevel'),
@@ -830,54 +1162,6 @@
         }
     }
 
-    async function populateCourseOptions() {
-        const courseSelect = document.getElementById('course');
-        if (!courseSelect) return;
-
-        try {
-            let courses = [];
-            if (window.DAO && window.DAO.Courses) {
-                courses = await window.DAO.Courses.getAll();
-            } else {
-                const res = await fetch('/api/courses');
-                if (res.ok) {
-                    const data = await res.json();
-                    courses = data.courses || [];
-                }
-            }
-
-            if (Array.isArray(courses) && courses.length > 0) {
-                admissionCourseList = courses;
-                const cur = courseSelect.value;
-                courseSelect.innerHTML = '<option value="">Choose a course</option>' + courses.map(c => {
-                    const cId = (c.id || c.code || c.title || '').toLowerCase();
-                    const cTitle = c.title || c.name || 'Course';
-                    const feeStr = c.fee ? ` (৳${Number(c.fee).toLocaleString()})` : '';
-                    return `<option value="${cId}" data-fee="${c.fee || 0}">${cTitle}${feeStr}</option>`;
-                }).join('');
-                if (cur) courseSelect.value = cur;
-            }
-        } catch (err) {
-            console.warn('[Admission] Could not load dynamic courses:', err);
-        }
-    }
-
-    function updateFeeDisplay() {
-        const courseSelect = document.getElementById('course');
-        const feeContent = document.getElementById('courseFeeContent');
-        if (!courseSelect || !feeContent) return;
-
-        const selectedOpt = courseSelect.options[courseSelect.selectedIndex];
-        const fee = selectedOpt?.getAttribute('data-fee');
-        if (fee && Number(fee) > 0) {
-            feeContent.innerHTML = `<span style="font-size: 0.85rem; color: #16a34a; font-weight: 700;"><i class="fas fa-tag"></i> Course Fee: ৳${Number(fee).toLocaleString()}</span>`;
-            feeContent.style.display = 'block';
-        } else {
-            feeContent.innerHTML = '';
-            feeContent.style.display = 'none';
-        }
-    }
-
     // ==========================================================
     // WIRE UP EVENTS
     // ==========================================================
@@ -901,6 +1185,9 @@
         // Age calculator
         document.getElementById('dateOfBirth')?.addEventListener('change', updateAgeBadge);
 
+        // Address auto-fill sync
+        setupAddressAutoFill();
+
         // File previews
         setupPhotoPreview();
         setupDocPreview();
@@ -909,6 +1196,7 @@
         populateBranchOptions();
         populateCourseOptions();
         document.getElementById('course')?.addEventListener('change', updateFeeDisplay);
+        document.getElementById('branch')?.addEventListener('change', updateFeeDisplay);
 
         // Print button
         document.getElementById('btn-print')?.addEventListener('click', printApplication);

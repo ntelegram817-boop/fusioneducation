@@ -16,11 +16,11 @@ async function renderHero() {
 
         if (heroSection) {
             const bgImg = hero.image || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1920&auto=format&fit=crop&q=80';
-            heroSection.style.backgroundImage = `linear-gradient(135deg, rgba(11, 18, 32, 0.65) 0%, rgba(15, 23, 42, 0.45) 50%, rgba(230, 0, 18, 0.2) 100%), url(${bgImg})`;
+            heroSection.style.backgroundImage = `linear-gradient(180deg, rgba(8, 10, 16, 0.72) 0%, rgba(8, 10, 16, 0.35) 45%, rgba(8, 10, 16, 0.88) 100%), url(${bgImg})`;
             heroSection.style.backgroundSize = 'cover';
-            heroSection.style.backgroundPosition = 'center';
+            heroSection.style.backgroundPosition = 'center 35%';
         }
-        if (title) title.textContent = hero.title || 'Learn Japanese, Build Your Future';
+        if (title) title.textContent = hero.title || 'Learn Japanese , Build Your Future';
         if (subtitle) subtitle.textContent = hero.subtitle || 'Master the Japanese language and unlock opportunities for education and employment in Japan with our comprehensive training and visa support services.';
         if (heroCta) {
             heroCta.textContent = hero.ctaText || 'Start Your Journey';
@@ -57,7 +57,7 @@ async function renderPosts() {
 
             const imageEl = `
                 ${hasPhotoLink ? `<a href="${item.photoLink}" target="_blank" rel="noopener noreferrer">` : ''}
-                    <img src="${item.image}" alt="${item.title}"
+                    <img src="${item.image}" alt="${item.title}" loading="lazy" decoding="async"
                          style="width:100%;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.15);">
                 ${hasPhotoLink ? '</a>' : ''}
             `;
@@ -104,34 +104,112 @@ async function renderCourses() {
         const courses = await window.DAO.Courses.getAll();
 
         container.innerHTML = '';
-        if (!courses.length) {
+        if (!courses || !courses.length) {
             container.innerHTML = '<p style="text-align:center;padding:2rem;grid-column:1/-1;">No courses available.</p>';
             return;
         }
 
         container.innerHTML = courses.map(course => {
-            const discountInfo = typeof getCourseDiscountInfo === 'function' ? getCourseDiscountInfo(course) : null;
-            const feeDisplay = discountInfo && discountInfo.hasDiscount
-                ? `<span style="text-decoration:line-through;opacity:0.6;margin-right:0.5rem;">${course.fee}</span>
-                   <strong>${formatCurrency(discountInfo.finalPrice)}</strong>`
-                : `<strong>${course.fee}</strong>`;
+            const pricing = typeof getCoursePricing === 'function' ? getCoursePricing(course) : null;
+            const regularFeeVal = pricing ? pricing.regularFee : (Number(course.regularFee) || (typeof extractFeeValue === 'function' ? extractFeeValue(course.fee) : 15000));
+            const regularFeeStr = typeof formatCurrency === 'function' ? formatCurrency(regularFeeVal) : (course.fee || `৳ ${regularFeeVal}`);
+            const discountInfo = pricing ? pricing.discountInfo : (typeof getCourseDiscountInfo === 'function' ? getCourseDiscountInfo(course) : null);
+            const hasDiscount = Boolean(pricing ? pricing.hasDiscount : (discountInfo && discountInfo.hasDiscount));
+
+            const branchLabel = course.discountBranch && course.discountBranch !== 'all'
+                ? `${course.discountBranch} Branch`
+                : 'All Branches';
+
+            const isMonthlyOffer = Boolean(pricing && pricing.monthlyEvent && pricing.monthlyEvent.isActive);
+
+            const discountBadgeHtml = hasDiscount
+                ? `<div class="course-discount-pill" style="display:inline-flex; align-items:center; gap:0.35rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.22rem 0.6rem; border-radius: 999px; box-shadow: 0 2px 6px rgba(16,185,129,0.3);">
+                     <i class="fas fa-tag"></i> ${discountInfo.discountType === 'percentage' ? `${discountInfo.discountPercent}% OFF` : `৳ ${discountInfo.discountAmount.toLocaleString('en-US')} OFF`}
+                   </div>`
+                : (isMonthlyOffer
+                    ? `<div class="course-discount-pill" style="display:inline-flex; align-items:center; gap:0.35rem; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.22rem 0.6rem; border-radius: 999px; box-shadow: 0 2px 6px rgba(245,158,11,0.3);">
+                         <i class="fas fa-fire"></i> Monthly Offer
+                       </div>`
+                    : '');
+
+            const branchTagHtml = hasDiscount && course.discountBranch && course.discountBranch !== 'all'
+                ? `<div style="font-size: 0.75rem; color: #10b981; font-weight: 600; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.3rem;">
+                     <i class="fas fa-map-marker-alt"></i> Discount at ${branchLabel}
+                   </div>`
+                : '';
+
+            let feeDisplay = '';
+            if (hasDiscount) {
+                feeDisplay = `<div style="display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap;">
+                     <span style="font-size: 1.45rem; font-weight: 800; color: #10b981;">${typeof formatCurrency === 'function' ? formatCurrency(pricing ? pricing.finalCourseFee : discountInfo.finalPrice) : `৳ ${(pricing ? pricing.finalCourseFee : discountInfo.finalPrice)}`}</span>
+                     <span style="text-decoration: line-through; opacity: 0.55; font-size: 0.92rem; color: #94a3b8; font-weight: 500;">${regularFeeStr}</span>
+                   </div>
+                   ${branchTagHtml}`;
+            } else if (isMonthlyOffer) {
+                const mFeeVal = pricing.monthlyEvent.monthlyFee || 1000;
+                feeDisplay = `<div style="display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap;">
+                     <span style="font-size: 1.45rem; font-weight: 800; color: #f59e0b;">৳ ${mFeeVal.toLocaleString()}<span style="font-size:0.85rem; font-weight:600; color:#cbd5e1;"> / month</span></span>
+                     <span style="text-decoration: line-through; opacity: 0.55; font-size: 0.92rem; color: #94a3b8; font-weight: 500;">${regularFeeStr}</span>
+                   </div>`;
+            } else {
+                feeDisplay = `<div style="font-size: 1.45rem; font-weight: 800; color: var(--primary);">${regularFeeStr}</div>`;
+            }
+
+            // Live Countdown Timer Strip (Discount & Monthly Event)
+            let countdownHtml = '';
+            if (pricing && pricing.hasDiscount && pricing.discountEndDate && typeof isEventActive === 'function' && isEventActive(pricing.discountEndDate)) {
+                countdownHtml = `
+                    <div class="course-countdown-strip" data-countdown-end="${pricing.discountEndDate}" style="margin: 0.65rem 0; background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(245,158,11,0.1)); border: 1px solid rgba(245,158,11,0.35); border-radius: 8px; padding: 0.4rem 0.65rem; display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; font-size: 0.76rem;">
+                        <span style="color: #f59e0b; font-weight: 700; display:flex; align-items:center; gap:0.3rem;">
+                            <i class="fas fa-stopwatch fa-spin"></i> Offer Ends:
+                        </span>
+                        <span class="countdown-display" style="font-family: monospace; font-weight: 800; color: #fbbf24; background: rgba(0,0,0,0.35); padding: 0.15rem 0.45rem; border-radius: 4px;">
+                            <span class="countdown-text">${typeof formatCountdown === 'function' ? formatCountdown(pricing.discountEndDate) : ''}</span>
+                        </span>
+                    </div>`;
+            } else if (isMonthlyOffer && pricing.monthlyEvent.endDate) {
+                countdownHtml = `
+                    <div class="course-countdown-strip" data-countdown-end="${pricing.monthlyEvent.endDate}" style="margin: 0.65rem 0; background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(239,68,68,0.08)); border: 1px solid rgba(245,158,11,0.35); border-radius: 8px; padding: 0.4rem 0.65rem; display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; font-size: 0.76rem;">
+                        <span style="color: #f59e0b; font-weight: 700; display:flex; align-items:center; gap:0.3rem;">
+                            <i class="fas fa-fire fa-beat"></i> Monthly: ৳${pricing.monthlyEvent.monthlyFee.toLocaleString()}/mo
+                        </span>
+                        <span class="countdown-display" style="font-family: monospace; font-weight: 800; color: #fbbf24; background: rgba(0,0,0,0.35); padding: 0.15rem 0.45rem; border-radius: 4px;">
+                            <span class="countdown-text">${pricing.monthlyEvent.remainingText || (typeof formatCountdown === 'function' ? formatCountdown(pricing.monthlyEvent.endDate) : '')}</span>
+                        </span>
+                    </div>`;
+            }
+
+            const offerBadgeHtml = hasDiscount 
+                ? `<div style="position: absolute; top: 12px; right: 12px; background: rgba(16,185,129,0.92); backdrop-filter:blur(4px); color: white; padding: 0.25rem 0.65rem; border-radius: 8px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 0.3rem; box-shadow: 0 4px 10px rgba(0,0,0,0.25);"><i class="fas fa-tag"></i> SPECIAL DISCOUNT</div>`
+                : (isMonthlyOffer ? `<div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); backdrop-filter:blur(4px); color: white; padding: 0.25rem 0.65rem; border-radius: 8px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 0.3rem; box-shadow: 0 4px 10px rgba(0,0,0,0.25);"><i class="fas fa-fire"></i> MONTHLY OFFER</div>` : '');
 
             return `
-            <div class="course-card">
-                <div class="course-thumbnail">📘</div>
+            <div class="course-card" style="position: relative;">
+                <div class="course-thumbnail" style="position: relative;">
+                    <span>📘</span>
+                    ${offerBadgeHtml}
+                </div>
                 <div class="course-content">
-                    <span class="course-level">${course.level}</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.5rem;">
+                        <span class="course-level">${course.level}</span>
+                        ${discountBadgeHtml}
+                    </div>
                     <h3 class="course-title">${course.title}</h3>
                     <div class="course-meta">
                         <div class="course-meta-item"><i class="fas fa-clock"></i> ${course.duration}</div>
                         <div class="course-meta-item"><i class="fas fa-users"></i> ${course.students}</div>
                     </div>
-                    <div class="course-fee">${feeDisplay}</div>
-                    <p style="font-size:0.9rem;">${course.description}</p>
-                    <a href="${course.link || 'pages/contact.html'}" class="btn btn-primary" style="width:100%;margin-top:1rem;">View Course</a>
+                    <div class="course-fee" style="margin: 0.75rem 0;">${feeDisplay}</div>
+                    ${countdownHtml}
+                    <p style="font-size:0.9rem; line-height: 1.5; color: var(--text-secondary);">${course.description}</p>
+                    <a href="${course.link || 'pages/admission.html'}" class="btn btn-primary" style="width:100%;margin-top:1.25rem;">View Course / Enroll</a>
                 </div>
             </div>`;
         }).join('');
+
+        if (typeof initLiveCountdowns === 'function') {
+            initLiveCountdowns();
+        }
     } catch (err) {
         console.error('[gallery] Error loading courses:', err);
     }
@@ -173,7 +251,7 @@ async function renderTestimonials() {
                     </div>
                     <div class="story-author-box">
                         ${isImgUrl ? `
-                            <img src="${t.image}" alt="${studentName}" class="story-author-avatar" onerror="this.outerHTML='<div class=\\'story-author-initials\\'>${initials}</div>'">
+                            <img src="${t.image}" alt="${studentName}" class="story-author-avatar" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=\\'story-author-initials\\'>${initials}</div>'">
                         ` : `
                             <div class="story-author-initials">${t.avatar || initials}</div>
                         `}
@@ -359,6 +437,10 @@ async function renderAll() {
         renderFaqs(),
         renderContactAndSocials()
     ]);
+
+    if (typeof observeLazyElements === 'function') {
+        observeLazyElements();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {

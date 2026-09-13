@@ -89,15 +89,26 @@ async function submitAdmission(req, res) {
             applicationNumber,
             submittedAt: new Date().toISOString(),
 
-            // Personal
-            fullName:      req.body.fullName,
-            email:         req.body.email,
-            phone:         req.body.phone,
-            dateOfBirth:   req.body.dateOfBirth,
-            gender:        req.body.gender,
-            address:       req.body.address,
-            city:          req.body.city,
-            district:      req.body.district,
+            // Personal & Family
+            fullName:          req.body.fullName,
+            fatherName:        req.body.fatherName || '',
+            motherName:        req.body.motherName || '',
+            email:             req.body.email,
+            phone:             req.body.phone,
+            dateOfBirth:       req.body.dateOfBirth,
+            gender:            req.body.gender,
+            nidBirthCert:      req.body.nidBirthCert || '',
+            bloodGroup:        req.body.bloodGroup || '',
+            occupation:        req.body.occupation || '',
+            religion:          req.body.religion || '',
+
+            // Addresses
+            address:           req.body.address,
+            city:              req.body.city,
+            district:          req.body.district,
+            permanentAddress:  req.body.permanentAddress || '',
+            permanentCity:     req.body.permanentCity || '',
+            permanentDistrict: req.body.permanentDistrict || '',
 
             // Course & preferences
             highestEducation:   req.body.highestEducation,

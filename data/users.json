@@ -1,37 +1,5 @@
 [
   {
-    "id": "usr_inst_1788373283107",
-    "name": "manikkkkkk",
-    "email": "manik20252455@gmail.com",
-    "password": "741074100",
-    "role": "instructor",
-    "branch": "asdfghh",
-    "permissions": [
-      "view_students",
-      "edit_students",
-      "manage_attendance",
-      "manage_batches",
-      "manage_routines",
-      "manage_academic_progress",
-      "manage_admissions",
-      "manage_readmissions",
-      "counseling",
-      "view_fees",
-      "manage_fees",
-      "custom_student_fee",
-      "view_documents",
-      "manage_documents",
-      "view_staff",
-      "edit_staff",
-      "manage_staff_permissions",
-      "view_reports",
-      "export_reports"
-    ],
-    "status": "inactive",
-    "createdAt": "2026-09-02T18:21:23.107Z",
-    "updatedAt": "2026-09-02T19:05:32.759Z"
-  },
-  {
     "id": "usr_inst_1788342774881",
     "name": "Tariq Sensei llll",
     "email": "tariq.senseib@fusion.com",
@@ -155,10 +123,28 @@
     "branch": "Dinajpur",
     "status": "active",
     "permissions": [
-      "view_students"
+      "view_students",
+      "edit_students",
+      "manage_attendance",
+      "manage_batches",
+      "manage_routines",
+      "manage_academic_progress",
+      "manage_admissions",
+      "manage_readmissions",
+      "counseling",
+      "view_fees",
+      "manage_fees",
+      "custom_student_fee",
+      "view_documents",
+      "manage_documents",
+      "view_staff",
+      "edit_staff",
+      "manage_staff_permissions",
+      "view_reports",
+      "export_reports"
     ],
     "createdAt": "2026-08-01T08:00:00.000Z",
-    "updatedAt": "2026-09-02T11:08:51.092Z"
+    "updatedAt": "2026-09-10T18:24:06.543Z"
   },
   {
     "id": "usr_staff_002",
@@ -170,12 +156,27 @@
     "status": "active",
     "permissions": [
       "view_students",
+      "edit_students",
+      "manage_attendance",
+      "manage_batches",
+      "manage_routines",
+      "manage_academic_progress",
       "manage_admissions",
+      "manage_readmissions",
       "counseling",
       "view_fees",
-      "view_reports"
+      "manage_fees",
+      "custom_student_fee",
+      "view_documents",
+      "manage_documents",
+      "view_staff",
+      "edit_staff",
+      "manage_staff_permissions",
+      "view_reports",
+      "export_reports"
     ],
-    "createdAt": "2026-08-10T11:00:00.000Z"
+    "createdAt": "2026-08-10T11:00:00.000Z",
+    "updatedAt": "2026-09-10T18:24:38.394Z"
   },
   {
     "id": "usr_staff_003",
@@ -211,13 +212,27 @@
     "status": "active",
     "permissions": [
       "view_students",
+      "edit_students",
+      "manage_attendance",
+      "manage_batches",
+      "manage_routines",
+      "manage_academic_progress",
       "manage_admissions",
+      "manage_readmissions",
       "counseling",
       "view_fees",
       "manage_fees",
-      "view_reports"
+      "custom_student_fee",
+      "view_documents",
+      "manage_documents",
+      "view_staff",
+      "edit_staff",
+      "manage_staff_permissions",
+      "view_reports",
+      "export_reports"
     ],
-    "createdAt": "2026-08-18T14:00:00.000Z"
+    "createdAt": "2026-08-18T14:00:00.000Z",
+    "updatedAt": "2026-09-10T18:24:54.157Z"
   },
   {
     "id": "usr_staff_005",
@@ -229,10 +244,26 @@
     "status": "active",
     "permissions": [
       "view_students",
+      "edit_students",
+      "manage_attendance",
+      "manage_batches",
+      "manage_routines",
+      "manage_academic_progress",
       "manage_admissions",
+      "manage_readmissions",
       "counseling",
-      "view_fees"
+      "view_fees",
+      "manage_fees",
+      "custom_student_fee",
+      "view_documents",
+      "manage_documents",
+      "view_staff",
+      "edit_staff",
+      "manage_staff_permissions",
+      "view_reports",
+      "export_reports"
     ],
-    "createdAt": "2026-08-25T16:00:00.000Z"
+    "createdAt": "2026-08-25T16:00:00.000Z",
+    "updatedAt": "2026-09-10T18:25:01.886Z"
   }
 ]

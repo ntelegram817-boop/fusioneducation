@@ -1,6 +1,0 @@
-name = "fusion-education-bd"
-compatibility_date = "2024-01-01"
-# Cloudflare Pages project for static site
-pages_build_output_dir = "dist"
-
-

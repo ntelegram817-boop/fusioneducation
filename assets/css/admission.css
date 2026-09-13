@@ -430,3 +430,67 @@ textarea.input-valid {
     .success-actions { flex-direction: column; }
     .step-nav { flex-direction: column; }
 }
+
+/* ── Dark Themes Support for Admission Wizard ────────────────── */
+body.theme-dark-mandala .admission-stepper,
+body.theme-dark-jali .admission-stepper,
+body.theme-dark-mandala .admission-panel,
+body.theme-dark-jali .admission-panel {
+    background: rgba(13, 20, 36, 0.92) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: #FFFFFF !important;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.theme-dark-mandala .step-circle,
+body.theme-dark-jali .step-circle {
+    background: rgba(15, 23, 42, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #94A3B8 !important;
+}
+
+body.theme-dark-mandala .step-circle.active,
+body.theme-dark-jali .step-circle.active {
+    background: linear-gradient(135deg, var(--primary), #FF3333) !important;
+    border-color: var(--primary) !important;
+    color: #FFFFFF !important;
+}
+
+body.theme-dark-mandala .step-circle.done,
+body.theme-dark-jali .step-circle.done {
+    background: var(--success) !important;
+    border-color: var(--success) !important;
+    color: #FFFFFF !important;
+}
+
+body.theme-dark-mandala .review-panel,
+body.theme-dark-jali .review-panel {
+    background: rgba(15, 23, 42, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+
+body.theme-dark-mandala .review-panel h4,
+body.theme-dark-jali .review-panel h4 {
+    color: #FFFFFF !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.theme-dark-mandala .review-item-value,
+body.theme-dark-jali .review-item-value {
+    color: #FFFFFF !important;
+}
+
+body.theme-dark-mandala .section-divider-label,
+body.theme-dark-jali .section-divider-label {
+    background: #0d1424 !important;
+    color: #94A3B8 !important;
+}
+
+body.theme-dark-mandala .file-upload-area,
+body.theme-dark-jali .file-upload-area {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+}

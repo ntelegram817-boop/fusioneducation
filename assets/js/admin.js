@@ -221,14 +221,39 @@
         updateBrandColorPreview(fusion, education);
     };
 
+    function selectTheme(themeId, triggerToast = false) {
+        const themeInput = document.getElementById('themeInput');
+        if (themeInput) themeInput.value = themeId;
+        
+        document.querySelectorAll('.theme-option-card').forEach(card => {
+            if (card.getAttribute('data-theme') === themeId) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+        
+        try {
+            localStorage.setItem('fusion_selected_theme', themeId);
+        } catch (_) {}
+
+        if (triggerToast) {
+            showToast('নকশা মডেল নির্বাচিত হয়েছে। সেভ করতে নিচে "Save Site Settings" বাটনে ক্লিক করুন।', 'info');
+        }
+    }
+    window.selectTheme = selectTheme;
+
     async function loadSettings() {
-        if (!document.getElementById('heroTitleInput')) return;
+        if (!document.getElementById('heroTitleInput') && !document.getElementById('themeInput')) return;
         try {
             const data = await window.DAO.Settings.get();
             const brandColors = data.brandColors || { fusionColor: '#FFFFFF', educationColor: '#00AEEF' };
             const hero = data.hero || {};
             const contactInfo = data.contactInfo || {};
             const socialLinks = data.socialLinks || {};
+
+            const currentTheme = data.theme || 'theme-dark-mandala';
+            selectTheme(currentTheme, false);
 
             if (document.getElementById('fusionColorInput')) {
                 document.getElementById('fusionColorInput').value = brandColors.fusionColor || '#FFFFFF';
@@ -295,6 +320,7 @@
             }
 
             const data = {
+                theme: document.getElementById('themeInput')?.value || 'theme-dark-mandala',
                 brandColors: {
                     fusionColor: document.getElementById('fusionColorHex')?.value.trim() || document.getElementById('fusionColorInput')?.value || '#FFFFFF',
                     educationColor: document.getElementById('educationColorHex')?.value.trim() || document.getElementById('educationColorInput')?.value || '#00AEEF'
@@ -325,7 +351,10 @@
             };
 
             await window.DAO.Settings.save(data);
-            showToast('Site settings & brand colors saved successfully!', 'success');
+            try {
+                localStorage.setItem('fusion_selected_theme', data.theme);
+            } catch (_) {}
+            showToast('Site settings & theme saved successfully!', 'success');
             loadSettings();
         } catch (err) {
             console.error('Error saving settings', err);
@@ -511,12 +540,160 @@
     let courseList = [];
     let filteredCourses = [];
 
+    window.syncDurationText = function(val) {
+        const textInput = document.getElementById('courseDuration');
+        if (textInput && val) {
+            textInput.value = `${val} Month${parseInt(val, 10) > 1 ? 's' : ''}`;
+        }
+    };
+
+    async function populateCourseBranchDropdown() {
+        const select = document.getElementById('courseDiscountBranch');
+        if (!select) return;
+        try {
+            let branches = [];
+            if (window.DAO && window.DAO.Branches) {
+                branches = await window.DAO.Branches.getAll();
+            }
+            if (!branches || !branches.length) {
+                branches = await fetch('../data/branches.json').then(r => r.ok ? r.json() : []).catch(() => []);
+            }
+            if (Array.isArray(branches) && branches.length) {
+                const curVal = select.value || 'all';
+                select.innerHTML = '<option value="all">All Branches (সকল ব্রাঞ্চ)</option>' +
+                    branches.map(b => `<option value="${b.name || b.displayName || b.id}">${b.displayName || b.name || b.id} Branch</option>`).join('');
+                select.value = curVal;
+            }
+        } catch (err) {
+            console.warn('[admin] populateCourseBranchDropdown note:', err.message);
+        }
+    }
+
+    window.toggleMonthlyEventFields = function() {
+        const enabled = document.getElementById('courseMonthlyEventEnabled')?.checked;
+        const fields = document.getElementById('monthlyEventFields');
+        if (fields) {
+            fields.style.display = enabled ? 'block' : 'none';
+        }
+        if (typeof updateCoursePricePreview === 'function') {
+            updateCoursePricePreview();
+        }
+    };
+
+    window.updateCoursePricePreview = function() {
+        const rawRegularFee = document.getElementById('courseRegularFee')?.value || '0';
+        const regularFee = typeof extractFeeValue === 'function' 
+            ? extractFeeValue(rawRegularFee) 
+            : (parseFloat(String(rawRegularFee).replace(/[^\d.]/g, '')) || 0);
+        const dtype = document.getElementById('courseDiscountType')?.value || 'none';
+        const dval = parseFloat(document.getElementById('courseDiscountValue')?.value || '0');
+        const dEnd = document.getElementById('courseDiscountEndDate')?.value;
+        const preview = document.getElementById('discountPreview');
+        const finalPriceEl = document.getElementById('previewFinalPrice');
+        const origPriceEl = document.getElementById('previewOriginalPrice');
+        const savingEl = document.getElementById('previewSaving');
+        const branchVal = document.getElementById('courseDiscountBranch')?.value || 'all';
+        const branchText = document.getElementById('courseDiscountBranch')?.selectedOptions?.[0]?.text || 'All Branches';
+        const branchPreviewEl = document.getElementById('previewDiscountBranch');
+
+        if (!preview) return;
+
+        if (!regularFee || regularFee <= 0) {
+            if (finalPriceEl) finalPriceEl.textContent = '৳ 0';
+            if (origPriceEl) origPriceEl.style.display = 'none';
+            if (savingEl) savingEl.style.display = 'none';
+            if (branchPreviewEl) branchPreviewEl.style.display = 'none';
+            return;
+        }
+
+        // Check if discount is expired
+        let isExpired = false;
+        if (dEnd && typeof isEventActive === 'function' && !isEventActive(dEnd)) {
+            isExpired = true;
+        }
+
+        const isMonthlyOn = Boolean(document.getElementById('courseMonthlyEventEnabled')?.checked);
+        const mFeeInput = parseFloat(document.getElementById('courseMonthlyFee')?.value || '1000') || 1000;
+        const admFeeInput = parseFloat(document.getElementById('courseAdmissionFee')?.value || '0') || 0;
+
+        const info = (!isExpired && dtype !== 'none' && dval > 0)
+            ? calculateDiscount(regularFee, dtype, dval)
+            : { hasDiscount: false, finalPrice: regularFee, originalPrice: regularFee, discountAmount: 0, discountPercent: 0 };
+
+        if (info.hasDiscount) {
+            if (finalPriceEl) finalPriceEl.textContent = formatCurrency(info.finalPrice);
+            if (origPriceEl) {
+                origPriceEl.textContent = formatCurrency(info.originalPrice);
+                origPriceEl.style.display = 'inline';
+            }
+            if (savingEl) {
+                savingEl.textContent = `You save ${formatCurrency(info.discountAmount)} (${info.discountPercent}%) on Full Course`;
+                savingEl.style.display = 'block';
+            }
+            if (branchPreviewEl) {
+                branchPreviewEl.innerHTML = branchVal === 'all'
+                    ? '<i class="fas fa-globe" style="color:#38bdf8;"></i> Applicable: <strong>All Branches</strong>'
+                    : `<i class="fas fa-map-marker-alt" style="color:#f59e0b;"></i> Applicable: <strong>${branchText}</strong>`;
+                branchPreviewEl.style.display = 'block';
+            }
+        } else if (isMonthlyOn) {
+            if (finalPriceEl) finalPriceEl.textContent = `৳ ${mFeeInput.toLocaleString()} / month`;
+            if (origPriceEl) {
+                origPriceEl.textContent = formatCurrency(regularFee);
+                origPriceEl.style.display = 'inline';
+            }
+            if (savingEl) {
+                savingEl.textContent = `🔥 Monthly Offer: ৳${mFeeInput.toLocaleString()}/mo ${admFeeInput > 0 ? `(Admission Fee: ৳${admFeeInput})` : '(No Admission Fee)'}`;
+                savingEl.style.display = 'block';
+            }
+            if (branchPreviewEl) branchPreviewEl.style.display = 'none';
+        } else {
+            if (finalPriceEl) finalPriceEl.textContent = formatCurrency(regularFee);
+            if (origPriceEl) origPriceEl.style.display = 'none';
+            if (branchPreviewEl) branchPreviewEl.style.display = 'none';
+            if (savingEl) {
+                if (isExpired) {
+                    savingEl.textContent = 'Discount offer expired';
+                    savingEl.style.display = 'block';
+                } else {
+                    savingEl.textContent = '';
+                    savingEl.style.display = 'none';
+                }
+            }
+        }
+    };
+
+    // Alias for backward-compatibility
+    window.updateDiscountPreview = window.updateCoursePricePreview;
+
+    window.formatRegularFeeInput = function(input) {
+        if (!input || !input.value) return;
+        const val = typeof extractFeeValue === 'function' 
+            ? extractFeeValue(input.value) 
+            : parseFloat(String(input.value).replace(/[^\d.]/g, ''));
+        if (val && !isNaN(val) && val > 0) {
+            input.value = formatCurrency(val);
+        }
+        window.updateCoursePricePreview();
+    };
+
     function resetCourseForm() {
         const form = document.getElementById('courseForm');
         if (form) form.reset();
         if (document.getElementById('courseId')) document.getElementById('courseId').value = '';
+        if (document.getElementById('courseRegularFee')) document.getElementById('courseRegularFee').value = '৳ 15,000';
         if (document.getElementById('courseDiscountType')) document.getElementById('courseDiscountType').value = 'none';
         if (document.getElementById('courseDiscountValue')) document.getElementById('courseDiscountValue').value = '';
+        if (document.getElementById('courseDiscountBranch')) document.getElementById('courseDiscountBranch').value = 'all';
+        if (document.getElementById('courseDiscountEndDate')) document.getElementById('courseDiscountEndDate').value = '';
+        if (document.getElementById('courseMonthlyEventEnabled')) document.getElementById('courseMonthlyEventEnabled').checked = false;
+        if (document.getElementById('courseMonthlyEventTitle')) document.getElementById('courseMonthlyEventTitle').value = '';
+        if (document.getElementById('courseMonthlyFee')) document.getElementById('courseMonthlyFee').value = '1500';
+        if (document.getElementById('courseAdmissionFee')) document.getElementById('courseAdmissionFee').value = '1000';
+        if (document.getElementById('courseMonthlyEventEndDate')) document.getElementById('courseMonthlyEventEndDate').value = '';
+        if (document.getElementById('monthlyEventFields')) document.getElementById('monthlyEventFields').style.display = 'none';
+        if (document.getElementById('courseInitialDurationMonths')) document.getElementById('courseInitialDurationMonths').value = '3';
+
         if (document.getElementById('courseSubmitBtn')) {
             document.getElementById('courseSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save Course';
         }
@@ -526,45 +703,7 @@
         if (document.getElementById('formCancelBtn')) {
             document.getElementById('formCancelBtn').style.display = 'none';
         }
-        if (document.getElementById('discountPreview')) {
-            document.getElementById('discountPreview').classList.remove('show');
-        }
-    }
-
-    function updateDiscountPreview() {
-        const feeStr = document.getElementById('courseFee')?.value || '';
-        const dtype = document.getElementById('courseDiscountType')?.value || 'none';
-        const dval = parseFloat(document.getElementById('courseDiscountValue')?.value || '0');
-        const preview = document.getElementById('discountPreview');
-
-        if (!preview) return;
-
-        if (!feeStr || dtype === 'none' || !dval || isNaN(dval)) {
-            preview.classList.remove('show');
-            return;
-        }
-
-        if (typeof calculateDiscount !== 'function' || typeof extractFeeValue !== 'function' || typeof formatCurrency !== 'function') {
-            preview.classList.remove('show');
-            return;
-        }
-
-        const origVal = extractFeeValue(feeStr);
-        if (!origVal) {
-            preview.classList.remove('show');
-            return;
-        }
-
-        const info = calculateDiscount(origVal, dtype, dval);
-        if (!info.hasDiscount) {
-            preview.classList.remove('show');
-            return;
-        }
-
-        if (document.getElementById('previewFinalPrice')) document.getElementById('previewFinalPrice').textContent = formatCurrency(info.finalPrice);
-        if (document.getElementById('previewOriginalPrice')) document.getElementById('previewOriginalPrice').textContent = formatCurrency(info.originalPrice);
-        if (document.getElementById('previewSaving')) document.getElementById('previewSaving').textContent = `You save ${formatCurrency(info.discountAmount)} (${info.discountPercent}%)`;
-        preview.classList.add('show');
+        updateCoursePricePreview();
     }
 
     async function handleCourseForm(event) {
@@ -578,17 +717,26 @@
         const courseId = document.getElementById('courseId')?.value;
         const title = document.getElementById('courseTitle')?.value.trim() || '';
         const level = document.getElementById('courseLevel')?.value.trim() || '';
-        const duration = document.getElementById('courseDuration')?.value.trim() || '';
         const initialDurationMonths = parseInt(document.getElementById('courseInitialDurationMonths')?.value || '3', 10);
-        const monthlyFee = parseFloat(document.getElementById('courseMonthlyFee')?.value || '1000');
-        const admissionFee = parseFloat(document.getElementById('courseAdmissionFee')?.value || '1000');
-        const billingType = document.getElementById('courseBillingType')?.value || 'monthly_recurring';
-        const students = document.getElementById('courseStudents')?.value.trim() || '';
-        const fee = document.getElementById('courseFee')?.value.trim() || `৳ ${monthlyFee.toLocaleString()} / month`;
-        const description = document.getElementById('courseDescription')?.value.trim() || '';
-        const link = document.getElementById('courseLink')?.value.trim() || '';
+        const duration = document.getElementById('courseDuration')?.value.trim() || `${initialDurationMonths} Months`;
+        const rawRegularFee = document.getElementById('courseRegularFee')?.value || '15000';
+        const regularFee = typeof extractFeeValue === 'function' 
+            ? extractFeeValue(rawRegularFee) 
+            : (parseFloat(String(rawRegularFee).replace(/[^\d.]/g, '')) || 15000);
         const discountType = document.getElementById('courseDiscountType')?.value || 'none';
-        const discountValue = document.getElementById('courseDiscountValue')?.value;
+        const discountValue = parseFloat(document.getElementById('courseDiscountValue')?.value || '0');
+        const discountBranch = document.getElementById('courseDiscountBranch')?.value || 'all';
+        const discountEndDate = document.getElementById('courseDiscountEndDate')?.value;
+
+        const monthlyEventEnabled = Boolean(document.getElementById('courseMonthlyEventEnabled')?.checked);
+        const monthlyEventTitle = document.getElementById('courseMonthlyEventTitle')?.value.trim() || 'Limited Intake: Monthly Tuition Offer';
+        const monthlyFee = parseFloat(document.getElementById('courseMonthlyFee')?.value || '1500');
+        const admissionFee = parseFloat(document.getElementById('courseAdmissionFee')?.value || '1000');
+        const monthlyEventEndDate = document.getElementById('courseMonthlyEventEndDate')?.value;
+
+        const students = document.getElementById('courseStudents')?.value.trim() || '20 per batch';
+        const link = document.getElementById('courseLink')?.value.trim() || 'pages/admission.html';
+        const description = document.getElementById('courseDescription')?.value.trim() || '';
 
         if (!title || !level) {
             showToast('Course title and level are required.', 'warning');
@@ -599,11 +747,34 @@
             return;
         }
 
+        const feeFormatted = `৳ ${regularFee.toLocaleString()}`;
         const course = {
-            title, level, duration, initialDurationMonths, monthlyFee, admissionFee, billingType,
-            students, fee, description, link,
-            discountType: discountType || 'none',
-            discountValue: discountValue ? parseFloat(discountValue) : 0
+            title,
+            level,
+            duration,
+            initialDurationMonths,
+            durationMonths: initialDurationMonths,
+            regularFee,
+            monthlyFee,
+            admissionFee,
+            billingType: 'course_fee',
+            fee: feeFormatted,
+            totalInitialFee: feeFormatted,
+            students,
+            link,
+            description,
+            discountType,
+            discountValue: discountValue || 0,
+            discountBranch: discountBranch || 'all',
+            discountEndDate: discountEndDate ? new Date(discountEndDate).toISOString() : null,
+            monthlyEvent: {
+                enabled: monthlyEventEnabled,
+                eventTitle: monthlyEventTitle,
+                monthlyFee,
+                admissionFee,
+                endDate: monthlyEventEndDate ? new Date(monthlyEventEndDate).toISOString() : null
+            },
+            updatedAt: new Date().toISOString()
         };
 
         try {
@@ -646,29 +817,66 @@
         }
 
         list.innerHTML = courses.map(course => {
-            const discountInfo = typeof getCourseDiscountInfo === 'function' ? getCourseDiscountInfo(course) : null;
+            const pricing = typeof getCoursePricing === 'function' ? getCoursePricing(course) : null;
             let priceHTML = '';
 
-            if (discountInfo && discountInfo.hasDiscount && typeof formatCurrency === 'function') {
+            if (pricing && pricing.hasDiscount && typeof formatCurrency === 'function') {
                 const discountLabel = course.discountType === 'percentage'
                     ? `${course.discountValue}% OFF`
                     : `৳${Number(course.discountValue).toLocaleString()} OFF`;
+                const branchNote = course.discountBranch && course.discountBranch !== 'all'
+                    ? `<span class="discount-chip" style="background:rgba(56,189,248,0.15); color:#38bdf8; border-color:rgba(56,189,248,0.3);"><i class="fas fa-map-marker-alt"></i> ${course.discountBranch}</span>`
+                    : '';
                 priceHTML = `
                     <div class="course-card-price">
-                        <span class="price-final">${formatCurrency(discountInfo.finalPrice)}</span>
-                        <span class="price-original">${formatCurrency(discountInfo.originalPrice)}</span>
+                        <span class="price-final">${formatCurrency(pricing.finalCourseFee)}</span>
+                        <span class="price-original">${formatCurrency(pricing.regularFee)}</span>
                         <span class="discount-chip"><i class="fas fa-tag"></i> ${discountLabel}</span>
+                        ${branchNote}
                     </div>`;
             } else {
-                const feeVal = typeof extractFeeValue === 'function' ? extractFeeValue(course.fee) : 0;
+                const regFee = pricing ? pricing.regularFee : (extractFeeValue(course.fee) || 15000);
                 priceHTML = `
                     <div class="course-card-price">
-                        <span class="price-final">${feeVal > 0 && typeof formatCurrency === 'function' ? formatCurrency(feeVal) : (course.fee || '—')}</span>
+                        <span class="price-final">${typeof formatCurrency === 'function' ? formatCurrency(regFee) : `৳ ${regFee.toLocaleString()}`}</span>
+                        <span style="font-size:0.75rem; color:#94a3b8; font-weight:500;">(Full Course Fee)</span>
                     </div>`;
             }
 
-            const linkBtn = course.link
-                ? `<button class="card-action-btn view-link" onclick="window.open('${course.link}', '_blank')"><i class="fas fa-external-link-alt"></i> View</button>`
+            // Monthly Event Badge & Countdown
+            let eventHTML = '';
+            if (pricing && pricing.monthlyEvent && pricing.monthlyEvent.enabled) {
+                if (pricing.monthlyEvent.isActive && pricing.monthlyEvent.endDate) {
+                    eventHTML = `
+                        <div class="live-event-card-strip" data-countdown-end="${pricing.monthlyEvent.endDate}" style="margin: 0.65rem 0; background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(239,68,68,0.08)); border: 1px solid rgba(245,158,11,0.35); border-radius: 8px; padding: 0.45rem 0.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.4rem;">
+                            <div style="font-size: 0.78rem; font-weight: 700; color: #f59e0b; display:flex; align-items:center; gap:0.35rem;">
+                                <i class="fas fa-fire fa-beat"></i>
+                                <span>Monthly Pay: ৳${pricing.monthlyEvent.monthlyFee.toLocaleString()}/mo</span>
+                            </div>
+                            <span class="countdown-display" style="font-size: 0.75rem; font-weight: 800; color: #fbbf24; background: rgba(0,0,0,0.3); padding: 0.15rem 0.45rem; border-radius: 4px;">
+                                <i class="fas fa-clock"></i> <span class="countdown-text">${pricing.monthlyEvent.remainingText || ''}</span>
+                            </span>
+                        </div>
+                    `;
+                } else {
+                    eventHTML = `
+                        <div style="margin: 0.5rem 0; font-size: 0.75rem; color: #94a3b8;">
+                            <i class="fas fa-history"></i> Monthly Pay Event ended
+                        </div>
+                    `;
+                }
+            }
+
+            let targetUrl = '';
+            if (course.link && course.link.trim()) {
+                targetUrl = course.link.trim();
+                if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://') && !targetUrl.startsWith('/')) {
+                    targetUrl = '/' + targetUrl;
+                }
+            }
+
+            const linkBtn = targetUrl
+                ? `<a class="card-action-btn view-link" href="${targetUrl}" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> View</a>`
                 : '';
 
             return `
@@ -684,6 +892,7 @@
                     ${course.link ? `<span class="meta-pill accent"><i class="fas fa-link"></i> Linked</span>` : ''}
                 </div>
                 ${priceHTML}
+                ${eventHTML}
                 <div class="action-row">
                     <button class="card-action-btn edit" onclick="window.editCourse('${course.id}')"><i class="fas fa-edit"></i> Edit</button>
                     <button class="card-action-btn delete" onclick="window.deleteCourse('${course.id}')"><i class="fas fa-trash"></i> Delete</button>
@@ -691,6 +900,10 @@
                 </div>
             </div>`;
         }).join('');
+
+        if (typeof initLiveCountdowns === 'function') {
+            initLiveCountdowns();
+        }
     }
 
     async function loadCourses() {
@@ -698,6 +911,7 @@
         if (!list) return;
 
         try {
+            await populateCourseBranchDropdown();
             courseList = await window.DAO.Courses.getAll();
             filteredCourses = [...courseList];
 
@@ -706,12 +920,18 @@
                 document.getElementById('totalCoursesCount').textContent = courseList.length;
             }
             if (document.getElementById('discountedCount')) {
-                const discounted = courseList.filter(c => c.discountType && c.discountType !== 'none' && c.discountValue > 0);
+                const discounted = courseList.filter(c => {
+                    const pricing = typeof getCoursePricing === 'function' ? getCoursePricing(c) : null;
+                    return pricing ? pricing.hasDiscount : (c.discountType && c.discountType !== 'none' && c.discountValue > 0);
+                });
                 document.getElementById('discountedCount').textContent = discounted.length;
             }
             if (document.getElementById('avgFeeDisplay')) {
-                if (courseList.length > 0 && typeof extractFeeValue === 'function') {
-                    const total = courseList.reduce((sum, c) => sum + extractFeeValue(c.fee), 0);
+                if (courseList.length > 0) {
+                    const total = courseList.reduce((sum, c) => {
+                        const pricing = typeof getCoursePricing === 'function' ? getCoursePricing(c) : null;
+                        return sum + (pricing ? pricing.regularFee : (extractFeeValue(c.fee) || 15000));
+                    }, 0);
                     const avg = Math.round(total / courseList.length);
                     document.getElementById('avgFeeDisplay').textContent = avg > 0 ? `৳${(avg/1000).toFixed(0)}k` : '—';
                 } else {
@@ -745,28 +965,69 @@
         if (document.getElementById('courseTitle')) document.getElementById('courseTitle').value = course.title || '';
         if (document.getElementById('courseLevel')) document.getElementById('courseLevel').value = course.level || '';
         if (document.getElementById('courseDuration')) document.getElementById('courseDuration').value = course.duration || '';
-        if (document.getElementById('courseInitialDurationMonths')) document.getElementById('courseInitialDurationMonths').value = course.initialDurationMonths || 3;
-        if (document.getElementById('courseMonthlyFee')) document.getElementById('courseMonthlyFee').value = course.monthlyFee !== undefined ? course.monthlyFee : 1000;
-        if (document.getElementById('courseAdmissionFee')) document.getElementById('courseAdmissionFee').value = course.admissionFee !== undefined ? course.admissionFee : 1000;
-        if (document.getElementById('courseBillingType')) document.getElementById('courseBillingType').value = course.billingType || 'monthly_recurring';
-        if (document.getElementById('courseStudents')) document.getElementById('courseStudents').value = course.students || '';
-        if (document.getElementById('courseFee')) document.getElementById('courseFee').value = course.fee || '';
-        if (document.getElementById('courseDescription')) document.getElementById('courseDescription').value = course.description || '';
-        if (document.getElementById('courseLink')) document.getElementById('courseLink').value = course.link || '';
+        if (document.getElementById('courseInitialDurationMonths')) {
+            document.getElementById('courseInitialDurationMonths').value = course.durationMonths || course.initialDurationMonths || 3;
+        }
+
+        const regularFee = course.regularFee !== undefined ? course.regularFee : (extractFeeValue(course.fee) || 15000);
+        if (document.getElementById('courseRegularFee')) {
+            document.getElementById('courseRegularFee').value = formatCurrency(regularFee);
+        }
         if (document.getElementById('courseDiscountType')) document.getElementById('courseDiscountType').value = course.discountType || 'none';
         if (document.getElementById('courseDiscountValue')) document.getElementById('courseDiscountValue').value = course.discountValue || '';
+        if (document.getElementById('courseDiscountBranch')) document.getElementById('courseDiscountBranch').value = course.discountBranch || 'all';
+        
+        // Format ISO date to YYYY-MM-DDTHH:mm for datetime-local input
+        const formatInputDate = d => {
+            if (!d) return '';
+            try {
+                const date = new Date(d);
+                if (isNaN(date.getTime())) return '';
+                const tzOffset = date.getTimezoneOffset() * 60000;
+                return (new Date(date.getTime() - tzOffset)).toISOString().slice(0, 16);
+            } catch (_) { return ''; }
+        };
+
+        if (document.getElementById('courseDiscountEndDate')) {
+            document.getElementById('courseDiscountEndDate').value = formatInputDate(course.discountEndDate);
+        }
+
+        // Monthly Event
+        const monthlyEvent = course.monthlyEvent || {};
+        const isEventOn = Boolean(monthlyEvent.enabled);
+        if (document.getElementById('courseMonthlyEventEnabled')) {
+            document.getElementById('courseMonthlyEventEnabled').checked = isEventOn;
+        }
+        if (document.getElementById('courseMonthlyEventTitle')) {
+            document.getElementById('courseMonthlyEventTitle').value = monthlyEvent.eventTitle || '';
+        }
+        if (document.getElementById('courseMonthlyFee')) {
+            document.getElementById('courseMonthlyFee').value = monthlyEvent.monthlyFee !== undefined ? monthlyEvent.monthlyFee : (course.monthlyFee !== undefined ? course.monthlyFee : 1500);
+        }
+        if (document.getElementById('courseAdmissionFee')) {
+            document.getElementById('courseAdmissionFee').value = monthlyEvent.admissionFee !== undefined ? monthlyEvent.admissionFee : (course.admissionFee !== undefined ? course.admissionFee : 1000);
+        }
+        if (document.getElementById('courseMonthlyEventEndDate')) {
+            document.getElementById('courseMonthlyEventEndDate').value = formatInputDate(monthlyEvent.endDate);
+        }
+
+        toggleMonthlyEventFields();
+
+        if (document.getElementById('courseStudents')) document.getElementById('courseStudents').value = course.students || '';
+        if (document.getElementById('courseDescription')) document.getElementById('courseDescription').value = course.description || '';
+        if (document.getElementById('courseLink')) document.getElementById('courseLink').value = course.link || '';
 
         if (document.getElementById('courseSubmitBtn')) {
             document.getElementById('courseSubmitBtn').innerHTML = '<i class="fas fa-check"></i> Update Course';
         }
         if (document.getElementById('formCardTitle')) {
-            document.getElementById('formCardTitle').innerHTML = '<i class="fas fa-edit"></i> Editing Course';
+            document.getElementById('formCardTitle').innerHTML = '<i class="fas fa-edit" style="color: #ef4444;"></i> Editing Course';
         }
         if (document.getElementById('formCancelBtn')) {
-            document.getElementById('formCancelBtn').style.display = '';
+            document.getElementById('formCancelBtn').style.display = 'inline-flex';
         }
 
-        updateDiscountPreview();
+        updateCoursePricePreview();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1234,86 +1495,11 @@
     };
 
     /* ============================================================
-       7. STUDENT ADMISSIONS
+       7. STUDENT ADMISSIONS  (see full implementation below ~line 1660)
        ============================================================ */
-    async function loadAdmissions() {
-        const list = document.getElementById('admissionsList');
-        if (!list) return;
-        try {
-            const admissions = await window.DAO.Admissions.getAll();
-
-            // Dynamically populate admBranchFilter if present
-            const admBranchSelect = document.getElementById('admBranchFilter');
-            if (admBranchSelect && window.DAO.Branches) {
-                try {
-                    const branches = await window.DAO.Branches.getAll();
-                    if (Array.isArray(branches) && branches.length > 0) {
-                        const cur = admBranchSelect.value || 'all';
-                        admBranchSelect.innerHTML = '<option value="all">All Branches</option>' + branches.map(b => {
-                            const bVal = (b.name || b.displayName || '').toLowerCase();
-                            const bLabel = b.displayName || (b.name ? (b.name.charAt(0).toUpperCase() + b.name.slice(1) + ' Branch') : 'Branch');
-                            return `<option value="${bVal}">${bLabel}</option>`;
-                        }).join('');
-                        admBranchSelect.value = cur;
-                    }
-                } catch (_) {}
-            }
-
-            if (document.getElementById('admissionsCountBadge')) {
-                document.getElementById('admissionsCountBadge').innerHTML = `<i class="fas fa-user-graduate"></i> ${admissions.length} application${admissions.length !== 1 ? 's' : ''}`;
-            }
-
-            if (!admissions.length) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-user-graduate"></i></div>
-                        <h3>No Applications Yet</h3>
-                        <p>Submitted admission forms from the website will appear here.</p>
-                    </div>`;
-                return;
-            }
-
-            list.innerHTML = admissions.map(item => {
-                const dateStr = item.submittedAt ? new Date(item.submittedAt).toLocaleString() : (item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Recent');
-                const appNo = item.applicationNumber || item.id;
-                return `
-                <div class="item-card">
-                    <div class="item-card-top">
-                        <div>
-                            <h3 class="item-card-title">${item.fullName || 'Applicant'}</h3>
-                            <span class="badge-status green"><i class="fas fa-id-card"></i> ${appNo}</span>
-                        </div>
-                        <small style="color:var(--text-muted); font-size:0.8rem;"><i class="fas fa-clock"></i> ${dateStr}</small>
-                    </div>
-                    <div class="item-meta">
-                        ${item.email ? `<span class="meta-pill"><i class="fas fa-envelope"></i> ${item.email}</span>` : ''}
-                        ${item.phone ? `<span class="meta-pill"><i class="fas fa-phone"></i> ${item.phone}</span>` : ''}
-                        ${item.course ? `<span class="meta-pill accent"><i class="fas fa-book"></i> ${item.course}</span>` : ''}
-                        ${item.branch ? `<span class="meta-pill"><i class="fas fa-map-marker-alt"></i> ${item.branch}</span>` : ''}
-                        ${item.visaType ? `<span class="meta-pill"><i class="fas fa-passport"></i> ${item.visaType}</span>` : ''}
-                    </div>
-                    ${item.comment ? `<p class="item-desc" style="background:var(--bg); padding:0.75rem 1rem; border-radius:var(--radius-sm); border:1px solid var(--border);"><strong>Comments:</strong> ${item.comment}</p>` : ''}
-                    <div class="action-row">
-                        ${item.photoUrl ? `<a class="card-action-btn view-link" href="${item.photoUrl}" target="_blank"><i class="fas fa-image"></i> View Photo</a>` : ''}
-                        ${item.documentUrl ? `<a class="card-action-btn view-link" href="${item.documentUrl}" target="_blank"><i class="fas fa-file-pdf"></i> View Document</a>` : ''}
-                        <button class="card-action-btn delete" onclick="window.deleteAdmission('${item.id}')"><i class="fas fa-trash"></i> Remove</button>
-                    </div>
-                </div>`;
-            }).join('');
-        } catch (err) {
-            console.error('Error loading admissions', err);
-            list.innerHTML = '<div class="empty-state"><p style="color:var(--error);">Failed to load admissions.</p></div>';
-        }
-    }
-
-    function deleteAdmission(id) {
-        openDeleteModal('Delete Application?', 'Are you sure you want to delete this student admission record?', async () => {
-            await window.DAO.Admissions.delete(id);
-            showToast('Admission application removed!', 'success');
-            loadAdmissions();
-            updateNavBadges();
-        });
-    }
+    // NOTE: The full loadAdmissions() with tab filtering, search, badge counts,
+    // and view modal is implemented in the ADMISSIONS MANAGEMENT section below.
+    // This section intentionally left as a placeholder to avoid duplicate declaration.
 
     /* ============================================================
        8. ADMIN USER & AUTH SETTINGS
@@ -1653,8 +1839,14 @@
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; background:rgba(255,255,255,0.03); padding:1.25rem; border-radius:14px; border:1px solid rgba(148,163,184,0.18); margin-bottom:1.25rem;">
                     <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">EMAIL ADDRESS</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.email || 'N/A'}</strong></div>
                     <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">PHONE NUMBER</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.phone || 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">FATHER'S NAME</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.fatherName || 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">MOTHER'S NAME</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.motherName || 'N/A'}</strong></div>
                     <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">DATE OF BIRTH / GENDER</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.dateOfBirth || 'N/A'} (${student.gender || 'N/A'})</strong></div>
-                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">LOCATION / ADDRESS</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.city || ''}${student.district ? ', ' + student.district : ''}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">BLOOD GROUP</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.bloodGroup ? `<span style="background:rgba(239,68,68,0.2);color:#fca5a5;padding:0.15rem 0.5rem;border-radius:6px;font-weight:700;">${student.bloodGroup}</span>` : 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">NID / BIRTH CERTIFICATE</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.nidBirthCert || 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">OCCUPATION &amp; RELIGION</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.occupation || 'N/A'} • ${student.religion || 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">RESIDENTIAL ADDRESS</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${[student.address, student.city, student.district].filter(Boolean).join(', ') || 'N/A'}</strong></div>
+                    <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">PERMANENT ADDRESS</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${[student.permanentAddress, student.permanentCity, student.permanentDistrict].filter(Boolean).join(', ') || student.address || 'N/A'}</strong></div>
                     <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">COURSE ENROLLED</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.course || 'N/A'} ${student.courseLevel ? `(${student.courseLevel})` : ''}</strong></div>
                     <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">VISA TARGET</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.visaType ? student.visaType.toUpperCase() : 'N/A'}</strong></div>
                     <div><span style="color:#94a3b8; font-size:0.75rem; font-weight:600; letter-spacing:0.04em; display:block; text-transform:uppercase;">HIGHEST EDUCATION</span><strong style="color:#ffffff; font-size:0.92rem; display:block; margin-top:0.2rem;">${student.highestEducation ? student.highestEducation.toUpperCase() : 'N/A'}</strong></div>
@@ -1692,16 +1884,22 @@
         window.print();
     };
 
-    async function deleteAdmission(id) {
-        if (!confirm('Are you sure you want to delete this admission application?')) return;
-        try {
-            await window.DAO.Admissions.delete(id);
-            showToast('Admission application deleted.', 'success');
-            loadAdmissions();
-        } catch (e) {
-            showToast('Failed to delete application.', 'error');
-        }
-    }
+    window.deleteAdmission = function(id) {
+        openDeleteModal(
+            'Delete Admission Application?',
+            'This will permanently remove the student application record. This action cannot be undone.',
+            async () => {
+                try {
+                    await window.DAO.Admissions.delete(id);
+                    showToast('Admission application deleted successfully.', 'success');
+                    loadAdmissions();
+                    updateNavBadges();
+                } catch (e) {
+                    showToast('Failed to delete application. Please try again.', 'error');
+                }
+            }
+        );
+    };
 
     /* ============================================================
        INIT & EVENT LISTENERS
@@ -1754,7 +1952,7 @@
     window.deleteFaq = deleteFaq;
 
     window.deleteContactMessage = deleteContactMessage;
-    window.deleteAdmission = deleteAdmission;
+    // window.deleteAdmission is already defined directly as window.deleteAdmission above
     window.logoutAdmin = logoutAdmin;
 
     // Run automatically on DOM ready

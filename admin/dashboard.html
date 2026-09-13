@@ -71,6 +71,86 @@
             <div class="card-body">
                 <form id="settingsForm" class="form-stack">
                     
+                    <!-- WEBSITE THEME & PATTERN MODEL (নকশা মডেল) -->
+                    <div class="form-section-title"><i class="fas fa-layer-group"></i> ওয়েবসাইট ব্যাকগ্রাউন্ড নকশা মডেল (Website Theme & Pattern Model)</div>
+                    <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:-0.5rem;margin-bottom:0.75rem;">
+                        মূল ওয়েবসাইটের ব্যাকগ্রাউন্ড নকশা ও থিম নির্বাচন করুন। যেকোনো একটি মডেলে ক্লিক করে নিচে <strong>"Save Site Settings"</strong> বাটনে চাপ দিন।
+                    </p>
+
+                    <input type="hidden" id="themeInput" name="theme" value="theme-dark-mandala">
+
+                    <div class="theme-selector-grid" id="themeSelectorGrid">
+                        <!-- Theme 1: Dark Mandala -->
+                        <div class="theme-option-card active" data-theme="theme-dark-mandala" onclick="selectTheme('theme-dark-mandala')">
+                            <div class="theme-preview-box preview-mandala">
+                                <span class="preview-badge dark">Dark Mode</span>
+                            </div>
+                            <div class="theme-card-info">
+                                <div class="theme-card-header">
+                                    <span class="theme-card-title">১. ডার্ক ম্যান্ডালা</span>
+                                    <span class="theme-check-icon"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                                <span class="theme-card-sub">Royal Dark Mandala &amp; Glow</span>
+                            </div>
+                        </div>
+
+                        <!-- Theme 2: Dark Jali -->
+                        <div class="theme-option-card" data-theme="theme-dark-jali" onclick="selectTheme('theme-dark-jali')">
+                            <div class="theme-preview-box preview-jali">
+                                <span class="preview-badge dark">Dark Mode</span>
+                            </div>
+                            <div class="theme-card-info">
+                                <div class="theme-card-header">
+                                    <span class="theme-card-title">২. ডার্ক জালি</span>
+                                    <span class="theme-check-icon"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                                <span class="theme-card-sub">Midnight Arabic Jali Lattice</span>
+                            </div>
+                        </div>
+
+                        <!-- Theme 3: Light Floral -->
+                        <div class="theme-option-card" data-theme="theme-light-floral" onclick="selectTheme('theme-light-floral')">
+                            <div class="theme-preview-box preview-floral">
+                                <span class="preview-badge light">Light Mode</span>
+                            </div>
+                            <div class="theme-card-info">
+                                <div class="theme-card-header">
+                                    <span class="theme-card-title">৩. লাইট ফ্লোরাল</span>
+                                    <span class="theme-check-icon"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                                <span class="theme-card-sub">Royal Ivory Floral Carving</span>
+                            </div>
+                        </div>
+
+                        <!-- Theme 4: Light Geometric -->
+                        <div class="theme-option-card" data-theme="theme-light-geometric" onclick="selectTheme('theme-light-geometric')">
+                            <div class="theme-preview-box preview-geometric">
+                                <span class="preview-badge light">Light Mode</span>
+                            </div>
+                            <div class="theme-card-info">
+                                <div class="theme-card-header">
+                                    <span class="theme-card-title">৪. লাইট জ্যামিতি</span>
+                                    <span class="theme-check-icon"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                                <span class="theme-card-sub">Porcelain Geometric Star Lattice</span>
+                            </div>
+                        </div>
+
+                        <!-- Theme 5: Classic Clean -->
+                        <div class="theme-option-card" data-theme="theme-classic" onclick="selectTheme('theme-classic')">
+                            <div class="theme-preview-box preview-classic">
+                                <span class="preview-badge light">Clean White</span>
+                            </div>
+                            <div class="theme-card-info">
+                                <div class="theme-card-header">
+                                    <span class="theme-card-title">৫. ক্লাসিক ক্লিন</span>
+                                    <span class="theme-check-icon"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                                <span class="theme-card-sub">Classic Clean Minimalist White</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- BRAND COLORS -->
                     <div class="form-section-title"><i class="fas fa-palette"></i> Brand & Logo Name Colors</div>
                     <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:-0.5rem;margin-bottom:0.75rem;">
