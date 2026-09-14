@@ -14,6 +14,7 @@ const bcrypt       = require('bcrypt');
 const IS_DEV = (process.env.NODE_ENV || 'development') === 'development';
 
 const admissionRoutes = require('./routes/admission');
+const authRoutes      = require('./routes/auth');
 const {
     readJson,
     writeJson,
