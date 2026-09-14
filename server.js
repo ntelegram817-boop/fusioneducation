@@ -1683,58 +1683,6 @@ app.get('/api/admin/users', requireAuth('admin'), async (req, res) => {
   res.json({ success: true, users });
 });
 
-// ── ADMIN LOGIN ENDPOINT ───────────────────────────────────────
-app.post('/api/admin/login', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ success: false, error: 'Email and password are required.' });
-  }
-
-  const cleanEmail = String(email).trim().toLowerCase();
-  const users = await readData('users.json', []);
-  const adminUser = users.find(u => u.email && u.email.toLowerCase() === cleanEmail && u.role === 'admin');
-
-  if (!adminUser) {
-    return res.status(401).json({ success: false, error: 'Admin account not found.' });
-  }
-
-  let passwordValid = false;
-  if (adminUser.password) {
-    passwordValid = await verifyPassword(password, adminUser.password);
-  }
-  if (!passwordValid && IS_DEV) {
-    const demoPasswords = ['admin123', 'password123', '123456'];
-    passwordValid = demoPasswords.includes(password);
-  }
-
-  if (!passwordValid) {
-    return res.status(401).json({ success: false, error: 'Invalid password.' });
-  }
-
-  res.cookie('fusion_staff_email', adminUser.email, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
-  res.cookie('fusion_staff_branch', adminUser.branch || 'all', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
-  res.cookie('fusion_staff_role', 'admin', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
-
-  recordAuditLog('admin_login', `Admin logged in: ${adminUser.name}`, 'user', adminUser.id, adminUser.name, {
-    name: adminUser.name,
-    email: adminUser.email,
-    role: 'admin',
-    branch: adminUser.branch || 'all'
-  });
-
-  return res.json({
-    success: true,
-    admin: {
-      id: adminUser.id,
-      name: adminUser.name,
-      email: adminUser.email,
-      branch: adminUser.branch || 'all',
-      role: 'admin',
-      permissions: adminUser.permissions || ['*']
-    },
-    redirect: '/pages/admin-login.html'
-  });
-});
 
 app.post('/api/admin/users', requireAuth('admin'), async (req, res) => {
   const { name, email, password, role, branch, permissions, status } = req.body;

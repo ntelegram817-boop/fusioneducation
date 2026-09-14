@@ -105,7 +105,7 @@ router.post('/staff', async (req, res) => {
         }
         
         if (!staff) {
-            return res.status(403).json({ success: false, error: 'Access Denied. Your Google account is not registered as a Staff member by the Admin.' });
+            return res.status(403).json({ success: false, error: 'Access Denied. Your account is not registered as a Staff member or Admin.' });
         }
         
         const userBranch = branch || staff.branch || 'Dinajpur';
@@ -114,7 +114,7 @@ router.post('/staff', async (req, res) => {
         res.cookie('fusion_staff_branch', userBranch, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
         res.cookie('fusion_staff_role', staff.role || 'staff', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
         
-        return res.json({ success: true, redirect: '/pages/staff-dashboard.html' });
+        return res.json({ success: true, redirect: '/dashboard.html' });
     } catch (err) {
         console.error('Firebase Auth error (Staff):', err);
         return res.status(401).json({ success: false, error: 'Invalid authentication token.' });
