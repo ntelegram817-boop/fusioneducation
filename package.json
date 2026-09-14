@@ -26,7 +26,6 @@
     "multer": "^2.2.0"
   },
   "devDependencies": {
-    "live-server": "^1.2.2",
     "nodemon": "^3.0.1"
   }
 }
