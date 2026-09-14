@@ -1424,13 +1424,40 @@ textarea {
     left: 0;
     right: 0;
     background: rgba(15, 23, 42, 0.98);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     flex-direction: column;
-    padding: 1.5rem 2rem;
-    gap: 1.25rem;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    align-items: stretch;
+    padding: 1rem 0;
+    gap: 0;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .nav-menu li {
+    width: 100%;
+  }
+
+  .nav-menu a {
+    display: block;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    width: 100%;
+    text-align: left;
+    font-size: 1.05rem;
+  }
+
+  .nav-menu li:last-child a {
+    border-bottom: none;
+  }
+
+  .nav-menu a::after {
+    display: none !important;
+  }
+
+  .nav-menu a:hover {
+    background: rgba(255, 255, 255, 0.03);
+    padding-left: 2.5rem;
   }
 
   .nav-menu.active {
