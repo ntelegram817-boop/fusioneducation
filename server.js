@@ -29,6 +29,10 @@ const { handleUpload, saveUploadedFile } = require('./middleware/upload');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+const compression = require('compression');
+
+// ── Compression Middleware ───────────────────────────────────
+app.use(compression());
 
 // ── Security headers & CORS ──────────────────────────────────
 app.use(helmet({
@@ -52,7 +56,8 @@ app.use('/.env', (req, res) => {
     return res.status(403).json({ success: false, error: 'Access denied.' });
 });
 
-app.use(express.static(__dirname));
+// Cache static assets for 1 day
+app.use(express.static(__dirname, { maxAge: '1d' }));
 
 // ── Trust proxy (for correct IP in rate limiter) ─────────────
 app.set('trust proxy', 1);

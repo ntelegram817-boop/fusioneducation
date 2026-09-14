@@ -125,7 +125,8 @@ function hasPermission(user, permissionKey) {
 function hasBranchAccess(user, targetBranch) {
   if (!user) return false;
   if (user.role === 'admin' || user.branch === 'all') return true;
-  if (!targetBranch || targetBranch.toLowerCase() === 'all') return true;
+  if (!targetBranch) return true; // If target branch isn't specified, they can only fetch their own implicitly
+  if (targetBranch.toLowerCase() === 'all') return false; // Staff cannot request 'all' branches
   return String(user.branch).toLowerCase() === String(targetBranch).toLowerCase();
 }
 
