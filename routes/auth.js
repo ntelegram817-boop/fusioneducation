@@ -114,7 +114,8 @@ router.post('/staff', async (req, res) => {
         res.cookie('fusion_staff_branch', userBranch, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
         res.cookie('fusion_staff_role', staff.role || 'staff', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
         
-        return res.json({ success: true, redirect: '/dashboard.html' });
+        const redirectUrl = staff.role === 'admin' ? '/admin/dashboard.html' : '/dashboard.html';
+        return res.json({ success: true, redirect: redirectUrl, role: staff.role });
     } catch (err) {
         console.error('Firebase Auth error (Staff):', err);
         return res.status(401).json({ success: false, error: 'Invalid authentication token.' });
