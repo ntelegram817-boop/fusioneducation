@@ -62,23 +62,21 @@
     </div>
 
     <script src="../assets/js/dao.js"></script>
-    <script>
-        const defaultAdminEmail = 'admin@fusioneducation.com';
-        const defaultAdminPassword = 'admin123';
-
-        async function getAdminCredentials() {
-            try {
-                if (window.DAO && window.DAO.Settings) {
-                    const settings = await window.DAO.Settings.get();
-                    if (settings && settings.adminUser && settings.adminUser.email) {
-                        return settings.adminUser;
-                    }
-                }
-                const stored = localStorage.getItem('fusion_edu_adminUser');
-                if (stored) return JSON.parse(stored);
-            } catch (e) {}
-            return { email: defaultAdminEmail, password: defaultAdminPassword };
-        }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyCnQ84TpNW1xFXfeeBU3LTt2LOWdRdt0Ck",
+          authDomain: "fusion-education-ac48c.firebaseapp.com",
+          projectId: "fusion-education-ac48c",
+          storageBucket: "fusion-education-ac48c.firebasestorage.app",
+          messagingSenderId: "860945627718",
+          appId: "1:860945627718:web:44c22695ff43c7d3fba847"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
         function showAlert(msg, isSuccess) {
             const alert = document.getElementById('loginAlert');
@@ -96,17 +94,35 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
             const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            const credentials = await getAdminCredentials();
+            const password = document.getElementById('loginPassword').value;
 
-            if (email === credentials.email && password === credentials.password) {
-                showAlert('Login successful! Redirecting...', true);
-                sessionStorage.setItem('fusion_admin_session', 'true');
-                setTimeout(() => {
-                    window.location.href = '../admin/dashboard.html';
-                }, 600);
-            } else {
-                showAlert('Invalid email or password. Please try again.', false);
+            try {
+                const result = await signInWithEmailAndPassword(auth, email, password);
+                const idToken = await result.user.getIdToken();
+                
+                const res = await fetch('/api/auth/staff', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idToken, branch: 'all' })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    showAlert('Login successful! Redirecting to Admin Panel...', true);
+                    sessionStorage.setItem('fusion_admin_session', 'true');
+                    setTimeout(() => {
+                        window.location.href = '../admin/dashboard.html';
+                    }, 600);
+                } else {
+                    throw new Error(data.error || 'Server rejected login.');
+                }
+            } catch (error) {
+                console.error('Admin Login error:', error);
+                let msg = error.message || String(error);
+                if (msg.includes('auth/invalid-credential')) msg = 'Invalid email or password.';
+                
+                showAlert(msg, false);
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In to Dashboard';
             }
