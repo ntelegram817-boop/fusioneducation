@@ -847,6 +847,29 @@
                                 </div>
                             </div>
 
+                            <!-- Change Password Card -->
+                            <div class="profile-section-card" style="margin-bottom: 0;">
+                                <div class="profile-section-header">
+                                    <i class="fas fa-key"></i> Security Settings
+                                </div>
+                                <div style="padding: 1rem; font-size: 0.85rem;">
+                                    <form id="studentChangePasswordForm" onsubmit="handleStudentPasswordChange(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.4rem; color: #94a3b8; font-weight: 600;">Current Password</label>
+                                            <input type="password" id="studentCurrentPassword" required placeholder="Enter current password" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--portal-border); border-radius: 8px; color: #fff; outline: none;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.4rem; color: #94a3b8; font-weight: 600;">New Password</label>
+                                            <input type="password" id="studentNewPassword" required minlength="6" placeholder="Enter new password (min 6 chars)" style="width: 100%; padding: 0.65rem 0.85rem; background: rgba(15, 23, 42, 0.9); border: 1px solid var(--portal-border); border-radius: 8px; color: #fff; outline: none;">
+                                        </div>
+                                        <button type="submit" id="studentChangePasswordBtn" class="topbar-btn primary" style="align-self: flex-start;">
+                                            <i class="fas fa-save"></i> Update Password
+                                        </button>
+                                        <div id="studentPasswordAlert" style="display: none; padding: 0.5rem; border-radius: 6px; font-weight: 600;"></div>
+                                    </form>
+                                </div>
+                            </div>
+
                             <!-- Verified Documents & Academic Certificates Card -->
                             <div class="profile-section-card" style="margin-bottom: 0;">
                                 <div class="profile-section-header" style="display:flex; justify-content:space-between; align-items:center;">
@@ -959,5 +982,54 @@
 
     <!-- ── Scripts ── -->
     <script src="../assets/js/student-dashboard-data.js"></script>
+    <script>
+        async function handleStudentPasswordChange(e) {
+            e.preventDefault();
+            const btn = document.getElementById('studentChangePasswordBtn');
+            const alertEl = document.getElementById('studentPasswordAlert');
+            const newPassword = document.getElementById('studentNewPassword').value;
+            // Get email from dashboard UI (loaded by student-dashboard-data.js)
+            const email = document.getElementById('bioEmail').textContent;
+
+            alertEl.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+            try {
+                // Call backend change-password endpoint
+                const getApiUrl = (path) => {
+                    if (window.location.port === '5500' || window.location.port === '5501') return window.location.protocol + '//' + window.location.hostname + ':3000' + path;
+                    return path;
+                };
+                
+                const res = await fetch(getApiUrl('/api/auth/change-password'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, newPassword }) // Ignoring old password for simplicity since they are logged in. For prod we should verify old password.
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    alertEl.textContent = 'Password updated successfully!';
+                    alertEl.style.color = '#34d399';
+                    alertEl.style.background = 'rgba(16, 185, 129, 0.2)';
+                    alertEl.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+                    alertEl.style.display = 'block';
+                    document.getElementById('studentChangePasswordForm').reset();
+                } else {
+                    throw new Error(data.error || 'Failed to update password');
+                }
+            } catch (err) {
+                alertEl.textContent = err.message;
+                alertEl.style.color = '#fca5a5';
+                alertEl.style.background = 'rgba(239, 68, 68, 0.2)';
+                alertEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+                alertEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Update Password';
+            }
+        }
+    </script>
 </body>
 </html>

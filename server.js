@@ -59,6 +59,7 @@ app.set('trust proxy', 1);
 // ── API Routes ───────────────────────────────────────────────
 app.use('/api/admission', admissionRoutes);
 app.use('/api/admissions', admissionRoutes);
+app.use('/api/auth', authRoutes);
 
 // ── API Endpoints & CRUD Data Layer ──────────────────────────
 const dataDir = path.join(__dirname, 'data');
@@ -253,16 +254,16 @@ function buildStudentFromAdmission(adm) {
 }
 
 // ── COURSES CRUD ─────────────────────────────────────────────
-app.get('/api/courses', (req, res) => {
-    res.json({ success: true, courses: readData('courses.json') });
+app.get('/api/courses', async (req, res) => {
+    res.json({ success: true, courses: await readData('courses.json') });
 });
 
-const handleSaveCourse = (req, res) => {
+const handleSaveCourse = async (req, res) => {
     const courseData = req.body;
     if (!courseData || !courseData.title) {
         return res.status(400).json({ success: false, error: 'Course title is required.' });
     }
-    const courses = readData('courses.json');
+    const courses = await readData('courses.json');
     const newCourse = {
         ...courseData,
         id: courseData.id || ('course_' + Date.now()),
@@ -271,16 +272,16 @@ const handleSaveCourse = (req, res) => {
         createdAt: new Date().toISOString()
     };
     courses.unshift(newCourse);
-    writeData('courses.json', courses);
+    await writeData('courses.json', courses);
     res.json({ success: true, message: 'Course created successfully', course: newCourse, id: newCourse.id });
 };
 
 app.post('/api/courses', requireAuth(), handleSaveCourse);
 app.post('/api/courses/add', requireAuth(), handleSaveCourse);
 
-app.put('/api/courses/:id', requireAuth(), (req, res) => {
+app.put('/api/courses/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const courses = readData('courses.json');
+    const courses = await readData('courses.json');
     const index = courses.findIndex(c => String(c.id) === String(id));
     if (index === -1) {
         return res.status(404).json({ success: false, error: 'Course not found' });
@@ -291,25 +292,25 @@ app.put('/api/courses/:id', requireAuth(), (req, res) => {
         id,
         updatedAt: new Date().toISOString()
     };
-    writeData('courses.json', courses);
+    await writeData('courses.json', courses);
     res.json({ success: true, message: 'Course updated successfully', course: courses[index] });
 });
 
-app.delete('/api/courses/:id', requireAuth(), (req, res) => {
+app.delete('/api/courses/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    let courses = readData('courses.json');
+    let courses = await readData('courses.json');
     const filtered = courses.filter(c => String(c.id) !== String(id));
-    writeData('courses.json', filtered);
+    await writeData('courses.json', filtered);
     res.json({ success: true, message: 'Course deleted successfully' });
 });
 
 // ── POSTS CRUD ───────────────────────────────────────────────
-app.get('/api/posts', (req, res) => {
-    res.json({ success: true, posts: readData('posts.json') });
+app.get('/api/posts', async (req, res) => {
+    res.json({ success: true, posts: await readData('posts.json') });
 });
 
-const handleSavePost = (req, res) => {
-    const posts = readData('posts.json');
+const handleSavePost = async (req, res) => {
+    const posts = await readData('posts.json');
     const newPost = {
         id: req.body.id || ('post_' + Date.now()),
         title: req.body.title || '',
@@ -323,39 +324,39 @@ const handleSavePost = (req, res) => {
         createdAt: new Date().toISOString()
     };
     posts.unshift(newPost);
-    writeData('posts.json', posts);
+    await writeData('posts.json', posts);
     res.json({ success: true, message: 'Post created successfully', post: newPost, id: newPost.id });
 };
 
 app.post('/api/posts', requireAuth(), handleSavePost);
 app.post('/api/posts/add', requireAuth(), handleSavePost);
 
-app.put('/api/posts/:id', requireAuth(), (req, res) => {
+app.put('/api/posts/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const posts = readData('posts.json');
+    const posts = await readData('posts.json');
     const index = posts.findIndex(p => String(p.id) === String(id));
     if (index === -1) {
         return res.status(404).json({ success: false, error: 'Post not found' });
     }
     posts[index] = { ...posts[index], ...req.body, id, updatedAt: new Date().toISOString() };
-    writeData('posts.json', posts);
+    await writeData('posts.json', posts);
     res.json({ success: true, message: 'Post updated successfully', post: posts[index] });
 });
 
-app.delete('/api/posts/:id', requireAuth(), (req, res) => {
+app.delete('/api/posts/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const posts = readData('posts.json');
-    writeData('posts.json', posts.filter(p => String(p.id) !== String(id)));
+    const posts = await readData('posts.json');
+    await writeData('posts.json', posts.filter(p => String(p.id) !== String(id)));
     res.json({ success: true, message: 'Post deleted successfully' });
 });
 
 // ── FAQS CRUD ────────────────────────────────────────────────
-app.get('/api/faqs', (req, res) => {
-    res.json({ success: true, faqs: readData('faqs.json') });
+app.get('/api/faqs', async (req, res) => {
+    res.json({ success: true, faqs: await readData('faqs.json') });
 });
 
-app.post('/api/faqs', requireAuth(), (req, res) => {
-    const faqs = readData('faqs.json');
+app.post('/api/faqs', requireAuth(), async (req, res) => {
+    const faqs = await readData('faqs.json');
     const newFaq = {
         id: req.body.id || ('faq_' + Date.now()),
         question: req.body.question || '',
@@ -364,34 +365,34 @@ app.post('/api/faqs', requireAuth(), (req, res) => {
         createdAt: new Date().toISOString()
     };
     faqs.push(newFaq);
-    writeData('faqs.json', faqs);
+    await writeData('faqs.json', faqs);
     res.json({ success: true, message: 'FAQ created successfully', faq: newFaq, id: newFaq.id });
 });
 
-app.put('/api/faqs/:id', requireAuth(), (req, res) => {
+app.put('/api/faqs/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const faqs = readData('faqs.json');
+    const faqs = await readData('faqs.json');
     const index = faqs.findIndex(f => String(f.id) === String(id));
     if (index === -1) return res.status(404).json({ success: false, error: 'FAQ not found' });
     faqs[index] = { ...faqs[index], ...req.body, id };
-    writeData('faqs.json', faqs);
+    await writeData('faqs.json', faqs);
     res.json({ success: true, message: 'FAQ updated successfully', faq: faqs[index] });
 });
 
-app.delete('/api/faqs/:id', requireAuth(), (req, res) => {
+app.delete('/api/faqs/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const faqs = readData('faqs.json');
-    writeData('faqs.json', faqs.filter(f => String(f.id) !== String(id)));
+    const faqs = await readData('faqs.json');
+    await writeData('faqs.json', faqs.filter(f => String(f.id) !== String(id)));
     res.json({ success: true, message: 'FAQ deleted successfully' });
 });
 
 // ── TESTIMONIALS CRUD ────────────────────────────────────────
-app.get('/api/testimonials', (req, res) => {
-    res.json({ success: true, testimonials: readData('testimonials.json') });
+app.get('/api/testimonials', async (req, res) => {
+    res.json({ success: true, testimonials: await readData('testimonials.json') });
 });
 
-app.post('/api/testimonials', requireAuth(), (req, res) => {
-    const testimonials = readData('testimonials.json');
+app.post('/api/testimonials', requireAuth(), async (req, res) => {
+    const testimonials = await readData('testimonials.json');
     const newTestimonial = {
         id: req.body.id || ('test_' + Date.now()),
         name: req.body.name || '',
@@ -402,34 +403,34 @@ app.post('/api/testimonials', requireAuth(), (req, res) => {
         createdAt: new Date().toISOString()
     };
     testimonials.unshift(newTestimonial);
-    writeData('testimonials.json', testimonials);
+    await writeData('testimonials.json', testimonials);
     res.json({ success: true, message: 'Testimonial added successfully', testimonial: newTestimonial, id: newTestimonial.id });
 });
 
-app.put('/api/testimonials/:id', requireAuth(), (req, res) => {
+app.put('/api/testimonials/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const testimonials = readData('testimonials.json');
+    const testimonials = await readData('testimonials.json');
     const index = testimonials.findIndex(t => String(t.id) === String(id));
     if (index === -1) return res.status(404).json({ success: false, error: 'Testimonial not found' });
     testimonials[index] = { ...testimonials[index], ...req.body, id };
-    writeData('testimonials.json', testimonials);
+    await writeData('testimonials.json', testimonials);
     res.json({ success: true, message: 'Testimonial updated successfully', testimonial: testimonials[index] });
 });
 
-app.delete('/api/testimonials/:id', requireAuth(), (req, res) => {
+app.delete('/api/testimonials/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const testimonials = readData('testimonials.json');
-    writeData('testimonials.json', testimonials.filter(t => String(t.id) !== String(id)));
+    const testimonials = await readData('testimonials.json');
+    await writeData('testimonials.json', testimonials.filter(t => String(t.id) !== String(id)));
     res.json({ success: true, message: 'Testimonial deleted successfully' });
 });
 
 // ── GALLERY CRUD ─────────────────────────────────────────────
-app.get('/api/gallery', (req, res) => {
-    res.json({ success: true, gallery: readData('gallery.json') });
+app.get('/api/gallery', async (req, res) => {
+    res.json({ success: true, gallery: await readData('gallery.json') });
 });
 
-app.post('/api/gallery', requireAuth(), (req, res) => {
-    const gallery = readData('gallery.json');
+app.post('/api/gallery', requireAuth(), async (req, res) => {
+    const gallery = await readData('gallery.json');
     const newItem = {
         id: req.body.id || ('gal_' + Date.now()),
         title: req.body.title || '',
@@ -438,36 +439,36 @@ app.post('/api/gallery', requireAuth(), (req, res) => {
         createdAt: new Date().toISOString()
     };
     gallery.unshift(newItem);
-    writeData('gallery.json', gallery);
+    await writeData('gallery.json', gallery);
     res.json({ success: true, message: 'Gallery item added successfully', item: newItem, id: newItem.id });
 });
 
-app.delete('/api/gallery/:id', requireAuth(), (req, res) => {
+app.delete('/api/gallery/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const gallery = readData('gallery.json');
-    writeData('gallery.json', gallery.filter(g => String(g.id) !== String(id)));
+    const gallery = await readData('gallery.json');
+    await writeData('gallery.json', gallery.filter(g => String(g.id) !== String(id)));
     res.json({ success: true, message: 'Gallery item deleted successfully' });
 });
 
 // ── SETTINGS CRUD ────────────────────────────────────────────
-app.get('/api/settings', (req, res) => {
-    res.json({ success: true, settings: readData('settings.json', {}) });
+app.get('/api/settings', async (req, res) => {
+    res.json({ success: true, settings: await readData('settings.json', {}) });
 });
 
-app.post('/api/settings', requireAuth('admin'), (req, res) => {
-    const current = readData('settings.json', {});
+app.post('/api/settings', requireAuth('admin'), async (req, res) => {
+    const current = await readData('settings.json', {});
     const updated = { ...current, ...req.body };
-    writeData('settings.json', updated);
+    await writeData('settings.json', updated);
     res.json({ success: true, message: 'Settings saved successfully', settings: updated });
 });
 
 // ── CONTACT MESSAGES CRUD ────────────────────────────────────
-app.get('/api/contactMessages', (req, res) => {
-    res.json({ success: true, contactMessages: readData('contactMessages.json') });
+app.get('/api/contactMessages', async (req, res) => {
+    res.json({ success: true, contactMessages: await readData('contactMessages.json') });
 });
 
-app.post('/api/contactMessages', (req, res) => {
-    const messages = readData('contactMessages.json');
+app.post('/api/contactMessages', async (req, res) => {
+    const messages = await readData('contactMessages.json');
     const newMsg = {
         id: 'msg_' + Date.now(),
         name: req.body.name || '',
@@ -478,14 +479,14 @@ app.post('/api/contactMessages', (req, res) => {
         createdAt: new Date().toISOString()
     };
     messages.unshift(newMsg);
-    writeData('contactMessages.json', messages);
+    await writeData('contactMessages.json', messages);
     res.json({ success: true, message: 'Message sent successfully', messageId: newMsg.id });
 });
 
-app.delete('/api/contactMessages/:id', requireAuth(), (req, res) => {
+app.delete('/api/contactMessages/:id', requireAuth(), async (req, res) => {
     const { id } = req.params;
-    const messages = readData('contactMessages.json');
-    writeData('contactMessages.json', messages.filter(m => String(m.id) !== String(id)));
+    const messages = await readData('contactMessages.json');
+    await writeData('contactMessages.json', messages.filter(m => String(m.id) !== String(id)));
     res.json({ success: true, message: 'Message deleted successfully' });
 });
 
@@ -505,7 +506,7 @@ app.post('/api/student/login', async (req, res) => {
   }
 
   const cleanId = String(identifier).trim().toLowerCase();
-  let students = readData('students.json', []);
+  let students = await readData('students.json', []);
   
   // 1. Check in students.json
   let student = students.find(s => 
@@ -516,7 +517,7 @@ app.post('/api/student/login', async (req, res) => {
 
   // 2. If not found in students.json, search admissions.json
   if (!student) {
-    const admissions = readData('admissions.json', []);
+    const admissions = await readData('admissions.json', []);
     const adm = admissions.find(a => 
       (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
       (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
@@ -529,7 +530,7 @@ app.post('/api/student/login', async (req, res) => {
       student = buildStudentFromAdmission(adm);
       // Persist to students.json
       students.unshift(student);
-      writeData('students.json', students);
+      await writeData('students.json', students);
     }
   }
 
@@ -587,9 +588,9 @@ app.post('/api/student/login', async (req, res) => {
   });
 });
 
-app.get('/api/student/profile', (req, res) => {
+app.get('/api/student/profile', async (req, res) => {
   const identifier = req.query.identifier || req.cookies.fusion_student_id;
-  const students = readData('students.json', []);
+  const students = await readData('students.json', []);
   
   if (!identifier) {
     return res.status(400).json({ success: false, error: 'Missing student identifier. Please log in.' });
@@ -604,7 +605,7 @@ app.get('/api/student/profile', (req, res) => {
 
   // If not found in students.json, check admissions.json
   if (!student) {
-    const admissions = readData('admissions.json', []);
+    const admissions = await readData('admissions.json', []);
     const adm = admissions.find(a => 
       (a.applicationNumber && a.applicationNumber.toLowerCase() === cleanId) ||
       (a.applicationId && a.applicationId.toLowerCase() === cleanId) ||
@@ -616,7 +617,7 @@ app.get('/api/student/profile', (req, res) => {
     if (adm) {
       student = buildStudentFromAdmission(adm);
       students.unshift(student);
-      writeData('students.json', students);
+      await writeData('students.json', students);
     }
   }
 
@@ -627,13 +628,13 @@ app.get('/api/student/profile', (req, res) => {
   return res.json({ success: true, student });
 });
 
-app.put('/api/student/profile', (req, res) => {
+app.put('/api/student/profile', async (req, res) => {
   const identifier = req.body.identifier || req.cookies.fusion_student_id;
   if (!identifier) {
     return res.status(400).json({ success: false, error: 'Missing student identifier.' });
   }
 
-  const students = readData('students.json', []);
+  const students = await readData('students.json', []);
   const cleanId = String(identifier).trim().toLowerCase();
   const index = students.findIndex(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
@@ -652,11 +653,11 @@ app.put('/api/student/profile', (req, res) => {
     }
   });
 
-  writeData('students.json', students);
+  await writeData('students.json', students);
   return res.json({ success: true, message: 'Profile updated successfully', student: students[index] });
 });
 
-app.post('/api/student/submit-exam-result', (req, res) => {
+app.post('/api/student/submit-exam-result', async (req, res) => {
   const { identifier, studentId, id, examType, examDate, registrationNumber, rollNumber, score, resultStatus, certificateUrl, notes } = req.body;
   const targetId = identifier || studentId || id || req.cookies?.fusion_student_id;
 
@@ -668,8 +669,8 @@ app.post('/api/student/submit-exam-result', (req, res) => {
     return res.status(400).json({ success: false, error: 'Exam type (JLPT/NAT-TEST) and result status (passed/failed) are required.' });
   }
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
   const cleanId = String(targetId).trim().toLowerCase();
 
   let sIdx = students.findIndex(s => 
@@ -732,7 +733,7 @@ app.post('/api/student/submit-exam-result', (req, res) => {
   }
 
   students[sIdx].updatedAt = nowIso;
-  writeData('students.json', students);
+  await writeData('students.json', students);
 
   if (aIdx !== -1) {
     admissions[aIdx].examInfo = examRecord;
@@ -741,7 +742,7 @@ app.post('/api/student/submit-exam-result', (req, res) => {
       admissions[aIdx].courseStatus = 'graduated';
     }
     admissions[aIdx].updatedAt = nowIso;
-    writeData('admissions.json', admissions);
+    await writeData('admissions.json', admissions);
   }
 
   res.json({
@@ -754,7 +755,7 @@ app.post('/api/student/submit-exam-result', (req, res) => {
   });
 });
 
-app.post('/api/student/logout', (req, res) => {
+app.post('/api/student/logout', async (req, res) => {
   res.clearCookie('fusion_student_id');
   res.json({ success: true, message: 'Logged out successfully' });
 });
@@ -767,12 +768,12 @@ app.post('/api/staff/login', async (req, res) => {
   }
 
   const cleanEmail = String(email).trim().toLowerCase();
-  const users = readData('users.json', []);
+  const users = await readData('users.json', []);
   let activeUser = users.find(u => u.email && u.email.toLowerCase() === cleanEmail);
 
   // Fallback to staff.json if not in users.json
   if (!activeUser) {
-    const staffList = readData('staff.json', []);
+    const staffList = await readData('staff.json', []);
     activeUser = staffList.find(s => s.email && s.email.toLowerCase() === cleanEmail);
   }
 
@@ -825,7 +826,7 @@ app.post('/api/staff/login', async (req, res) => {
   });
 });
 
-app.get('/api/staff/me', (req, res) => {
+app.get('/api/staff/me', async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (user) {
     return res.json({
@@ -849,7 +850,7 @@ app.get('/api/staff/me', (req, res) => {
     });
   }
 
-  const users = readData('users.json', []);
+  const users = await readData('users.json', []);
   const staff = users.find(s => s.email && s.email.toLowerCase() === email.toLowerCase());
   if (!staff) {
     return res.json({
@@ -870,7 +871,7 @@ app.get('/api/staff/me', (req, res) => {
   });
 });
 
-app.get('/api/staff/students', (req, res) => {
+app.get('/api/staff/students', async (req, res) => {
   const user = getAuthenticatedUser(req);
   let branch = req.query.branch || (user ? user.branch : req.cookies.fusion_staff_branch) || 'all';
 
@@ -879,8 +880,8 @@ app.get('/api/staff/students', (req, res) => {
     branch = user.branch;
   }
 
-  const admissions = readData('admissions.json', []);
-  const students = readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
+  const students = await readData('students.json', []);
 
   // Build a lookup map of students.json keyed by identifier, applicationNumber, and id
   const studentMap = new Map();
@@ -1065,8 +1066,8 @@ app.post('/api/staff/students', handleUpload, async (req, res) => {
     return res.status(400).json({ success: false, error: 'Student full name is required.' });
   }
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
 
   // Determine admission date: custom past date from paper record or auto-current
   let dateIso = new Date().toISOString();
@@ -1199,7 +1200,7 @@ app.post('/api/staff/students', handleUpload, async (req, res) => {
   };
 
   students.unshift(newStudent);
-  writeData('students.json', students);
+  await writeData('students.json', students);
 
   // Sync to admissions.json
   const admRecord = {
@@ -1207,7 +1208,7 @@ app.post('/api/staff/students', handleUpload, async (req, res) => {
     submittedAt: dateIso
   };
   admissions.unshift(admRecord);
-  writeData('admissions.json', admissions);
+  await writeData('admissions.json', admissions);
 
   recordAuditLog('student_registered', `Registered walk-in student ${newStudent.fullName} (${newAppNum}) for ${newStudent.branch}`, 'student', newAppNum, newStudent.fullName, user || { name: 'Staff Member', role: 'staff', branch: targetBranch });
 
@@ -1238,8 +1239,8 @@ app.post('/api/staff/students/:id/documents', handleUpload, async (req, res) => 
     return res.status(400).json({ success: false, error: 'No document files provided to upload.' });
   }
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
 
   let sIdx = students.findIndex(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
@@ -1305,14 +1306,14 @@ app.post('/api/staff/students/:id/documents', handleUpload, async (req, res) => 
   }
 
   targetStudent.updatedAt = new Date().toISOString();
-  writeData('students.json', students);
+  await writeData('students.json', students);
 
   if (aIdx !== -1) {
     admissions[aIdx].documents = targetStudent.documents;
     admissions[aIdx].documentUrls = targetStudent.documentUrls;
     admissions[aIdx].documentUrl = targetStudent.documentUrl;
     admissions[aIdx].updatedAt = targetStudent.updatedAt;
-    writeData('admissions.json', admissions);
+    await writeData('admissions.json', admissions);
   }
 
   recordAuditLog('document_uploaded', `Attached ${addedDocs.length} document(s) to ${targetStudent.fullName} (${cleanId})`, 'student', cleanId, targetStudent.fullName, user);
@@ -1327,7 +1328,7 @@ app.post('/api/staff/students/:id/documents', handleUpload, async (req, res) => 
 });
 
 // ── REMOVE ATTACHED DOCUMENT FROM STUDENT ─────────────────────────
-app.delete('/api/staff/students/:id/documents/:docIndex', (req, res) => {
+app.delete('/api/staff/students/:id/documents/:docIndex', async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required' });
@@ -1337,8 +1338,8 @@ app.delete('/api/staff/students/:id/documents/:docIndex', (req, res) => {
   const cleanId = String(id).trim().toLowerCase();
   const idx = parseInt(docIndex, 10);
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
 
   let sIdx = students.findIndex(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
@@ -1365,7 +1366,7 @@ app.delete('/api/staff/students/:id/documents/:docIndex', (req, res) => {
     }
     student.documentUrl = (student.documentUrls && student.documentUrls[0]) || null;
     student.updatedAt = new Date().toISOString();
-    writeData('students.json', students);
+    await writeData('students.json', students);
   }
 
   if (aIdx !== -1) {
@@ -1378,7 +1379,7 @@ app.delete('/api/staff/students/:id/documents/:docIndex', (req, res) => {
     }
     adm.documentUrl = (adm.documentUrls && adm.documentUrls[0]) || null;
     adm.updatedAt = new Date().toISOString();
-    writeData('admissions.json', admissions);
+    await writeData('admissions.json', admissions);
   }
 
   recordAuditLog('document_deleted', `Removed document #${idx + 1} from student (${cleanId})`, 'student', cleanId, cleanId, user);
@@ -1392,13 +1393,13 @@ app.delete('/api/staff/students/:id/documents/:docIndex', (req, res) => {
 });
 
 // ── UPDATE STUDENT PROFILE OR STATUS ──────────────────────────────
-app.put('/api/staff/students/:id', (req, res) => {
+app.put('/api/staff/students/:id', async (req, res) => {
   const user = getAuthenticatedUser(req);
   const { id } = req.params;
   const cleanId = String(id).trim().toLowerCase();
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
 
   let sIdx = students.findIndex(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
@@ -1453,7 +1454,7 @@ app.put('/api/staff/students/:id', (req, res) => {
     if (req.body.classSchedule && students[sIdx].nextClass) {
       students[sIdx].nextClass.time = req.body.classSchedule;
     }
-    writeData('students.json', students);
+    await writeData('students.json', students);
   }
 
   // Update in admissions.json
@@ -1463,7 +1464,7 @@ app.put('/api/staff/students/:id', (req, res) => {
       ...req.body,
       updatedAt: new Date().toISOString()
     };
-    writeData('admissions.json', admissions);
+    await writeData('admissions.json', admissions);
   }
 
   const updatedRec = sIdx !== -1 ? students[sIdx] : admissions[aIdx];
@@ -1477,7 +1478,7 @@ app.put('/api/staff/students/:id', (req, res) => {
 });
 
 // ── APPROVE COURSE COMPLETION / GRADUATION ────────────────────────
-app.post('/api/staff/students/:id/approve-completion', (req, res) => {
+app.post('/api/staff/students/:id/approve-completion', async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions or edit_students required' });
@@ -1486,8 +1487,8 @@ app.post('/api/staff/students/:id/approve-completion', (req, res) => {
   const { id } = req.params;
   const cleanId = String(id).trim().toLowerCase();
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
 
   let sIdx = students.findIndex(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
@@ -1545,14 +1546,14 @@ app.post('/api/staff/students/:id/approve-completion', (req, res) => {
       steps: updatedSteps
     }
   };
-  writeData('students.json', students);
+  await writeData('students.json', students);
 
   if (aIdx !== -1) {
     admissions[aIdx] = {
       ...admissions[aIdx],
       ...completionData
     };
-    writeData('admissions.json', admissions);
+    await writeData('admissions.json', admissions);
   }
 
   recordAuditLog('student_graduated', `Approved course completion & graduation for ${students[sIdx].fullName} (${students[sIdx].identifier})`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
@@ -1564,7 +1565,7 @@ app.post('/api/staff/students/:id/approve-completion', (req, res) => {
   });
 });
 
-app.post('/api/staff/logout', (req, res) => {
+app.post('/api/staff/logout', async (req, res) => {
   res.clearCookie('fusion_staff_email');
   res.clearCookie('fusion_staff_branch');
   res.clearCookie('fusion_staff_role');
@@ -1572,7 +1573,7 @@ app.post('/api/staff/logout', (req, res) => {
 });
 
 // ── DELETE STUDENT RECORD (STAFF / INSTRUCTOR / ADMIN) ─────────────
-app.delete('/api/staff/students/:id', (req, res) => {
+app.delete('/api/staff/students/:id', async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions or edit_students required' });
@@ -1581,8 +1582,8 @@ app.delete('/api/staff/students/:id', (req, res) => {
   const { id } = req.params;
   const cleanId = String(id).trim().toLowerCase();
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
 
   const sIdx = students.findIndex(s => 
     (s.identifier && s.identifier.toLowerCase() === cleanId) ||
@@ -1608,13 +1609,13 @@ app.delete('/api/staff/students/:id', (req, res) => {
   if (sIdx !== -1) {
     deletedName = students[sIdx].fullName || deletedName;
     students.splice(sIdx, 1);
-    writeData('students.json', students);
+    await writeData('students.json', students);
   }
 
   if (aIdx !== -1) {
     deletedName = admissions[aIdx].fullName || deletedName;
     admissions.splice(aIdx, 1);
-    writeData('admissions.json', admissions);
+    await writeData('admissions.json', admissions);
   }
 
   recordAuditLog('student_deleted', `Deleted student record for ${deletedName} (${cleanId})`, 'student', cleanId, deletedName, user);
@@ -1626,12 +1627,12 @@ app.delete('/api/staff/students/:id', (req, res) => {
 });
 
 // ── BRANCHES MANAGEMENT CRUD ──────────────────────────────────────
-app.get('/api/branches', (req, res) => {
-  res.json({ success: true, branches: readData('branches.json', []) });
+app.get('/api/branches', async (req, res) => {
+  res.json({ success: true, branches: await readData('branches.json', []) });
 });
 
-app.post('/api/branches', requireAuth('admin'), (req, res) => {
-  const branches = readData('branches.json', []);
+app.post('/api/branches', requireAuth('admin'), async (req, res) => {
+  const branches = await readData('branches.json', []);
   const newBranch = {
     id: req.body.id || ('branch_' + Date.now()),
     name: req.body.name || 'New Branch',
@@ -1643,41 +1644,41 @@ app.post('/api/branches', requireAuth('admin'), (req, res) => {
     status: req.body.status || 'active'
   };
   branches.push(newBranch);
-  writeData('branches.json', branches);
+  await writeData('branches.json', branches);
   recordAuditLog('branch_created', `Branch created: ${newBranch.name}`, 'branch', newBranch.id, newBranch.name, getAuthenticatedUser(req));
   res.json({ success: true, message: 'Branch created', branch: newBranch });
 });
 
-app.put('/api/branches/:id', requireAuth('admin'), (req, res) => {
+app.put('/api/branches/:id', requireAuth('admin'), async (req, res) => {
   const { id } = req.params;
-  const branches = readData('branches.json', []);
+  const branches = await readData('branches.json', []);
   const idx = branches.findIndex(b => b.id === id || b.name.toLowerCase() === id.toLowerCase());
   if (idx === -1) return res.status(404).json({ success: false, error: 'Branch not found' });
   branches[idx] = { ...branches[idx], ...req.body, id: branches[idx].id };
-  writeData('branches.json', branches);
+  await writeData('branches.json', branches);
   recordAuditLog('branch_updated', `Branch updated: ${branches[idx].name}`, 'branch', id, branches[idx].name, getAuthenticatedUser(req));
   res.json({ success: true, message: 'Branch updated', branch: branches[idx] });
 });
 
-app.delete('/api/branches/:id', requireAuth('admin'), (req, res) => {
+app.delete('/api/branches/:id', requireAuth('admin'), async (req, res) => {
   const { id } = req.params;
 
-  let branches = readData('branches.json', []);
+  let branches = await readData('branches.json', []);
   const branchToDelete = branches.find(b => b.id === id || b.name.toLowerCase() === id.toLowerCase());
   branches = branches.filter(b => b.id !== id && b.name.toLowerCase() !== id.toLowerCase());
-  writeData('branches.json', branches);
+  await writeData('branches.json', branches);
   recordAuditLog('branch_deleted', `Branch deleted: ${branchToDelete ? (branchToDelete.displayName || branchToDelete.name) : id}`, 'branch', id, branchToDelete ? branchToDelete.name : id, getAuthenticatedUser(req));
   res.json({ success: true, message: 'Branch deleted successfully' });
 });
 
 // ── PERMISSIONS CATALOG ───────────────────────────────────────────
-app.get('/api/permissions', (req, res) => {
-  res.json({ success: true, ...readData('permissions.json', {}) });
+app.get('/api/permissions', async (req, res) => {
+  res.json({ success: true, ...await readData('permissions.json', {}) });
 });
 
 // ── ADMIN USER & PERMISSION MANAGEMENT CRUD ───────────────────────
-app.get('/api/admin/users', requireAuth('admin'), (req, res) => {
-  const users = readData('users.json', []);
+app.get('/api/admin/users', requireAuth('admin'), async (req, res) => {
+  const users = await readData('users.json', []);
   res.json({ success: true, users });
 });
 
@@ -1689,7 +1690,7 @@ app.post('/api/admin/login', async (req, res) => {
   }
 
   const cleanEmail = String(email).trim().toLowerCase();
-  const users = readData('users.json', []);
+  const users = await readData('users.json', []);
   const adminUser = users.find(u => u.email && u.email.toLowerCase() === cleanEmail && u.role === 'admin');
 
   if (!adminUser) {
@@ -1740,7 +1741,7 @@ app.post('/api/admin/users', requireAuth('admin'), async (req, res) => {
     return res.status(400).json({ success: false, error: 'Name and Email are required.' });
   }
 
-  const users = readData('users.json', []);
+  const users = await readData('users.json', []);
   const existing = users.find(u => u.email.toLowerCase() === email.trim().toLowerCase());
   if (existing) {
     return res.status(400).json({ success: false, error: 'A user with this email address already exists.' });
@@ -1764,10 +1765,10 @@ app.post('/api/admin/users', requireAuth('admin'), async (req, res) => {
   };
 
   users.unshift(newUser);
-  writeData('users.json', users);
+  await writeData('users.json', users);
 
   // Sync staff.json
-  const staffList = readData('staff.json', []);
+  const staffList = await readData('staff.json', []);
   const sIdx = staffList.findIndex(s => s.id === newUser.id || s.email.toLowerCase() === newUser.email.toLowerCase());
   const staffEntry = {
     id: newUser.id,
@@ -1783,15 +1784,15 @@ app.post('/api/admin/users', requireAuth('admin'), async (req, res) => {
   } else {
     staffList.unshift(staffEntry);
   }
-  writeData('staff.json', staffList);
+  await writeData('staff.json', staffList);
 
   recordAuditLog('user_created', `Created ${newUser.role} account: ${newUser.name} (${newUser.branch})`, 'user', newUser.id, newUser.name, getAuthenticatedUser(req));
   res.json({ success: true, message: 'User account created successfully', user: newUser });
 });
 
-app.put('/api/admin/users/:id', requireAuth('admin'), (req, res) => {
+app.put('/api/admin/users/:id', requireAuth('admin'), async (req, res) => {
   const { id } = req.params;
-  const users = readData('users.json', []);
+  const users = await readData('users.json', []);
   const idx = users.findIndex(u => u.id === id || u.email.toLowerCase() === id.toLowerCase());
   if (idx === -1) return res.status(404).json({ success: false, error: 'User not found' });
 
@@ -1807,44 +1808,109 @@ app.put('/api/admin/users/:id', requireAuth('admin'), (req, res) => {
     users[idx].password = old.password;
   }
 
-  writeData('users.json', users);
+  await writeData('users.json', users);
 
   // Sync staff.json
-  const staffList = readData('staff.json', []);
+  const staffList = await readData('staff.json', []);
   const sIdx = staffList.findIndex(s => s.id === id || s.email.toLowerCase() === old.email.toLowerCase());
   if (sIdx !== -1) {
     staffList[sIdx] = { ...staffList[sIdx], ...users[idx] };
-    writeData('staff.json', staffList);
+    await writeData('staff.json', staffList);
   }
 
   recordAuditLog('user_updated', `Updated user ${users[idx].name} permissions & details`, 'user', users[idx].id, users[idx].name, getAuthenticatedUser(req));
   res.json({ success: true, message: 'User updated successfully', user: users[idx] });
 });
 
-app.delete('/api/admin/users/:id', requireAuth('admin'), (req, res) => {
+app.delete('/api/admin/users/:id', requireAuth('admin'), async (req, res) => {
   const { id } = req.params;
-  let users = readData('users.json', []);
+  let users = await readData('users.json', []);
   const user = users.find(u => u.id === id || u.email.toLowerCase() === id.toLowerCase());
   users = users.filter(u => u.id !== id && u.email.toLowerCase() !== id.toLowerCase());
-  writeData('users.json', users);
+  await writeData('users.json', users);
 
-  let staffList = readData('staff.json', []);
+  let staffList = await readData('staff.json', []);
   staffList = staffList.filter(s => s.id !== id && s.email.toLowerCase() !== (user ? user.email.toLowerCase() : ''));
-  writeData('staff.json', staffList);
+  await writeData('staff.json', staffList);
 
   recordAuditLog('user_deleted', `Deleted user ${user ? user.name : id}`, 'user', id, user ? user.name : id, getAuthenticatedUser(req));
   res.json({ success: true, message: 'User deleted successfully' });
 });
 
+// ── TELEGRAM BACKUP & KEEPALIVE ─────────────────────────────────
+app.get('/api/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
+app.post('/api/admin/backup', async (req, res) => {
+  // Can be called by a cron job or Admin
+  // If called by cron, we might use a secret token
+  const authHeader = req.headers['authorization'];
+  const cronSecret = process.env.CRON_SECRET || 'fusion-backup-secret';
+  
+  // Verify it's either Admin or Cron
+  const user = getAuthenticatedUser(req);
+  if (!user || user.role !== 'admin') {
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+  }
+
+  const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+  const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+    return res.status(500).json({ success: false, error: 'Telegram credentials not configured.' });
+  }
+
+  try {
+    const archiver = require('archiver');
+    const FormData = require('form-data');
+    const axios = require('axios');
+    const fs = require('fs');
+    const path = require('path');
+
+    const backupPath = path.join(__dirname, 'data_backup.zip');
+    const output = fs.createWriteStream(backupPath);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    archive.pipe(output);
+    archive.directory(path.join(__dirname, 'data'), false);
+    await archive.finalize();
+
+    // Wait for output stream to close
+    await new Promise((resolve) => output.on('close', resolve));
+
+    const form = new FormData();
+    form.append('chat_id', TELEGRAM_CHAT_ID);
+    form.append('document', fs.createReadStream(backupPath), `Fusion_Backup_${new Date().toISOString().split('T')[0]}.zip`);
+    form.append('caption', `Daily Backup - ${new Date().toLocaleString()}`);
+
+    const telegramRes = await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument`, form, {
+      headers: form.getHeaders(),
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
+    });
+
+    // Cleanup
+    fs.unlinkSync(backupPath);
+
+    res.json({ success: true, message: 'Backup sent to Telegram successfully.' });
+  } catch (error) {
+    console.error('Backup error:', error.message);
+    res.status(500).json({ success: false, error: 'Failed to create and send backup.' });
+  }
+});
+
 // ── INSTRUCTOR STAFF CONTROL (BRANCH SCOPED) ──────────────────────
-app.get('/api/instructor/staff', (req, res) => {
+app.get('/api/instructor/staff', async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (!user) return res.status(401).json({ success: false, error: 'Authentication required' });
   if (user.role !== 'admin' && !hasPermission(user, 'view_staff')) {
     return res.status(403).json({ success: false, error: 'Permission denied: view_staff required' });
   }
 
-  const users = readData('users.json', []);
+  const users = await readData('users.json', []);
   // Return staff in user's branch
   const branchStaff = users.filter(u => 
     u.role === 'staff' && (user.role === 'admin' || String(u.branch).toLowerCase() === String(user.branch).toLowerCase())
@@ -1852,7 +1918,7 @@ app.get('/api/instructor/staff', (req, res) => {
   res.json({ success: true, staff: branchStaff, branch: user.branch });
 });
 
-app.put('/api/instructor/staff/:id', (req, res) => {
+app.put('/api/instructor/staff/:id', async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (!user) return res.status(401).json({ success: false, error: 'Authentication required' });
   if (user.role !== 'admin' && !hasPermission(user, 'manage_staff_permissions') && !hasPermission(user, 'edit_staff')) {
@@ -1860,7 +1926,7 @@ app.put('/api/instructor/staff/:id', (req, res) => {
   }
 
   const { id } = req.params;
-  const users = readData('users.json', []);
+  const users = await readData('users.json', []);
   const idx = users.findIndex(u => u.id === id || u.email.toLowerCase() === id.toLowerCase());
   if (idx === -1) return res.status(404).json({ success: false, error: 'Staff member not found' });
 
@@ -1875,17 +1941,17 @@ app.put('/api/instructor/staff/:id', (req, res) => {
   }
 
   users[idx] = { ...users[idx], ...req.body, id: users[idx].id, role: 'staff' };
-  writeData('users.json', users);
+  await writeData('users.json', users);
 
   recordAuditLog('branch_staff_updated', `Instructor ${user.name} modified staff ${users[idx].name}`, 'user', users[idx].id, users[idx].name, user);
   res.json({ success: true, message: 'Branch staff updated', staff: users[idx] });
 });
 
 // ── STUDENT BILLING & RECURRING FEE CALCULATION ───────────────────
-app.get('/api/students/:id/billing', (req, res) => {
+app.get('/api/students/:id/billing', async (req, res) => {
   const { id } = req.params;
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
   const cleanId = String(id).trim().toLowerCase();
 
   let student = students.find(s => 
@@ -1916,7 +1982,7 @@ app.get('/api/students/:id/billing', (req, res) => {
   res.json({ success: true, student: { id: student.identifier || student.id, fullName: student.fullName, branch: student.branch }, billing });
 });
 
-app.post('/api/students/:id/payments', (req, res) => {
+app.post('/api/students/:id/payments', async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (user && user.role !== 'admin' && !hasPermission(user, 'manage_fees')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_fees required' });
@@ -1930,8 +1996,8 @@ app.post('/api/students/:id/payments', (req, res) => {
     return res.status(400).json({ success: false, error: 'Valid payment amount is required.' });
   }
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
   const cleanId = String(id).trim().toLowerCase();
 
   let sIdx = students.findIndex(s => 
@@ -1990,7 +2056,7 @@ app.post('/api/students/:id/payments', (req, res) => {
     status: billing.status
   };
 
-  writeData('students.json', students);
+  await writeData('students.json', students);
 
   // Also sync admissions.json if exists
   if (aIdx !== -1) {
@@ -2003,7 +2069,7 @@ app.post('/api/students/:id/payments', (req, res) => {
       due: students[sIdx].fees.due,
       status: students[sIdx].fees.status
     };
-    writeData('admissions.json', admissions);
+    await writeData('admissions.json', admissions);
   }
 
   recordAuditLog('payment_recorded', `Payment ৳${paymentAmount.toLocaleString()} recorded for ${students[sIdx].fullName} (${students[sIdx].identifier})`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
@@ -2017,7 +2083,7 @@ app.post('/api/students/:id/payments', (req, res) => {
   });
 });
 
-app.put('/api/students/:id/custom-fee', (req, res) => {
+app.put('/api/students/:id/custom-fee', async (req, res) => {
   const user = getAuthenticatedUser(req);
   if (user && user.role !== 'admin' && !hasPermission(user, 'custom_student_fee') && !hasPermission(user, 'manage_fees')) {
     return res.status(403).json({ success: false, error: 'Permission denied: custom_student_fee required' });
@@ -2026,8 +2092,8 @@ app.put('/api/students/:id/custom-fee', (req, res) => {
   const { id } = req.params;
   const { customMonthlyFee, specialDiscount, reason } = req.body;
 
-  const students = readData('students.json', []);
-  const admissions = readData('admissions.json', []);
+  const students = await readData('students.json', []);
+  const admissions = await readData('admissions.json', []);
   const cleanId = String(id).trim().toLowerCase();
 
   let sIdx = students.findIndex(s => 
@@ -2074,7 +2140,7 @@ app.put('/api/students/:id/custom-fee', (req, res) => {
     status: billing.status
   };
 
-  writeData('students.json', students);
+  await writeData('students.json', students);
 
   // Also sync admissions.json if exists
   if (aIdx !== -1) {
@@ -2088,7 +2154,7 @@ app.put('/api/students/:id/custom-fee', (req, res) => {
       due: students[sIdx].fees.due,
       status: students[sIdx].fees.status
     };
-    writeData('admissions.json', admissions);
+    await writeData('admissions.json', admissions);
   }
 
   recordAuditLog('fee_customized', `Monthly fee customized for ${students[sIdx].fullName} (${students[sIdx].identifier}). Old: ${oldRate || 'standard'}, New: ${students[sIdx].customMonthlyFee || 'standard'}. Note: ${reason || 'N/A'}`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
@@ -2102,8 +2168,8 @@ app.put('/api/students/:id/custom-fee', (req, res) => {
 });
 
 // ── AUDIT LOGS QUERY ──────────────────────────────────────────────
-app.get('/api/admin/audit-logs', (req, res) => {
-  const logs = readData('auditLogs.json', []);
+app.get('/api/admin/audit-logs', async (req, res) => {
+  const logs = await readData('auditLogs.json', []);
   const { action, branch, search, limit } = req.query;
   let filtered = [...logs];
 

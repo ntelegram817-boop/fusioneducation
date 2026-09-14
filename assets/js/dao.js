@@ -28,8 +28,10 @@
     // Helper to resolve backend port across Live Server (5500) and Node server (3000)
     function getApiUrl(endpoint) {
         if (!endpoint || !endpoint.startsWith('/')) return endpoint;
-        if (window.location.port === '3000') return endpoint;
-        return 'http://localhost:3000' + endpoint;
+        if (window.location.port === '5500' || window.location.port === '5501') {
+            return window.location.protocol + '//' + window.location.hostname + ':3000' + endpoint;
+        }
+        return endpoint;
     }
 
     // Universal API Caller

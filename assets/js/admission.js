@@ -511,9 +511,12 @@
         if (window.location.protocol.startsWith('http')) {
             endpoints.push(path);
         }
-        if (window.location.port !== '3000') {
+        if (window.location.port === '5500' || window.location.port === '5501') {
+            endpoints.push(window.location.protocol + '//' + window.location.hostname + ':3000' + path);
+        }
+        // Fallback for file:/// protocol execution
+        if (window.location.protocol === 'file:') {
             endpoints.push('http://localhost:3000' + path);
-            endpoints.push('http://127.0.0.1:3000' + path);
         }
         return [...new Set(endpoints)];
     }

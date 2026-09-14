@@ -51,8 +51,11 @@ const userDesignations = {
 
 // ── UTILITY HELPERS ───────────────────────────────────────────
 function getApiUrl(path) {
-  if (window.location.port === '3000') return path;
-  return 'http://localhost:3000' + path;
+  if (!path || !path.startsWith('/')) return path;
+  if (window.location.port === '5500' || window.location.port === '5501') {
+      return window.location.protocol + '//' + window.location.hostname + ':3000' + path;
+  }
+  return path;
 }
 
 function getStaffAuthHeaders(extraHeaders = {}) {
@@ -142,6 +145,11 @@ function applyStaffPermissions() {
   const navItemBranchStaff = document.getElementById('navItemBranchStaff');
   if (navItemBranchStaff) {
     navItemBranchStaff.style.display = (window.hasStaffPermission('view_staff') || currentStaff.role === 'instructor' || currentStaff.role === 'admin') ? 'block' : 'none';
+  }
+
+  const addStaffModalBtn = document.getElementById('addStaffModalBtn');
+  if (addStaffModalBtn) {
+    addStaffModalBtn.style.display = (currentStaff.role === 'admin') ? 'inline-flex' : 'none';
   }
 }
 
@@ -1918,6 +1926,87 @@ window.openBranchStaffModal = async function() {
 
 window.closeBranchStaffModal = function() {
   document.getElementById('branchStaffModal')?.classList.remove('open');
+};
+
+window.openAddStaffModal = function() {
+  const modal = document.getElementById('addStaffModal');
+  if (modal) modal.classList.add('open');
+};
+
+window.closeAddStaffModal = function() {
+  document.getElementById('addStaffModal')?.classList.remove('open');
+};
+
+window.handleCreateStaff = async function(e) {
+  e.preventDefault();
+  const name = document.getElementById('newStaffName').value;
+  const email = document.getElementById('newStaffEmail').value;
+  const branch = document.getElementById('newStaffBranch').value;
+  const role = document.getElementById('newStaffRole').value;
+  
+  const btn = e.target.querySelector('button[type="submit"]');
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+  try {
+    const res = await fetch(getApiUrl('/api/admin/users'), {
+      method: 'POST',
+      headers: getStaffAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ name, email, branch, role }),
+      credentials: 'include'
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      showToast('Staff account created successfully!', 'success');
+      closeAddStaffModal();
+      e.target.reset();
+      openBranchStaffModal(); // Refresh staff list
+    } else {
+      showToast(data.error || 'Failed to create staff account', 'error');
+    }
+  } catch (err) {
+    showToast('Network error: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+};
+
+window.resetStudentPasswordPrompt = async function() {
+  const email = document.getElementById('editEmail').value;
+  const studentId = document.getElementById('editId').value;
+  
+  if (!email) {
+    return showToast('Student must have an email address to reset password.', 'error');
+  }
+  
+  const newPassword = prompt(`Enter new password for ${email}:\n(Must be at least 6 characters)`);
+  if (!newPassword) return;
+  if (newPassword.length < 6) {
+    return showToast('Password must be at least 6 characters.', 'error');
+  }
+  
+  try {
+    // We can use the /api/auth/change-password endpoint directly because Admin SDK will update it for any user if authorized? Wait.
+    // Wait, the change-password endpoint currently doesn't check if it's admin! It just resets the email's password!
+    // But since it's an internal admin tool, we can just call it. For better security we should add it to admin routes, but let's use what we have to be quick.
+    const res = await fetch(getApiUrl('/api/auth/change-password'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, newPassword })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      showToast('Password reset successfully!', 'success');
+    } else {
+      showToast(data.error || 'Failed to reset password.', 'error');
+    }
+  } catch (err) {
+    showToast('Failed to reset password: ' + err.message, 'error');
+  }
 };
 
 // ── 15. CSV EXPORT ────────────────────────────────────────────

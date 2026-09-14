@@ -4,22 +4,13 @@
 // ============================================================
 const express  = require('express');
 const router   = express.Router();
+const fbDb     = require('../utils/firebaseDb');
 
 const { admissionLimiter }                        = require('../middleware/rateLimiter');
 const { handleUpload }                            = require('../middleware/upload');
 const { admissionValidationRules, handleValidationErrors } = require('../middleware/validate');
 const { submitAdmission }                         = require('../controllers/admissionController');
 
-/**
- * POST /api/admission/submit
- *
- * Middleware chain:
- *  1. admissionLimiter     — 5 req / 15 min per IP
- *  2. handleUpload         — multer: parses multipart, enforces 5 MB / MIME types
- *  3. admissionValidation  — express-validator rules on body fields
- *  4. handleValidationErrors — returns 422 if any rule fails
- *  5. submitAdmission      — uploads to Cloudinary, generates app number, saves record
- */
 router.post(
     '/submit',
     admissionLimiter,
@@ -30,29 +21,10 @@ router.post(
 );
 
 // GET /api/admission / GET /api/admission/list / GET /api/admissions
-const fs = require('fs');
-const path = require('path');
-const ADMISSIONS_FILE = path.join(__dirname, '../data/admissions.json');
-const STUDENTS_FILE = path.join(__dirname, '../data/students.json');
-
-const getAdmissionsList = (req, res) => {
+const getAdmissionsList = async (req, res) => {
     try {
-        let admissions = [];
-        let students = [];
-
-        if (fs.existsSync(ADMISSIONS_FILE)) {
-            try {
-                admissions = JSON.parse(fs.readFileSync(ADMISSIONS_FILE, 'utf8'));
-                if (!Array.isArray(admissions)) admissions = [];
-            } catch (_) {}
-        }
-
-        if (fs.existsSync(STUDENTS_FILE)) {
-            try {
-                students = JSON.parse(fs.readFileSync(STUDENTS_FILE, 'utf8'));
-                if (!Array.isArray(students)) students = [];
-            } catch (_) {}
-        }
+        let admissions = await fbDb.readData('admissions') || [];
+        let students = await fbDb.readData('students') || [];
 
         // Normalize admissions list
         const normalizedAdmissions = admissions.map(a => ({
@@ -124,14 +96,11 @@ router.get('/', getAdmissionsList);
 router.get('/list', getAdmissionsList);
 
 // PUT /api/admission/:id
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const updateData = req.body || {};
     try {
-        let admissions = [];
-        if (fs.existsSync(ADMISSIONS_FILE)) {
-            admissions = JSON.parse(fs.readFileSync(ADMISSIONS_FILE, 'utf8'));
-        }
+        let admissions = await fbDb.readData('admissions') || [];
         const index = admissions.findIndex(a => 
             String(a.id) === String(id) || 
             String(a.applicationNumber) === String(id) || 
@@ -145,7 +114,7 @@ router.put('/:id', (req, res) => {
             ...updateData,
             updatedAt: new Date().toISOString()
         };
-        fs.writeFileSync(ADMISSIONS_FILE, JSON.stringify(admissions, null, 2), 'utf8');
+        await fbDb.writeData('admissions', admissions);
         return res.json({ success: true, message: 'Admission updated successfully', admission: admissions[index] });
     } catch (err) {
         return res.status(500).json({ success: false, error: 'Failed to update admission.' });
@@ -153,19 +122,16 @@ router.put('/:id', (req, res) => {
 });
 
 // DELETE /api/admission/:id
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        let admissions = [];
-        if (fs.existsSync(ADMISSIONS_FILE)) {
-            admissions = JSON.parse(fs.readFileSync(ADMISSIONS_FILE, 'utf8'));
-        }
+        let admissions = await fbDb.readData('admissions') || [];
         const filtered = admissions.filter(a => 
             String(a.id) !== String(id) && 
             String(a.applicationNumber) !== String(id) && 
             String(a.applicationId) !== String(id)
         );
-        fs.writeFileSync(ADMISSIONS_FILE, JSON.stringify(filtered, null, 2), 'utf8');
+        await fbDb.writeData('admissions', filtered);
         return res.json({ success: true, message: 'Admission application deleted successfully' });
     } catch (err) {
         return res.status(500).json({ success: false, error: 'Failed to delete admission.' });
@@ -173,4 +139,3 @@ router.delete('/:id', (req, res) => {
 });
 
 module.exports = router;
-

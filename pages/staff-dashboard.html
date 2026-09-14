@@ -613,11 +613,18 @@
           </div>
         </div>
 
-        <div class="staff-modal-footer">
-          <button type="button" class="staff-action-btn" onclick="closeEditModal()">Cancel</button>
-          <button type="submit" class="staff-action-btn success">
-            <i class="fas fa-check"></i> Save Student Changes
-          </button>
+        <div class="staff-modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <button type="button" class="staff-action-btn" style="color: #f87171; border-color: rgba(248, 113, 113, 0.4);" onclick="resetStudentPasswordPrompt()">
+              <i class="fas fa-key"></i> Reset Password
+            </button>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="staff-action-btn" onclick="closeEditModal()">Cancel</button>
+            <button type="submit" class="staff-action-btn success">
+              <i class="fas fa-check"></i> Save Student Changes
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -1102,9 +1109,14 @@
           <h3><i class="fas fa-users-cog" style="color:#c084fc; margin-right:0.4rem;"></i> Branch Staff &amp; Team</h3>
           <p style="margin:0.2rem 0 0; font-size:0.8rem; color:#94a3b8;">Oversee staff members and coordinators within your branch</p>
         </div>
-        <button type="button" onclick="closeBranchStaffModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;" title="Close">
-          <i class="fas fa-times"></i>
-        </button>
+        <div style="display:flex; align-items:center; gap: 1rem;">
+          <button type="button" class="staff-action-btn primary" onclick="openAddStaffModal()" id="addStaffModalBtn" style="display: none;">
+            <i class="fas fa-plus"></i> Add Staff
+          </button>
+          <button type="button" onclick="closeBranchStaffModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;" title="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
       </div>
       <div class="staff-modal-body">
         <div style="overflow-x: auto;">
@@ -1127,6 +1139,57 @@
       <div class="staff-modal-footer">
         <button type="button" class="staff-action-btn" onclick="closeBranchStaffModal()">Close</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <!-- MODAL: ADD NEW STAFF                                          -->
+  <!-- ═════════════════════════════════════════════════════════════ -->
+  <div class="staff-modal-backdrop" id="addStaffModal">
+    <div class="staff-modal-card" style="max-width: 500px;">
+      <div class="staff-modal-header">
+        <div>
+          <h3><i class="fas fa-user-shield" style="color:#34d399; margin-right:0.4rem;"></i> Create Staff Account</h3>
+        </div>
+        <button type="button" onclick="closeAddStaffModal()" style="background:none; border:none; color:#94a3b8; font-size:1.2rem; cursor:pointer;" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="addStaffForm" onsubmit="handleCreateStaff(event)">
+        <div class="staff-modal-body">
+          <div class="modal-form-group">
+            <label>Staff Full Name *</label>
+            <input type="text" id="newStaffName" required placeholder="e.g. Anisur Rahman">
+          </div>
+          <div class="modal-form-group">
+            <label>Google Email Address *</label>
+            <input type="email" id="newStaffEmail" required placeholder="staff@gmail.com">
+            <small style="color: #94a3b8; display: block; margin-top: 0.25rem;">Staff will use this Gmail account to Sign in with Google.</small>
+          </div>
+          <div class="modal-form-group">
+            <label>Branch *</label>
+            <select id="newStaffBranch" required>
+              <option value="Dinajpur">Dinajpur Branch</option>
+              <option value="Dhaka">Dhaka Branch</option>
+              <option value="Bogura">Bogura Branch</option>
+              <option value="Rangpur">Rangpur Branch</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label>Role *</label>
+            <select id="newStaffRole" required>
+              <option value="staff">Branch Staff / Counselor</option>
+              <option value="instructor">Instructor / Teacher</option>
+            </select>
+          </div>
+        </div>
+        <div class="staff-modal-footer">
+          <button type="button" class="staff-action-btn" onclick="closeAddStaffModal()">Cancel</button>
+          <button type="submit" class="staff-action-btn success">
+            <i class="fas fa-check"></i> Create Account
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

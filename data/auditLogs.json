@@ -1,5 +1,35 @@
 [
   {
+    "id": "log_1789311803107_ms99",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (instructor)",
+    "targetType": "user",
+    "targetId": "usr_inst_001",
+    "targetName": "Rahim Sensei (Tanaka)",
+    "performedBy": {
+      "name": "Rahim Sensei (Tanaka)",
+      "email": "instructor@fusion.com",
+      "role": "instructor",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-13T15:03:23.107Z"
+  },
+  {
+    "id": "log_1789310929211_0pl2",
+    "action": "user_login",
+    "details": "Logged in via Staff/Instructor portal (staff)",
+    "targetType": "user",
+    "targetId": "usr_staff_001",
+    "targetName": "Mahmudul Hasan",
+    "performedBy": {
+      "name": "Mahmudul Hasan",
+      "email": "staff@fusioneducation.com",
+      "role": "staff",
+      "branch": "Dinajpur"
+    },
+    "timestamp": "2026-09-13T14:48:49.211Z"
+  },
+  {
     "id": "log_1789142019236_f224",
     "action": "branch_deleted",
     "details": "Branch deleted: Dhaka Branch",

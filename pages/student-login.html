@@ -123,6 +123,25 @@
         </div>
     </div>
 
+    
+    <!-- Firebase JS SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnQ84TpNW1xFXfeeBU3LTt2LOWdRdt0Ck",
+            authDomain: "fusion-education-ac48c.firebaseapp.com",
+            projectId: "fusion-education-ac48c",
+            storageBucket: "fusion-education-ac48c.firebasestorage.app",
+            messagingSenderId: "860945627718",
+            appId: "1:860945627718:web:44c22695ff43c7d3fba847"
+        };
+        const app = initializeApp(firebaseConfig);
+        window.fbAuth = getAuth(app);
+        window.fbSignInWithEmailAndPassword = signInWithEmailAndPassword;
+    </script>
+    
     <script>
         function togglePassword() {
             const password = document.getElementById('password');
@@ -161,8 +180,10 @@
 
         // Determine correct endpoint based on current page origin
         function getApiUrl(path) {
-            if (window.location.port === '3000') return path;
-            return 'http://localhost:3000' + path;
+            if (window.location.port === '5500' || window.location.port === '5501') {
+                return window.location.protocol + '//' + window.location.hostname + ':3000' + path;
+            }
+            return path;
         }
 
         const demoStudentsDirectory = {
@@ -182,82 +203,61 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
 
-            const identifier = document.getElementById('studentIdentifier').value.trim();
+            let identifier = document.getElementById('studentIdentifier').value.trim();
             const password = document.getElementById('password').value;
+            let emailToUse = identifier;
 
             try {
-                // Try primary API
-                let endpoint = getApiUrl('/api/student/login');
-                let response = null;
-
-                try {
-                    response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ identifier, password }),
-                        credentials: 'include'
-                    });
-                } catch (netErr) {
-                    if (endpoint.startsWith('http://localhost:3000')) {
-                        try {
-                            response = await fetch('/api/student/login', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ identifier, password }),
-                                credentials: 'include'
-                            });
-                        } catch (e2) {}
+                // Check if it's an email, if not, lookup the email
+                if (!identifier.includes('@')) {
+                    const lookupRes = await fetch(getApiUrl('/api/auth/lookup-email?id=' + encodeURIComponent(identifier)));
+                    const lookupData = await lookupRes.json();
+                    if (lookupData.success && lookupData.email) {
+                        emailToUse = lookupData.email;
+                    } else {
+                        throw new Error('Student Registration Number not found.');
                     }
                 }
 
-                if (response && response.ok) {
-                    const result = await response.json();
-                    const student = result.student || {};
-                    const canonicalId = student.identifier || identifier;
-                    localStorage.setItem('studentIdentifier', canonicalId);
-                    sessionStorage.setItem('studentIdentifier', canonicalId);
+                // Wait for Firebase to be ready (it loads as a module)
+                let retries = 10;
+                while (!window.fbAuth && retries > 0) {
+                    await new Promise(r => setTimeout(r, 100));
+                    retries--;
+                }
+
+                if (!window.fbAuth) throw new Error('Firebase failed to load. Please refresh.');
+
+                // Firebase Auth Sign In
+                const userCredential = await window.fbSignInWithEmailAndPassword(window.fbAuth, emailToUse, password);
+                const idToken = await userCredential.user.getIdToken();
+
+                // Send Token to our Backend to create a Session Cookie
+                const backendRes = await fetch(getApiUrl('/api/auth/student'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idToken })
+                });
+
+                const backendData = await backendRes.json();
+                if (backendData.success) {
+                    localStorage.setItem('studentIdentifier', identifier);
+                    sessionStorage.setItem('studentIdentifier', identifier);
                     sessionStorage.setItem('student_authenticated', 'true');
                     
-                    showAlert(`Login successful! Welcome ${student.fullName || canonicalId}. Redirecting...`, true);
+                    showAlert('Login successful! Redirecting...', true);
                     setTimeout(() => {
-                        window.location.href = 'student-dashboard.html';
-                    }, 400);
-                    return;
-                } else if (response && response.status !== 404) {
-                    const result = await response.json().catch(() => ({}));
-                    showAlert(result.error || 'Invalid student credentials. Please try again.');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In to Portal';
-                    return;
+                        window.location.href = backendData.redirect || 'student-dashboard.html';
+                    }, 500);
+                } else {
+                    throw new Error(backendData.error || 'Server rejected login.');
                 }
-
-                // Resilient local fallback if server cannot be reached / Live Server Static Mode
-                const cleanInput = identifier.toLowerCase();
-                const matched = demoStudentsDirectory[cleanInput];
-                const validPasses = ['password123', '123456', 'student123'];
-
-                if (!validPasses.includes(password)) {
-                    showAlert('Invalid password. (Demo password: password123)');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In to Portal';
-                    return;
-                }
-
-                const canonicalId = matched ? matched.identifier : identifier;
-                localStorage.setItem('studentIdentifier', canonicalId);
-                sessionStorage.setItem('studentIdentifier', canonicalId);
-                sessionStorage.setItem('student_authenticated', 'true');
-
-                showAlert(`Welcome back, ${matched ? matched.fullName : canonicalId}! Redirecting...`, true);
-                setTimeout(() => {
-                    window.location.href = 'student-dashboard.html';
-                }, 400);
 
             } catch (err) {
-                // Safety fallback
-                localStorage.setItem('studentIdentifier', identifier);
-                sessionStorage.setItem('studentIdentifier', identifier);
-                window.location.href = 'student-dashboard.html';
+                console.error(err);
+                showAlert(err.message || 'Invalid credentials. Please check your password.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In to Portal';
             }
         });
     </script>

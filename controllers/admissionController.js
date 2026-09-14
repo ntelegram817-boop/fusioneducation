@@ -3,35 +3,19 @@
 // Handles multi-file uploads (photo + up to 4+ documents), application tracking, and persistence
 // ============================================================
 const { saveUploadedFile } = require('../middleware/upload');
-const path = require('path');
-const fs   = require('fs').promises;
-
-const COUNTER_FILE = path.join(__dirname, '../data/admissionCounter.json');
-const ADMISSIONS_FILE = path.join(__dirname, '../data/admissions.json');
-
-// ── Ensure data directory & files exist ─────────────────────
-async function ensureDataFiles() {
-    const dataDir = path.join(__dirname, '../data');
-    try { await fs.mkdir(dataDir, { recursive: true }); } catch (_) {}
-
-    try { await fs.access(COUNTER_FILE); }
-    catch (_) { await fs.writeFile(COUNTER_FILE, JSON.stringify({ year: new Date().getFullYear(), seq: 0 }, null, 2)); }
-
-    try { await fs.access(ADMISSIONS_FILE); }
-    catch (_) { await fs.writeFile(ADMISSIONS_FILE, JSON.stringify([], null, 2)); }
-}
+const fbDb = require('../utils/firebaseDb');
 
 // ── Generate unique application number FEBD-YYYY-NNN ─────────
 async function generateAppNumber() {
     const currentYear = new Date().getFullYear();
-    let counter;
+    let counter = { year: currentYear, seq: 0 };
 
     try {
-        const raw = await fs.readFile(COUNTER_FILE, 'utf8');
-        counter = JSON.parse(raw);
-    } catch (_) {
-        counter = { year: currentYear, seq: 0 };
-    }
+        const doc = await fbDb.db.collection('admissionCounter').doc('default').get();
+        if (doc.exists) {
+            counter = doc.data();
+        }
+    } catch (_) {}
 
     if (counter.year !== currentYear) {
         counter.year = currentYear;
@@ -39,7 +23,7 @@ async function generateAppNumber() {
     }
 
     counter.seq += 1;
-    await fs.writeFile(COUNTER_FILE, JSON.stringify(counter, null, 2));
+    await fbDb.writeSingleDocument('admissionCounter', 'default', counter);
 
     const padded = String(counter.seq).padStart(3, '0');
     return `FEBD-${currentYear}-${padded}`;
@@ -48,7 +32,6 @@ async function generateAppNumber() {
 // ── POST /api/admission/submit ────────────────────────────────
 async function submitAdmission(req, res) {
     try {
-        await ensureDataFiles();
 
         // ── Upload photo ─────────────────────────────────────
         let photoUrl = null;
@@ -137,15 +120,29 @@ async function submitAdmission(req, res) {
             ipAddress: req.ip
         };
 
-        // ── Persist to local JSON ────────────────────────────
-        let admissions = [];
-        try {
-            const raw = await fs.readFile(ADMISSIONS_FILE, 'utf8');
-            admissions = JSON.parse(raw);
-        } catch (_) { admissions = []; }
+        // ── Persist to Firebase ────────────────────────────
+        let admissions = await fbDb.readData('admissions');
+        if (!admissions) admissions = [];
 
         admissions.unshift(admission);
-        await fs.writeFile(ADMISSIONS_FILE, JSON.stringify(admissions, null, 2));
+        await fbDb.writeData('admissions', admissions);
+
+        // CREATE FIREBASE AUTH ACCOUNT FOR THE STUDENT
+        try {
+            const defaultPassword = req.body.phone || 'FEBD2026';
+            await fbDb.getAuth().createUser({
+                uid: applicationNumber,
+                email: req.body.email,
+                emailVerified: false,
+                password: defaultPassword,
+                displayName: req.body.fullName,
+                disabled: false,
+            });
+            console.log('Firebase Auth created for:', req.body.email);
+        } catch (authErr) {
+            console.error('Error creating Firebase Auth user:', authErr.message);
+            // It might already exist, or invalid email. Proceed anyway.
+        }
 
         return res.status(201).json({
             success:           true,

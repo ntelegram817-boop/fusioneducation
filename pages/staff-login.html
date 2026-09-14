@@ -26,75 +26,46 @@
       border: 1px solid rgba(148, 163, 184, 0.18);
       backdrop-filter: blur(18px);
       border-radius: 20px;
-      padding: 2rem;
+      padding: 2.5rem 2rem;
       box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+      text-align: center;
     }
 
     .login-shell h1 {
-      margin: 0 0 0.5rem;
+      margin: 1rem 0 0.5rem;
       font-size: 1.55rem;
       font-weight: 700;
       color: #fff;
     }
 
     .login-shell p {
-      margin: 0 0 1.5rem;
+      margin: 0 0 2rem;
       color: #94a3b8;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       line-height: 1.5;
     }
 
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #cbd5e1;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      border-radius: 10px;
-      color: #f8fafc;
-      font-size: 0.95rem;
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-    }
-
-    .btn-primary {
+    .btn-google {
       width: 100%;
       padding: 0.85rem;
       border-radius: 10px;
-      border: none;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
       color: #fff;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 1rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      transition: all 0.2s;
+      gap: 0.75rem;
+      transition: all 0.3s;
     }
 
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #1d4ed8, #1e40af);
-      transform: translateY(-1px);
+    .btn-google:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
     }
 
     .alert {
@@ -102,7 +73,8 @@
       border-radius: 10px;
       font-size: 0.9rem;
       display: none;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
+      text-align: left;
     }
 
     .alert--error {
@@ -120,318 +92,110 @@
 </head>
 <body>
   <main class="login-shell">
-    <div style="text-align: center; margin-bottom: 1.5rem;">
+    <div style="text-align: center; margin-bottom: 1rem;">
       <a href="../index.html" style="display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; margin-bottom: 0.5rem;">
-        <img src="../assets/images/logo.jpg" alt="Fusion Logo" style="height: 44px; width: 44px; border-radius: 10px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        <img src="../assets/images/logo.jpg" alt="Fusion Logo" style="height: 52px; width: 52px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
         <div style="text-align: left;">
-          <div style="font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 700; color: #FFFFFF; line-height: 1.2;">
+          <div style="font-family: 'Poppins', sans-serif; font-size: 1.35rem; font-weight: 700; color: #FFFFFF; line-height: 1.2;">
             Fusion <span style="color: #E60012;">Education</span>
           </div>
-          <span style="font-size: 0.72rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Staff Portal</span>
+          <span style="font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Staff Portal</span>
         </div>
       </a>
     </div>
-    <h1>Staff Login</h1>
-    <p>Sign in with your staff credentials and select your active branch.</p>
+    
+    <h1>Welcome Back, Staff</h1>
+    <p>Sign in using your authorized Google Workspace account to access the dashboard.</p>
 
-    <!-- Demo Credentials Box -->
-    <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 0.9rem; margin-bottom: 1.25rem; font-size: 0.82rem; color: #bae6fd;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-        <strong style="color: #fff;"><i class="fas fa-id-badge" style="margin-right: 0.35rem;"></i> Quick Demo Accounts:</strong>
-      </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.5rem;">
-        <button type="button" onclick="fillStaff('instructor@fusion.com', 'password123', 'Dinajpur')" style="background: rgba(168, 85, 247, 0.25); border: 1px solid rgba(168, 85, 247, 0.5); color: #e9d5ff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
-          👨‍🏫 Dinajpur Sensei
-        </button>
-        <button type="button" onclick="fillStaff('dhaka.instructor@fusion.com', 'password123', 'Dhaka')" style="background: rgba(168, 85, 247, 0.25); border: 1px solid rgba(168, 85, 247, 0.5); color: #e9d5ff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
-          👨‍🏫 Dhaka Sensei
-        </button>
-        <button type="button" onclick="fillStaff('staff@fusioneducation.com', 'staff123', 'Dinajpur')" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
-          💼 Dinajpur Staff
-        </button>
-        <button type="button" onclick="fillStaff('bogura@fusion.com', 'password123', 'Bogura')" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
-          💼 Bogura Staff
-        </button>
-        <button type="button" onclick="fillStaff('rangpur.staff@fusion.com', 'password123', 'Rangpur')" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.4); color: #fff; border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.78rem; cursor: pointer;">
-          💼 Rangpur Staff
-        </button>
-      </div>
-      <div style="font-size: 0.76rem; color: #94a3b8;">
-        Pass: <code style="color: #fff; background: rgba(0,0,0,0.3); padding: 0.1rem 0.25rem; border-radius: 4px;">password123</code> or <code style="color: #fff; background: rgba(0,0,0,0.3); padding: 0.1rem 0.25rem; border-radius: 4px;">staff123</code>
-      </div>
+    <!-- Branch Selection before login -->
+    <div style="text-align: left; margin-bottom: 1.5rem;">
+      <label for="staffBranch" style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 600; color: #cbd5e1;">Select your Active Branch:</label>
+      <select id="staffBranch" style="width: 100%; padding: 0.75rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 8px; color: #fff; font-size: 0.95rem;">
+        <option value="Dinajpur">Dinajpur Branch</option>
+        <option value="Dhaka">Dhaka Branch</option>
+        <option value="Bogura">Bogura Branch</option>
+        <option value="Rangpur">Rangpur Branch</option>
+      </select>
     </div>
 
-    <form id="staffLoginForm">
-      <div class="form-group">
-        <label for="staffEmail">Staff Email</label>
-        <input id="staffEmail" type="email" autocomplete="username" required placeholder="staff@fusioneducation.com" />
-      </div>
-
-      <div class="form-group">
-        <label for="staffPassword">Password</label>
-        <input id="staffPassword" type="password" autocomplete="current-password" required placeholder="Enter password" />
-      </div>
-
-      <div class="form-group">
-        <label for="staffBranch">Active Branch</label>
-        <select id="staffBranch" required>
-          <option value="Dinajpur">Dinajpur Branch</option>
-          <option value="Dhaka">Dhaka Branch</option>
-          <option value="Bogura">Bogura Branch</option>
-          <option value="Rangpur">Rangpur Branch</option>
-        </select>
-      </div>
-
-      <button id="staffSubmitBtn" class="btn-primary" type="submit"><i class="fas fa-sign-in-alt"></i> Continue to Dashboard</button>
-    </form>
+    <button id="googleSignInBtn" class="btn-google" type="button">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; height: 20px;">
+      Sign in with Google
+    </button>
 
     <div id="loginAlert" class="alert alert--error"></div>
 
-    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.85rem;">
+    <div style="margin-top: 2rem; font-size: 0.85rem;">
       <a href="../index.html" style="color: #94a3b8; text-decoration: none;">← Back to Home</a>
     </div>
   </main>
 
-  <script>
-    function getApiUrl(path) {
-      if (window.location.port === '3000') return path;
-      return 'http://localhost:3000' + path;
-    }
+  <!-- Firebase JS SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnQ84TpNW1xFXfeeBU3LTt2LOWdRdt0Ck",
+      authDomain: "fusion-education-ac48c.firebaseapp.com",
+      projectId: "fusion-education-ac48c",
+      storageBucket: "fusion-education-ac48c.firebasestorage.app",
+      messagingSenderId: "860945627718",
+      appId: "1:860945627718:web:44c22695ff43c7d3fba847"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-    async function loadStaffBranches() {
-      const select = document.getElementById('staffBranch');
-      if (!select) return;
-      try {
-        let endpoint = getApiUrl('/api/branches');
-        const res = await fetch(endpoint);
-        if (res.ok) {
-          const data = await res.json();
-          const branches = data.branches || [];
-          if (Array.isArray(branches) && branches.length > 0) {
-            const currentVal = select.value;
-            select.innerHTML = '';
-            branches.forEach(b => {
-              const bName = b.name || b.displayName || '';
-              const bDisplay = b.displayName || (bName ? (bName.charAt(0).toUpperCase() + bName.slice(1) + ' Branch') : 'Branch');
-              const opt = document.createElement('option');
-              opt.value = bName;
-              opt.textContent = bDisplay;
-              select.appendChild(opt);
-            });
-            if (currentVal && select.querySelector('option[value="' + currentVal + '"]')) {
-              select.value = currentVal;
-            }
-          }
+    const getApiUrl = (path) => {
+        if (window.location.port === '5500' || window.location.port === '5501') {
+            return window.location.protocol + '//' + window.location.hostname + ':3000' + path;
         }
-      } catch (err) {
-        console.warn('Could not load dynamic branches for staff login:', err);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', loadStaffBranches);
-
-    function fillStaff(email, pass, branch) {
-      document.getElementById('staffEmail').value = email;
-      document.getElementById('staffPassword').value = pass;
-      const branchSel = document.getElementById('staffBranch');
-      if (branchSel) {
-        if (!branchSel.querySelector(`option[value="${branch}"]`)) {
-          const opt = document.createElement('option');
-          opt.value = branch;
-          opt.textContent = `${branch} Branch`;
-          branchSel.appendChild(opt);
-        }
-        branchSel.value = branch;
-      }
-    }
-
-    const demoStaffDirectory = {
-      'staff@fusioneducation.com': { 
-        password: 'staff123', 
-        name: 'Mahmudul Hasan', 
-        branch: 'Dinajpur', 
-        role: 'staff',
-        position: 'Branch Counselor',
-        permissions: ['view_students', 'edit_students', 'manage_admissions', 'counseling', 'view_fees', 'manage_fees', 'view_reports']
-      },
-      'instructor@fusion.com': { 
-        password: 'password123', 
-        name: 'Rahim Sensei (Tanaka)', 
-        branch: 'Dinajpur', 
-        role: 'instructor',
-        position: 'Head Japanese Instructor',
-        permissions: ['view_students', 'edit_students', 'manage_attendance', 'manage_batches', 'manage_routines', 'manage_academic_progress', 'manage_admissions', 'manage_readmissions', 'counseling', 'view_fees', 'manage_fees', 'custom_student_fee', 'view_documents', 'manage_documents', 'view_staff', 'edit_staff', 'manage_staff_permissions', 'view_reports', 'export_reports']
-      },
-      'dinajpur@fusion.com': { 
-        password: 'password123', 
-        name: 'Tariqul Islam', 
-        branch: 'Dinajpur', 
-        role: 'staff',
-        position: 'Academic Coordinator',
-        permissions: ['view_students', 'manage_admissions', 'counseling', 'view_fees', 'view_reports']
-      },
-      'dhaka.instructor@fusion.com': { 
-        password: 'password123', 
-        name: 'Kenji Sato', 
-        branch: 'Dhaka', 
-        role: 'instructor',
-        position: 'Senior Japanese Instructor',
-        permissions: ['view_students', 'edit_students', 'manage_attendance', 'manage_batches', 'manage_routines', 'manage_academic_progress', 'view_documents', 'view_fees', 'view_reports']
-      },
-      'dhaka.staff@fusion.com': { 
-        password: 'password123', 
-        name: 'Farhana Ahmed', 
-        branch: 'Dhaka', 
-        role: 'staff',
-        position: 'Branch Counselor',
-        permissions: ['view_students', 'edit_students', 'manage_admissions', 'counseling', 'view_fees', 'manage_fees']
-      },
-      'bogura@fusion.com': { 
-        password: 'password123', 
-        name: 'Nusrat Jahan', 
-        branch: 'Bogura', 
-        role: 'staff',
-        position: 'Branch Manager',
-        permissions: ['view_students', 'edit_students', 'manage_admissions', 'counseling', 'view_fees', 'manage_fees', 'view_reports', 'export_reports']
-      },
-      'rangpur.staff@fusion.com': { 
-        password: 'password123', 
-        name: 'Kamal Hossain', 
-        branch: 'Rangpur', 
-        role: 'staff',
-        position: 'Branch Counselor',
-        permissions: ['view_students', 'manage_admissions', 'counseling', 'view_fees']
-      }
+        return path;
     };
 
-    const loginForm = document.getElementById('staffLoginForm');
-    const loginAlert = document.getElementById('loginAlert');
-    const submitBtn = document.getElementById('staffSubmitBtn');
-
-    loginForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      loginAlert.style.display = 'none';
-
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-
-      const email = document.getElementById('staffEmail').value.trim();
-      const password = document.getElementById('staffPassword').value;
+    document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+      const alertEl = document.getElementById('loginAlert');
+      const btn = document.getElementById('googleSignInBtn');
       const branch = document.getElementById('staffBranch').value;
-
-      const payload = { email, password, branch };
+      
+      alertEl.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
 
       try {
-        let endpoint = getApiUrl('/api/staff/login');
-        let response = null;
-
-        try {
-          response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            credentials: 'include'
-          });
-        } catch (netErr) {
-          if (endpoint.startsWith('http://localhost:3000')) {
-            try {
-              response = await fetch('/api/staff/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                credentials: 'include'
-              });
-            } catch (e2) {}
-          }
-        }
-
-        const cleanEmail = email.toLowerCase();
-        const demoStaff = demoStaffDirectory[cleanEmail];
-
-        if (response && response.ok) {
-          const result = await response.json();
-          const staffName = (result.staff && result.staff.name) ? result.staff.name : (demoStaff?.name || email.split('@')[0].toUpperCase());
-          const staffRole = (result.staff && result.staff.role) ? result.staff.role : (demoStaff?.role || 'staff');
-          const staffPermissions = (result.staff && result.staff.permissions && result.staff.permissions.length > 0) ? result.staff.permissions : (demoStaff?.permissions || []);
-          const staffPosition = demoStaff?.position || (staffRole === 'instructor' ? 'Japanese Instructor' : 'Branch Counselor');
+        const result = await signInWithPopup(auth, provider);
+        const idToken = await result.user.getIdToken();
+        
+        // Verify with backend
+        const res = await fetch(getApiUrl('/api/auth/staff'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken, branch })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          alertEl.className = 'alert alert--success';
+          alertEl.textContent = 'Login successful! Redirecting...';
+          alertEl.style.display = 'block';
           
-          sessionStorage.setItem('fusion_staff_session', 'true');
-          sessionStorage.setItem('fusion_staff_email', email);
-          sessionStorage.setItem('fusion_staff_branch', branch);
-          sessionStorage.setItem('fusion_staff_name', staffName);
-          sessionStorage.setItem('fusion_staff_role', staffRole);
-          sessionStorage.setItem('fusion_staff_position', staffPosition);
-          sessionStorage.setItem('fusion_staff_permissions', JSON.stringify(staffPermissions));
-
-          localStorage.setItem('fusion_staff_branch', branch);
-          localStorage.setItem('fusion_staff_email', email);
-          localStorage.setItem('fusion_staff_name', staffName);
-          localStorage.setItem('fusion_staff_role', staffRole);
-          localStorage.setItem('fusion_staff_position', staffPosition);
-          localStorage.setItem('fusion_staff_permissions', JSON.stringify(staffPermissions));
-
-          loginAlert.className = 'alert alert--success';
-          loginAlert.textContent = `Welcome ${staffName}! Redirecting to ${staffPosition} Portal (${branch} Branch)...`;
-          loginAlert.style.display = 'block';
           setTimeout(() => {
-            window.location.href = 'staff-dashboard.html';
-          }, 350);
-          return;
-        } else if (response && response.status !== 404) {
-          const result = await response.json().catch(() => ({}));
-          loginAlert.className = 'alert alert--error';
-          loginAlert.textContent = result.error || 'Login failed. Please check your staff email and password.';
-          loginAlert.style.display = 'block';
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Continue to Dashboard';
-          return;
+            window.location.href = data.redirect || 'staff-dashboard.html';
+          }, 500);
+        } else {
+          throw new Error(data.error || 'Server rejected login.');
         }
-
-        // Offline / Live Server Static Mode Fallback
-        const validPasses = ['staff123', 'password123', 'admin123', '123456'];
-        if (demoStaff && demoStaff.password) validPasses.unshift(demoStaff.password);
-
-        if (!validPasses.includes(password)) {
-          loginAlert.className = 'alert alert--error';
-          loginAlert.textContent = 'Invalid password. (Demo password: staff123 or password123)';
-          loginAlert.style.display = 'block';
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Continue to Dashboard';
-          return;
-        }
-
-        const staffName = demoStaff ? demoStaff.name : email.split('@')[0].toUpperCase();
-        const staffRole = demoStaff ? demoStaff.role : 'staff';
-        const staffPosition = demoStaff?.position || (staffRole === 'instructor' ? 'Japanese Instructor' : 'Branch Counselor');
-        const staffPermissions = demoStaff?.permissions || [];
-
-        sessionStorage.setItem('fusion_staff_session', 'true');
-        sessionStorage.setItem('fusion_staff_email', email);
-        sessionStorage.setItem('fusion_staff_branch', branch);
-        sessionStorage.setItem('fusion_staff_name', staffName);
-        sessionStorage.setItem('fusion_staff_role', staffRole);
-        sessionStorage.setItem('fusion_staff_position', staffPosition);
-        sessionStorage.setItem('fusion_staff_permissions', JSON.stringify(staffPermissions));
-
-        localStorage.setItem('fusion_staff_branch', branch);
-        localStorage.setItem('fusion_staff_email', email);
-        localStorage.setItem('fusion_staff_name', staffName);
-        localStorage.setItem('fusion_staff_role', staffRole);
-        localStorage.setItem('fusion_staff_position', staffPosition);
-        localStorage.setItem('fusion_staff_permissions', JSON.stringify(staffPermissions));
-
-        loginAlert.className = 'alert alert--success';
-        loginAlert.textContent = `Welcome ${staffName}! Redirecting to ${staffPosition} Portal (${branch} Branch)...`;
-        loginAlert.style.display = 'block';
-        setTimeout(() => {
-          window.location.href = 'staff-dashboard.html';
-        }, 350);
-
       } catch (error) {
-        sessionStorage.setItem('fusion_staff_session', 'true');
-        sessionStorage.setItem('fusion_staff_email', email);
-        sessionStorage.setItem('fusion_staff_branch', branch);
-        window.location.href = 'staff-dashboard.html';
+        console.error('Login error:', error);
+        alertEl.className = 'alert alert--error';
+        alertEl.textContent = error.message || 'Authentication failed. Please try again or contact Admin.';
+        alertEl.style.display = 'block';
+        
+        btn.disabled = false;
+        btn.innerHTML = `<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; height: 20px;"> Sign in with Google`;
       }
     });
   </script>

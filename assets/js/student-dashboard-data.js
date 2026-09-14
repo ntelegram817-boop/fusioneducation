@@ -204,8 +204,10 @@ window.switchPortalTab = function (tabId) {
   let currentStudentData = null;
 
   function getApiBase() {
-    if (window.location.port === '3000') return '';
-    return 'http://localhost:3000';
+    if (window.location.port === '5500' || window.location.port === '5501') {
+        return window.location.protocol + '//' + window.location.hostname + ':3000';
+    }
+    return '';
   }
 
   // Setup tab listeners
