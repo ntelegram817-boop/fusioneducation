@@ -56,8 +56,8 @@ app.use('/.env', (req, res) => {
     return res.status(403).json({ success: false, error: 'Access denied.' });
 });
 
-// Cache static assets for 1 day
-app.use(express.static(__dirname, { maxAge: '1d' }));
+// Cache static assets for 1 day only in production, no cache in development
+app.use(express.static(__dirname, { maxAge: IS_DEV ? 0 : '1d' }));
 
 // ── Trust proxy (for correct IP in rate limiter) ─────────────
 app.set('trust proxy', 1);
