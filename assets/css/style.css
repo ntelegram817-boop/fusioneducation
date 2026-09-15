@@ -2060,6 +2060,13 @@ footer {
 @media (max-width: 991px) {
   .desktop-view-wrapper .hero {
     padding-top: 28rem !important;
-    padding-bottom: 18rem !important;
+    padding-bottom: 8rem !important;
   }
+}
+
+/* SAFARI ZOOM GRID FIX (Prevents auto-fit bug on iOS) */
+@media (max-width: 991px) {
+  .desktop-view-wrapper .grid-2 { grid-template-columns: repeat(2, 1fr) !important; }
+  .desktop-view-wrapper .grid-3 { grid-template-columns: repeat(3, 1fr) !important; }
+  .desktop-view-wrapper .grid-4 { grid-template-columns: repeat(4, 1fr) !important; }
 }
