@@ -2043,3 +2043,21 @@ footer {
   width: 28px;
   border-radius: 10px;
 }
+/* HYBRID MOBILE LAYOUT OVERRIDES */
+@media (max-width: 991px) {
+  html, body {
+    overflow-x: auto !important;
+  }
+  
+  body > *:not(header) {
+    min-width: 1024px !important;
+  }
+  
+  header {
+    width: 100vw !important;
+    position: sticky !important;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+}
