@@ -2043,24 +2043,20 @@ footer {
   width: 28px;
   border-radius: 10px;
 }
-}/* DESKTOP-TO-MOBILE ZOOM WRAPPER */
+}
+/* DESKTOP-TO-MOBILE ZOOM WRAPPER */
 @media (max-width: 991px) {
   html, body {
-    overflow-x: hidden !important; /* hide any horizontal scroll caused by zooming */
+    overflow-x: hidden !important;
   }
-
   .desktop-view-wrapper {
     width: 1280px !important;
     max-width: 1280px !important;
     transform-origin: top left;
-    
-  }
-  
-  
   }
 }
 
-/* HERO MOBILE FIX (Compensates for the desktop zoom effect) */
+/* HERO MOBILE FIX */
 @media (max-width: 991px) {
   .desktop-view-wrapper .hero {
     padding-top: 28rem !important;
