@@ -43,165 +43,7 @@ window.switchPortalTab = function (tabId) {
   'use strict';
 
   // Demo fallback student profiles in case offline or testing
-  const DEMO_STUDENTS = {
-    "FEBD-2026-003": {
-      identifier: "FEBD-2026-003",
-      email: "manik2025245@gmail.com",
-      fullName: "Manik I",
-      fatherName: "Abdur Rahim",
-      motherName: "Fatema Begum",
-      dateOfBirth: "2002-04-15",
-      occupation: "Student",
-      religion: "Islam",
-      phone: "01723372217",
-      bloodGroup: "B+",
-      address: "Dinajpur 5230",
-      permanentAddress: "Vill: Gopinathpur, Upazila: Dinajpur Sadar, Dist: Dinajpur",
-      branch: "Dinajpur",
-      photo: "/uploads/photos/1788258943110_t5u450.jpg",
-      status: "Active Student",
-      currentCourse: "JLPT N5 - Beginner",
-      courseLevel: "Beginner (N5)",
-      batch: "Batch 14 - JLPT N5 Morning",
-      instructor: "Tanaka Sensei",
-      progressPercent: 35,
-      nextClass: {
-        topic: "JLPT N5 Grammar: Lesson 03 & Hiragana Review",
-        time: "Tomorrow at 09:30 AM",
-        room: "Room 102, Dinajpur Campus & Zoom"
-      },
-      attendance: { attended: 6, total: 6, rate: "100%" },
-      fees: { total: "15,000 BDT", paid: "1,000 BDT", due: "14,000 BDT", status: "Partially Paid" },
-      payments: [
-        { id: "TXN-89421", date: "2026-09-01", amount: 1000, method: "bKash", note: "Admission Deposit", recordedBy: "Campus Accounts" }
-      ],
-      visaApplication: {
-        status: "Document Verification",
-        university: "Tokyo International Language Academy",
-        intake: "October 2026 Intake",
-        step: 2,
-        steps: [
-          { title: "Application Submitted", done: true, date: "01 Sep 2026" },
-          { title: "Document Verification", done: true, date: "Verified" },
-          { title: "Translation & Legalization", done: false, date: "In Progress" },
-          { title: "COE Application to Japan Immigration", done: false, date: "Pending" },
-          { title: "Embassy Visa Stamp", done: false, date: "Pending" }
-        ]
-      },
-      assignments: [
-        { id: "asg_m1", title: "Hiragana & Katakana Stroke Order Sheet", dueDate: "In 3 days", status: "Pending", maxScore: 25 }
-      ],
-      messages: [
-        { from: "Dinajpur Branch Desk", text: "Your enrollment in Batch 14 - JLPT N5 Morning is confirmed! Counseling verified.", time: "Today" }
-      ]
-    },
-    "FEBD-2026-002": {
-      identifier: "FEBD-2026-002",
-      email: "shakil@example.com",
-      fullName: "Md Shakil",
-      fatherName: "Kalam Hossain",
-      motherName: "Salma Begum",
-      dateOfBirth: "2001-11-20",
-      occupation: "Student",
-      religion: "Islam",
-      phone: "01712345678",
-      bloodGroup: "O+",
-      address: "House 12, Road 4, Dinajpur",
-      permanentAddress: "Dinajpur Sadar, Dinajpur",
-      branch: "Dinajpur",
-      photo: "/uploads/photos/1788258781808_6d8v97.jpg",
-      status: "Application Under Review",
-      currentCourse: "JLPT N5 - Beginner",
-      courseLevel: "Beginner (N5)",
-      batch: "Upcoming Intake",
-      instructor: "Tanaka Sensei",
-      progressPercent: 15,
-      nextClass: {
-        topic: "Orientation Briefing & Class Routine",
-        time: "Sunday at 10:00 AM",
-        room: "Campus & Online"
-      },
-      attendance: { attended: 0, total: 0, rate: "100%" },
-      fees: { total: "15,000 BDT", paid: "5,000 BDT", due: "10,000 BDT", status: "Partially Paid" },
-      payments: [
-        { id: "TXN-88102", date: "2026-08-28", amount: 5000, method: "Cash Desk", note: "Seat Booking Deposit", recordedBy: "Mahmudul Hasan" }
-      ],
-      visaApplication: {
-        status: "Document Verification",
-        university: "Tokyo International Language Academy",
-        intake: "October 2026 Intake",
-        step: 1,
-        steps: [
-          { title: "Application Submitted", done: true, date: "28 Aug 2026" },
-          { title: "Document Verification", done: false, date: "In Review" },
-          { title: "COE Application", done: false, date: "Pending" }
-        ]
-      },
-      assignments: [],
-      messages: [
-        { from: "Admin Desk", text: "Welcome to Fusion Education BD! Your admission application is being processed.", time: "Recent" }
-      ]
-    },
-    "FE-2024-001": {
-      identifier: "FE-2024-001",
-      email: "student@fusion.com",
-      fullName: "Amit Rahman",
-      fatherName: "Abul Kashem Rahman",
-      motherName: "Monowara Begum",
-      dateOfBirth: "2000-08-14",
-      occupation: "Job Holder (Private)",
-      religion: "Islam",
-      phone: "+880 1712 345678",
-      bloodGroup: "O+",
-      address: "House 12, Road 4, Dinajpur",
-      permanentAddress: "House 12, Road 4, Dinajpur 5200",
-      branch: "Dinajpur Campus",
-      photo: "../assets/images/student-placeholder.jpg",
-      status: "Active Student",
-      currentCourse: "JLPT N4 - Intermediate Japanese",
-      courseLevel: "Intermediate (N4)",
-      batch: "Batch 2024-N4-D01",
-      instructor: "Tanaka Sensei",
-      progressPercent: 68,
-      nextClass: {
-        topic: "Grammar: Lesson 14 (~te kudasai / ~nakereba narimasen)",
-        time: "Tomorrow at 10:00 AM",
-        room: "Room 102 & Zoom Online"
-      },
-      attendance: { attended: 28, total: 32, rate: "87.5%" },
-      fees: { total: "18,000 BDT", paid: "18,000 BDT", due: "0 BDT", status: "Paid in Full" },
-      payments: [
-        { id: "TXN-74190", date: "2026-01-15", amount: 9000, method: "bKash", note: "1st Installment", recordedBy: "Accounts" },
-        { id: "TXN-76832", date: "2026-02-20", amount: 9000, method: "Bank Transfer", note: "Final Installment", recordedBy: "Accounts" }
-      ],
-      visaApplication: {
-        status: "COE Applied",
-        university: "Tokyo International Language Academy",
-        intake: "October 2026 Intake",
-        step: 3,
-        steps: [
-          { title: "Document Verification", done: true, date: "10 Jan 2026" },
-          { title: "Translation & Legalization", done: true, date: "02 Feb 2026" },
-          { title: "COE Application to Japan Immigration", done: true, date: "15 Feb 2026" },
-          { title: "COE Issuance", done: false, date: "Expected April 2026" },
-          { title: "Embassy Visa Stamp", done: false, date: "Pending" }
-        ]
-      },
-      assignments: [
-        { id: "asg_1", title: "Kanji Practice: Kanji Chapters 8-10 (40 Characters)", dueDate: "In 2 days", status: "Pending", maxScore: 25 },
-        { id: "asg_2", title: "Listening Comprehension: Monologue & Dialogues N4", dueDate: "Next Monday", status: "Pending", maxScore: 50 },
-        { id: "asg_3", title: "JLPT N4 Mock Test 1", dueDate: "Completed", status: "Graded", score: "86/100" }
-      ],
-      messages: [
-        { from: "Tanaka Sensei (Instructor)", text: "Great job in yesterday's speaking session. Please memorize Kanji list 9 before next class.", time: "Yesterday" },
-        { from: "Visa Desk (Admin)", text: "Your academic transcript translation is verified. COE submission is in progress.", time: "3 days ago" },
-        { from: "Academic Office", text: "Mid-term mock test scheduled for 25th of this month.", time: "1 week ago" }
-      ]
-    }
-  };
-
-  const DEMO_STUDENT = DEMO_STUDENTS["FE-2024-001"];
-  let currentStudentData = null;
+let currentStudentData = null;
 
   function getApiBase() {
     if (window.location.port === '5500' || window.location.port === '5501') {
@@ -263,7 +105,7 @@ window.switchPortalTab = function (tabId) {
   }
 
   // Load student profile from API
-  async function loadStudentProfile() {
+    async function loadStudentProfile() {
     let identifier = localStorage.getItem('studentIdentifier') || sessionStorage.getItem('studentIdentifier');
     
     const urlParams = new URLSearchParams(window.location.search);
@@ -273,23 +115,13 @@ window.switchPortalTab = function (tabId) {
     }
 
     if (!identifier) {
-      identifier = "FE-2024-001";
+      window.location.href = 'student-login.html';
+      return;
     }
-
-    const findLocalFallback = (id) => {
-      const clean = String(id).trim().toUpperCase();
-      if (DEMO_STUDENTS[clean]) return DEMO_STUDENTS[clean];
-      for (const key in DEMO_STUDENTS) {
-        if (DEMO_STUDENTS[key].email.toLowerCase() === String(id).trim().toLowerCase()) {
-          return DEMO_STUDENTS[key];
-        }
-      }
-      return JSON.parse(localStorage.getItem('cached_student_profile') || 'null') || DEMO_STUDENT;
-    };
 
     try {
       const apiBase = getApiBase();
-      const res = await fetch(`${apiBase}/api/student/profile?identifier=${encodeURIComponent(identifier)}`, {
+      const res = await fetch(${apiBase}/api/student/profile?identifier=, {
         credentials: 'include'
       });
 
@@ -297,10 +129,13 @@ window.switchPortalTab = function (tabId) {
         const data = await res.json();
         currentStudentData = data.student || data;
       } else {
-        currentStudentData = findLocalFallback(identifier);
+        window.location.href = 'student-login.html';
+        return;
       }
     } catch (err) {
-      currentStudentData = findLocalFallback(identifier);
+      console.error(err);
+      window.location.href = 'student-login.html';
+      return;
     }
 
     if (currentStudentData) {

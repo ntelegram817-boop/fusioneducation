@@ -1049,5 +1049,33 @@
     applyDesktopZoom();
   })();
 </script>
+    <!-- Firebase Auth Protection -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnQ84TpNW1xFXfeeBU3LTt2LOWdRdt0Ck",
+            authDomain: "fusion-education-ac48c.firebaseapp.com",
+            projectId: "fusion-education-ac48c",
+            storageBucket: "fusion-education-ac48c.firebasestorage.app",
+            messagingSenderId: "860945627718",
+            appId: "1:860945627718:web:44c22695ff43c7d3fba847"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Active Auth State Listener
+        onAuthStateChanged(auth, (user) => {
+            if (!user && sessionStorage.getItem('student_authenticated') === 'true') {
+                // If user was supposedly authenticated but Firebase says NO, log them out instantly!
+                console.warn('Firebase Auth state invalid. Logging out.');
+                sessionStorage.removeItem('student_authenticated');
+                sessionStorage.removeItem('studentIdentifier');
+                localStorage.removeItem('studentIdentifier');
+                window.location.href = 'student-login.html';
+            }
+        });
+    </script>
 </body>
 </html>
