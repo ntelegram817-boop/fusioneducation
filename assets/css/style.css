@@ -8,6 +8,11 @@
   box-sizing: border-box;
 }
 
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
 :root {
   --primary: #E60012;
   --primary-dark: #B3000E;
@@ -61,6 +66,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -69,6 +75,8 @@ body {
   background-color: var(--white);
   line-height: 1.6;
   overflow-x: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   transition: background 0.4s ease, color 0.4s ease;
 }
 
