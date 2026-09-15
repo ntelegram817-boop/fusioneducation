@@ -2053,12 +2053,9 @@ footer {
     width: 1280px !important;
     max-width: 1280px !important;
     transform-origin: top left;
-    zoom: calc(100vw / 1280);
+    
   }
   
-  @supports not (zoom: 1) {
-    .desktop-view-wrapper {
-      transform: scale(calc(100vw / 1280));
-    }
+  
   }
 }

@@ -280,5 +280,21 @@
 
     <script src="../assets/js/dao.js"></script>
 </div>
+<script>
+  (function() {
+    function applyDesktopZoom() {
+      const wrapper = document.querySelector('.desktop-view-wrapper');
+      if (wrapper) {
+        if (window.innerWidth < 992) {
+          wrapper.style.zoom = window.innerWidth / 1280;
+        } else {
+          wrapper.style.zoom = 1;
+        }
+      }
+    }
+    window.addEventListener('resize', applyDesktopZoom);
+    applyDesktopZoom();
+  })();
+</script>
 </body>
 </html>
