@@ -90,7 +90,16 @@ const fbDb = require('./utils/firebaseDb');
 const readData = async (filename, defaultValue = []) => {
     try {
         const collectionName = filename.replace('.json', '');
-        return await fbDb.readData(collectionName);
+        let data = await fbDb.readData(collectionName);
+        
+        // Handle special cases where the JSON is expected to be an Object (like settings.json)
+        if (!Array.isArray(defaultValue) && Array.isArray(data) && data.length > 0) {
+            return data[0]; // Take the first document as the config object
+        } else if (!Array.isArray(defaultValue) && (data.length === 0 || !data)) {
+            return defaultValue;
+        }
+        
+        return data;
     } catch (e) {
         console.error(`Error reading ${filename} from Firebase:`, e.message);
         return defaultValue;
@@ -2171,6 +2180,37 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
     console.error('[Server] Unhandled error:', err.message);
     res.status(500).json({ success: false, error: 'Internal server error.' });
+});
+
+app.get('/api/migrate-firebase-init', async (req, res) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+    const dataDir = path.join(__dirname, 'data');
+    const files = await fs.readdir(dataDir);
+    let migrated = [];
+    
+    for (const file of files) {
+      if (file.endsWith('.json')) {
+        const content = await fs.readFile(path.join(dataDir, file), 'utf8');
+        const data = JSON.parse(content);
+        const collectionName = file.replace('.json', '');
+        
+        if (Array.isArray(data)) {
+          await writeData(file, data);
+        } else {
+          // For objects like settings.json
+          const docId = collectionName + '_doc';
+          data.id = docId;
+          await writeData(file, [data]); 
+        }
+        migrated.push(collectionName);
+      }
+    }
+    res.send(`<h1>Migration Successful!</h1><p>Migrated: ${migrated.join(', ')}</p>`);
+  } catch (err) {
+    res.status(500).send(`<h1>Migration Failed!</h1><pre>${err.message}</pre>`);
+  }
 });
 
 // ── Start server ─────────────────────────────────────────────
