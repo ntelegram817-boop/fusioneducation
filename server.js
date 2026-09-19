@@ -86,15 +86,31 @@ function releaseLock(filename) {
 
 const fbDb = require('./utils/firebaseDb');
 
-// Drop-in replacement for readData using Firebase
+// Drop-in replacement for readData using Firebase (with local fallback)
 const readData = async (filename, defaultValue = []) => {
+    let fbData = [];
     try {
         const collectionName = filename.replace('.json', '');
-        return await fbDb.readData(collectionName);
+        fbData = await fbDb.readData(collectionName);
     } catch (e) {
         console.error(`Error reading ${filename} from Firebase:`, e.message);
-        return defaultValue;
     }
+    
+    // If Firebase returns empty or fails, fallback to local JSON file
+    if (!fbData || (Array.isArray(fbData) && fbData.length === 0) || (Object.keys(fbData).length === 0)) {
+        try {
+            const fs = require('fs').promises;
+            const path = require('path');
+            const dataPath = path.join(__dirname, 'data', filename);
+            const content = await fs.readFile(dataPath, 'utf8');
+            return JSON.parse(content);
+        } catch (err) {
+            console.error(`Error reading local fallback for ${filename}:`, err.message);
+            return defaultValue;
+        }
+    }
+    
+    return fbData;
 };
 
 // Drop-in replacement for writeData using Firebase
