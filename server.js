@@ -771,6 +771,22 @@ app.post('/api/staff/login', async (req, res) => {
   }
 
   const cleanEmail = String(email).trim().toLowerCase();
+  
+  // 1. Check Super Admin from settings.json
+  const settings = await readData('settings.json', {});
+  if (settings.adminUser && cleanEmail === settings.adminUser.email.toLowerCase()) {
+    if (password === settings.adminUser.password) {
+      res.cookie('fusion_admin_session', 'true', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
+      res.cookie('fusion_admin_email', settings.adminUser.email, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
+      res.cookie('fusion_staff_role', 'admin', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
+      await recordAuditLog('user_login', 'Logged in via Admin portal (Super Admin)', 'user', 'usr_main_admin', 'Main Administrator', { email });
+      return res.json({ success: true, redirect: 'dashboard.html' });
+    } else {
+      return res.status(401).json({ success: false, error: 'Invalid password. Please check your credentials.' });
+    }
+  }
+
+  // 2. Check Staff / Instructors
   const users = await readData('users.json', []);
   let activeUser = users.find(u => u.email && u.email.toLowerCase() === cleanEmail);
 
