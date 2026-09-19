@@ -146,12 +146,32 @@ let currentStudentData = null;
 
   // Render full dashboard content
   function renderDashboard(student) {
+    // Due Alert Injection
+    let dueAmount = 0;
+    if (student.fees && student.fees.due) {
+        dueAmount = parseInt(String(student.fees.due).replace(/[^\d]/g, ''), 10) || 0;
+    }
+    const existingAlert = document.getElementById('student-due-alert');
+    if (existingAlert) existingAlert.remove();
+
     // 1. Sidebar & Topbar Profile
     const studentNameEl = document.getElementById('studentName');
     if (studentNameEl) studentNameEl.textContent = student.fullName || 'Student';
 
     const topbarGreeting = document.getElementById('topbarGreeting');
-    if (topbarGreeting) topbarGreeting.textContent = `Welcome back, ${student.fullName ? student.fullName.split(' ')[0] : 'Student'}! 👋`;
+    if (topbarGreeting) {
+        topbarGreeting.textContent = `Welcome back, ${student.fullName ? student.fullName.split(' ')[0] : 'Student'}! 👋`;
+        if (dueAmount > 0) {
+            const topbarWrap = document.querySelector('.topbar-greeting-wrap');
+            if (topbarWrap) {
+                const alertDiv = document.createElement('div');
+                alertDiv.id = 'student-due-alert';
+                alertDiv.style.cssText = 'margin-top: 8px; padding: 6px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; color: #ef4444; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;';
+                alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> আপনার ${dueAmount.toLocaleString()} BDT বকেয়া আছে! দয়া করে দ্রুত পরিশোধ করুন।`;
+                topbarWrap.appendChild(alertDiv);
+            }
+        }
+    }
 
     const studentPhotoEl = document.getElementById('studentPhoto');
     if (studentPhotoEl) {

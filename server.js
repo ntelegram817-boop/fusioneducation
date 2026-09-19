@@ -84,36 +84,33 @@ function releaseLock(filename) {
     _fileLocks.delete(filename);
 }
 
-// Helper to read data from local JSON
-const readData = (filename, defaultValue = []) => {
+const fbDb = require('./utils/firebaseDb');
+
+// Drop-in replacement for readData using Firebase
+const readData = async (filename, defaultValue = []) => {
     try {
-        const file = path.join(dataDir, filename);
-        if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, 'utf8'));
+        const collectionName = filename.replace('.json', '');
+        return await fbDb.readData(collectionName);
     } catch (e) {
-        console.error(`Error reading ${filename}:`, e.message);
+        console.error(`Error reading ${filename} from Firebase:`, e.message);
+        return defaultValue;
     }
-    return defaultValue;
 };
 
-// Helper to write data to local JSON (with synchronous lock)
-const writeData = (filename, data) => {
+// Drop-in replacement for writeData using Firebase
+const writeData = async (filename, data) => {
     try {
-        acquireLockSync(filename);
-        const file = path.join(dataDir, filename);
-        fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
-        releaseLock(filename);
-        return true;
+        const collectionName = filename.replace('.json', '');
+        return await fbDb.writeData(collectionName, data);
     } catch (e) {
-        releaseLock(filename);
-        console.error(`Error writing ${filename}:`, e.message);
+        console.error(`Error writing ${filename} to Firebase:`, e.message);
         return false;
     }
 };
-
-// ── Auth guard middleware for destructive endpoints ──────────
+//  ── Auth guard middleware for destructive endpoints ──────────
 function requireAuth(requiredRole = 'staff') {
-    return (req, res, next) => {
-        const user = getAuthenticatedUser(req);
+    return async (req, res, next) => {
+        const user = await getAuthenticatedUser(req);
         if (!user) {
             return res.status(401).json({ success: false, error: 'Authentication required. Please log in.' });
         }
@@ -811,7 +808,7 @@ app.post('/api/staff/login', async (req, res) => {
   res.cookie('fusion_staff_branch', userBranch, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
   res.cookie('fusion_staff_role', userRecord.role || 'staff', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
 
-  recordAuditLog('user_login', `Logged in via Staff/Instructor portal (${userRecord.role})`, 'user', userRecord.id, userRecord.name, {
+  await recordAuditLog('user_login', `Logged in via Staff/Instructor portal (${userRecord.role})`, 'user', userRecord.id, userRecord.name, {
     name: userRecord.name,
     email: userRecord.email,
     role: userRecord.role,
@@ -833,7 +830,7 @@ app.post('/api/staff/login', async (req, res) => {
 });
 
 app.get('/api/staff/me', async (req, res) => {
-  const user = getAuthenticatedUser(req);
+  const user = await getAuthenticatedUser(req);
   if (user) {
     return res.json({
       success: true,
@@ -878,11 +875,11 @@ app.get('/api/staff/me', async (req, res) => {
 });
 
 app.get('/api/staff/students', async (req, res) => {
-  const user = getAuthenticatedUser(req);
+  const user = await getAuthenticatedUser(req);
   let branch = req.query.branch || (user ? user.branch : req.cookies.fusion_staff_branch) || 'all';
 
   // Branch Isolation: If non-admin user is restricted to a specific branch and doesn't have view_all_branches permission, enforce user's branch
-  if (user && user.role !== 'admin' && user.branch && user.branch.toLowerCase() !== 'all' && !hasPermission(user, 'view_all_branches') && !hasPermission(user, '*')) {
+  if (user && user.role !== 'admin' && user.branch && user.branch.toLowerCase() !== 'all' && !await hasPermission(user, 'view_all_branches') && !await hasPermission(user, '*')) {
     branch = user.branch;
   }
 
@@ -891,15 +888,15 @@ app.get('/api/staff/students', async (req, res) => {
 
   // Build a lookup map of students.json keyed by identifier, applicationNumber, and id
   const studentMap = new Map();
-  students.forEach(s => {
+  await Promise.all(students.map(async s => {
     if (s.identifier) studentMap.set(String(s.identifier).toLowerCase().trim(), s);
     if (s.applicationNumber) studentMap.set(String(s.applicationNumber).toLowerCase().trim(), s);
     if (s.id) studentMap.set(String(s.id).toLowerCase().trim(), s);
-  });
+  }));
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  let list = admissions.map(a => {
+  let list = await Promise.all(admissions.map(async a => {
     const key = String(a.applicationNumber || a.id || '').toLowerCase().trim();
     const st = studentMap.get(key) || {};
 
@@ -972,15 +969,15 @@ app.get('/api/staff/students', async (req, res) => {
       submittedAt: validSubmittedAt
     };
 
-    merged.fees = calculateStudentFees(merged);
-    return merged;
-  });
+    merged.fees = await calculateStudentFees(merged);
+      return merged;
+    }));
 
   // Merge students.json records that weren't in admissions, preventing duplicates by ID and phone
   if (students.length > 0) {
     const existingIds = new Set(list.map(s => String(s.applicationNumber || s.id).toLowerCase().trim()));
     const existingPhones = new Set(list.map(s => String(s.phone || '').replace(/\D/g, '')).filter(Boolean));
-    students.forEach(s => {
+    await Promise.all(students.map(async s => {
       const sId = String(s.identifier || s.id || s.applicationNumber || '').toLowerCase().trim();
       const sPhone = String(s.phone || '').replace(/\D/g, '');
       if (sId && !existingIds.has(sId) && (!sPhone || !existingPhones.has(sPhone))) {
@@ -1016,7 +1013,7 @@ app.get('/api/staff/students', async (req, res) => {
           sSubmittedAt = new Date().toISOString();
         }
 
-        const fees = calculateStudentFees(s);
+        const fees = await calculateStudentFees(s);
         list.push({
           id: s.identifier || s.id,
           applicationNumber: s.identifier || s.id,
@@ -1043,7 +1040,7 @@ app.get('/api/staff/students', async (req, res) => {
           submittedAt: sSubmittedAt
         });
       }
-    });
+    }));
   }
 
   // Filter by branch if not 'all'
@@ -1056,8 +1053,8 @@ app.get('/api/staff/students', async (req, res) => {
 
 // ── WALK-IN STUDENT REGISTRATION (MANUAL ADD / PAPER CONVERSION) ──
 app.post('/api/staff/students', handleUpload, async (req, res) => {
-  const user = getAuthenticatedUser(req);
-  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions')) {
+  const user = await getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !await hasPermission(user, 'manage_admissions')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required' });
   }
 
@@ -1216,7 +1213,7 @@ app.post('/api/staff/students', handleUpload, async (req, res) => {
   admissions.unshift(admRecord);
   await writeData('admissions.json', admissions);
 
-  recordAuditLog('student_registered', `Registered walk-in student ${newStudent.fullName} (${newAppNum}) for ${newStudent.branch}`, 'student', newAppNum, newStudent.fullName, user || { name: 'Staff Member', role: 'staff', branch: targetBranch });
+  await recordAuditLog('student_registered', `Registered walk-in student ${newStudent.fullName} (${newAppNum}) for ${newStudent.branch}`, 'student', newAppNum, newStudent.fullName, user || { name: 'Staff Member', role: 'staff', branch: targetBranch });
 
   res.json({
     success: true,
@@ -1227,8 +1224,8 @@ app.post('/api/staff/students', handleUpload, async (req, res) => {
 
 // ── ATTACH ADDITIONAL DOCUMENTS TO EXISTING STUDENT ───────────────
 app.post('/api/staff/students/:id/documents', handleUpload, async (req, res) => {
-  const user = getAuthenticatedUser(req);
-  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
+  const user = await getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !await hasPermission(user, 'manage_admissions') && !await hasPermission(user, 'edit_students')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions or edit_students required' });
   }
 
@@ -1322,7 +1319,7 @@ app.post('/api/staff/students/:id/documents', handleUpload, async (req, res) => 
     await writeData('admissions.json', admissions);
   }
 
-  recordAuditLog('document_uploaded', `Attached ${addedDocs.length} document(s) to ${targetStudent.fullName} (${cleanId})`, 'student', cleanId, targetStudent.fullName, user);
+  await recordAuditLog('document_uploaded', `Attached ${addedDocs.length} document(s) to ${targetStudent.fullName} (${cleanId})`, 'student', cleanId, targetStudent.fullName, user);
 
   res.json({
     success: true,
@@ -1335,8 +1332,8 @@ app.post('/api/staff/students/:id/documents', handleUpload, async (req, res) => 
 
 // ── REMOVE ATTACHED DOCUMENT FROM STUDENT ─────────────────────────
 app.delete('/api/staff/students/:id/documents/:docIndex', async (req, res) => {
-  const user = getAuthenticatedUser(req);
-  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
+  const user = await getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !await hasPermission(user, 'manage_admissions') && !await hasPermission(user, 'edit_students')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required' });
   }
 
@@ -1388,7 +1385,7 @@ app.delete('/api/staff/students/:id/documents/:docIndex', async (req, res) => {
     await writeData('admissions.json', admissions);
   }
 
-  recordAuditLog('document_deleted', `Removed document #${idx + 1} from student (${cleanId})`, 'student', cleanId, cleanId, user);
+  await recordAuditLog('document_deleted', `Removed document #${idx + 1} from student (${cleanId})`, 'student', cleanId, cleanId, user);
 
   const updatedDocs = sIdx !== -1 ? students[sIdx].documents : (aIdx !== -1 ? admissions[aIdx].documents : []);
   res.json({
@@ -1400,7 +1397,7 @@ app.delete('/api/staff/students/:id/documents/:docIndex', async (req, res) => {
 
 // ── UPDATE STUDENT PROFILE OR STATUS ──────────────────────────────
 app.put('/api/staff/students/:id', async (req, res) => {
-  const user = getAuthenticatedUser(req);
+  const user = await getAuthenticatedUser(req);
   const { id } = req.params;
   const cleanId = String(id).trim().toLowerCase();
 
@@ -1428,7 +1425,7 @@ app.put('/api/staff/students/:id', async (req, res) => {
   // If status is being modified to admitted, verify permission
   const isAdmitting = req.body.status && (req.body.status === 'admitted' || req.body.status === 'approved');
   if (isAdmitting) {
-    if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions')) {
+    if (user && user.role !== 'admin' && !await hasPermission(user, 'manage_admissions')) {
       return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions required to admit student' });
     }
   }
@@ -1474,7 +1471,7 @@ app.put('/api/staff/students/:id', async (req, res) => {
   }
 
   const updatedRec = sIdx !== -1 ? students[sIdx] : admissions[aIdx];
-  recordAuditLog('student_updated', `Updated student profile ${updatedRec.fullName || cleanId}`, 'student', cleanId, updatedRec.fullName || cleanId, user);
+  await recordAuditLog('student_updated', `Updated student profile ${updatedRec.fullName || cleanId}`, 'student', cleanId, updatedRec.fullName || cleanId, user);
 
   res.json({
     success: true,
@@ -1485,8 +1482,8 @@ app.put('/api/staff/students/:id', async (req, res) => {
 
 // ── APPROVE COURSE COMPLETION / GRADUATION ────────────────────────
 app.post('/api/staff/students/:id/approve-completion', async (req, res) => {
-  const user = getAuthenticatedUser(req);
-  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
+  const user = await getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !await hasPermission(user, 'manage_admissions') && !await hasPermission(user, 'edit_students')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions or edit_students required' });
   }
 
@@ -1562,7 +1559,7 @@ app.post('/api/staff/students/:id/approve-completion', async (req, res) => {
     await writeData('admissions.json', admissions);
   }
 
-  recordAuditLog('student_graduated', `Approved course completion & graduation for ${students[sIdx].fullName} (${students[sIdx].identifier})`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
+  await recordAuditLog('student_graduated', `Approved course completion & graduation for ${students[sIdx].fullName} (${students[sIdx].identifier})`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
 
   res.json({
     success: true,
@@ -1580,8 +1577,8 @@ app.post('/api/staff/logout', async (req, res) => {
 
 // ── DELETE STUDENT RECORD (STAFF / INSTRUCTOR / ADMIN) ─────────────
 app.delete('/api/staff/students/:id', async (req, res) => {
-  const user = getAuthenticatedUser(req);
-  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_admissions') && !hasPermission(user, 'edit_students')) {
+  const user = await getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !await hasPermission(user, 'manage_admissions') && !await hasPermission(user, 'edit_students')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_admissions or edit_students required' });
   }
 
@@ -1624,7 +1621,7 @@ app.delete('/api/staff/students/:id', async (req, res) => {
     await writeData('admissions.json', admissions);
   }
 
-  recordAuditLog('student_deleted', `Deleted student record for ${deletedName} (${cleanId})`, 'student', cleanId, deletedName, user);
+  await recordAuditLog('student_deleted', `Deleted student record for ${deletedName} (${cleanId})`, 'student', cleanId, deletedName, user);
 
   return res.json({
     success: true,
@@ -1651,7 +1648,7 @@ app.post('/api/branches', requireAuth('admin'), async (req, res) => {
   };
   branches.push(newBranch);
   await writeData('branches.json', branches);
-  recordAuditLog('branch_created', `Branch created: ${newBranch.name}`, 'branch', newBranch.id, newBranch.name, getAuthenticatedUser(req));
+  await recordAuditLog('branch_created', `Branch created: ${newBranch.name}`, 'branch', newBranch.id, newBranch.name, await getAuthenticatedUser(req));
   res.json({ success: true, message: 'Branch created', branch: newBranch });
 });
 
@@ -1662,7 +1659,7 @@ app.put('/api/branches/:id', requireAuth('admin'), async (req, res) => {
   if (idx === -1) return res.status(404).json({ success: false, error: 'Branch not found' });
   branches[idx] = { ...branches[idx], ...req.body, id: branches[idx].id };
   await writeData('branches.json', branches);
-  recordAuditLog('branch_updated', `Branch updated: ${branches[idx].name}`, 'branch', id, branches[idx].name, getAuthenticatedUser(req));
+  await recordAuditLog('branch_updated', `Branch updated: ${branches[idx].name}`, 'branch', id, branches[idx].name, await getAuthenticatedUser(req));
   res.json({ success: true, message: 'Branch updated', branch: branches[idx] });
 });
 
@@ -1673,7 +1670,7 @@ app.delete('/api/branches/:id', requireAuth('admin'), async (req, res) => {
   const branchToDelete = branches.find(b => b.id === id || b.name.toLowerCase() === id.toLowerCase());
   branches = branches.filter(b => b.id !== id && b.name.toLowerCase() !== id.toLowerCase());
   await writeData('branches.json', branches);
-  recordAuditLog('branch_deleted', `Branch deleted: ${branchToDelete ? (branchToDelete.displayName || branchToDelete.name) : id}`, 'branch', id, branchToDelete ? branchToDelete.name : id, getAuthenticatedUser(req));
+  await recordAuditLog('branch_deleted', `Branch deleted: ${branchToDelete ? (branchToDelete.displayName || branchToDelete.name) : id}`, 'branch', id, branchToDelete ? branchToDelete.name : id, await getAuthenticatedUser(req));
   res.json({ success: true, message: 'Branch deleted successfully' });
 });
 
@@ -1740,7 +1737,7 @@ app.post('/api/admin/users', requireAuth('admin'), async (req, res) => {
   }
   await writeData('staff.json', staffList);
 
-  recordAuditLog('user_created', `Created ${newUser.role} account: ${newUser.name} (${newUser.branch})`, 'user', newUser.id, newUser.name, getAuthenticatedUser(req));
+  await recordAuditLog('user_created', `Created ${newUser.role} account: ${newUser.name} (${newUser.branch})`, 'user', newUser.id, newUser.name, await getAuthenticatedUser(req));
   res.json({ success: true, message: 'User account created successfully', user: newUser });
 });
 
@@ -1772,7 +1769,7 @@ app.put('/api/admin/users/:id', requireAuth('admin'), async (req, res) => {
     await writeData('staff.json', staffList);
   }
 
-  recordAuditLog('user_updated', `Updated user ${users[idx].name} permissions & details`, 'user', users[idx].id, users[idx].name, getAuthenticatedUser(req));
+  await recordAuditLog('user_updated', `Updated user ${users[idx].name} permissions & details`, 'user', users[idx].id, users[idx].name, await getAuthenticatedUser(req));
   res.json({ success: true, message: 'User updated successfully', user: users[idx] });
 });
 
@@ -1787,7 +1784,7 @@ app.delete('/api/admin/users/:id', requireAuth('admin'), async (req, res) => {
   staffList = staffList.filter(s => s.id !== id && s.email.toLowerCase() !== (user ? user.email.toLowerCase() : ''));
   await writeData('staff.json', staffList);
 
-  recordAuditLog('user_deleted', `Deleted user ${user ? user.name : id}`, 'user', id, user ? user.name : id, getAuthenticatedUser(req));
+  await recordAuditLog('user_deleted', `Deleted user ${user ? user.name : id}`, 'user', id, user ? user.name : id, await getAuthenticatedUser(req));
   res.json({ success: true, message: 'User deleted successfully' });
 });
 
@@ -1803,7 +1800,7 @@ app.post('/api/admin/backup', async (req, res) => {
   const cronSecret = process.env.CRON_SECRET || 'fusion-backup-secret';
   
   // Verify it's either Admin or Cron
-  const user = getAuthenticatedUser(req);
+  const user = await getAuthenticatedUser(req);
   if (!user || user.role !== 'admin') {
     if (authHeader !== `Bearer ${cronSecret}`) {
       return res.status(401).json({ success: false, error: 'Unauthorized' });
@@ -1858,9 +1855,9 @@ app.post('/api/admin/backup', async (req, res) => {
 
 // ── INSTRUCTOR STAFF CONTROL (BRANCH SCOPED) ──────────────────────
 app.get('/api/instructor/staff', async (req, res) => {
-  const user = getAuthenticatedUser(req);
+  const user = await getAuthenticatedUser(req);
   if (!user) return res.status(401).json({ success: false, error: 'Authentication required' });
-  if (user.role !== 'admin' && !hasPermission(user, 'view_staff')) {
+  if (user.role !== 'admin' && !await hasPermission(user, 'view_staff')) {
     return res.status(403).json({ success: false, error: 'Permission denied: view_staff required' });
   }
 
@@ -1873,9 +1870,9 @@ app.get('/api/instructor/staff', async (req, res) => {
 });
 
 app.put('/api/instructor/staff/:id', async (req, res) => {
-  const user = getAuthenticatedUser(req);
+  const user = await getAuthenticatedUser(req);
   if (!user) return res.status(401).json({ success: false, error: 'Authentication required' });
-  if (user.role !== 'admin' && !hasPermission(user, 'manage_staff_permissions') && !hasPermission(user, 'edit_staff')) {
+  if (user.role !== 'admin' && !await hasPermission(user, 'manage_staff_permissions') && !await hasPermission(user, 'edit_staff')) {
     return res.status(403).json({ success: false, error: 'Permission denied to manage branch staff' });
   }
 
@@ -1897,7 +1894,7 @@ app.put('/api/instructor/staff/:id', async (req, res) => {
   users[idx] = { ...users[idx], ...req.body, id: users[idx].id, role: 'staff' };
   await writeData('users.json', users);
 
-  recordAuditLog('branch_staff_updated', `Instructor ${user.name} modified staff ${users[idx].name}`, 'user', users[idx].id, users[idx].name, user);
+  await recordAuditLog('branch_staff_updated', `Instructor ${user.name} modified staff ${users[idx].name}`, 'user', users[idx].id, users[idx].name, user);
   res.json({ success: true, message: 'Branch staff updated', staff: users[idx] });
 });
 
@@ -1932,13 +1929,13 @@ app.get('/api/students/:id/billing', async (req, res) => {
 
   if (!student) return res.status(404).json({ success: false, error: 'Student not found' });
 
-  const billing = calculateStudentFees(student);
+  const billing = await calculateStudentFees(student);
   res.json({ success: true, student: { id: student.identifier || student.id, fullName: student.fullName, branch: student.branch }, billing });
 });
 
 app.post('/api/students/:id/payments', async (req, res) => {
-  const user = getAuthenticatedUser(req);
-  if (user && user.role !== 'admin' && !hasPermission(user, 'manage_fees')) {
+  const user = await getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !await hasPermission(user, 'manage_fees')) {
     return res.status(403).json({ success: false, error: 'Permission denied: manage_fees required' });
   }
 
@@ -2002,7 +1999,7 @@ app.post('/api/students/:id/payments', async (req, res) => {
   students[sIdx].payments.unshift(newPayment);
 
   // Recalculate fees
-  const billing = calculateStudentFees(students[sIdx]);
+  const billing = await calculateStudentFees(students[sIdx]);
   students[sIdx].fees = {
     total: `${billing.totalAccruedFee.toLocaleString()} BDT`,
     paid: `${billing.totalPaid.toLocaleString()} BDT`,
@@ -2026,7 +2023,7 @@ app.post('/api/students/:id/payments', async (req, res) => {
     await writeData('admissions.json', admissions);
   }
 
-  recordAuditLog('payment_recorded', `Payment ৳${paymentAmount.toLocaleString()} recorded for ${students[sIdx].fullName} (${students[sIdx].identifier})`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
+  await recordAuditLog('payment_recorded', `Payment ৳${paymentAmount.toLocaleString()} recorded for ${students[sIdx].fullName} (${students[sIdx].identifier})`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
 
   res.json({ 
     success: true, 
@@ -2038,8 +2035,8 @@ app.post('/api/students/:id/payments', async (req, res) => {
 });
 
 app.put('/api/students/:id/custom-fee', async (req, res) => {
-  const user = getAuthenticatedUser(req);
-  if (user && user.role !== 'admin' && !hasPermission(user, 'custom_student_fee') && !hasPermission(user, 'manage_fees')) {
+  const user = await getAuthenticatedUser(req);
+  if (user && user.role !== 'admin' && !await hasPermission(user, 'custom_student_fee') && !await hasPermission(user, 'manage_fees')) {
     return res.status(403).json({ success: false, error: 'Permission denied: custom_student_fee required' });
   }
 
@@ -2086,7 +2083,7 @@ app.put('/api/students/:id/custom-fee', async (req, res) => {
   if (specialDiscount !== undefined) students[sIdx].specialDiscount = Number(specialDiscount);
 
   // Recalculate fees
-  const billing = calculateStudentFees(students[sIdx]);
+  const billing = await calculateStudentFees(students[sIdx]);
   students[sIdx].fees = {
     total: `${billing.totalAccruedFee.toLocaleString()} BDT`,
     paid: `${billing.totalPaid.toLocaleString()} BDT`,
@@ -2111,7 +2108,7 @@ app.put('/api/students/:id/custom-fee', async (req, res) => {
     await writeData('admissions.json', admissions);
   }
 
-  recordAuditLog('fee_customized', `Monthly fee customized for ${students[sIdx].fullName} (${students[sIdx].identifier}). Old: ${oldRate || 'standard'}, New: ${students[sIdx].customMonthlyFee || 'standard'}. Note: ${reason || 'N/A'}`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
+  await recordAuditLog('fee_customized', `Monthly fee customized for ${students[sIdx].fullName} (${students[sIdx].identifier}). Old: ${oldRate || 'standard'}, New: ${students[sIdx].customMonthlyFee || 'standard'}. Note: ${reason || 'N/A'}`, 'student', students[sIdx].identifier, students[sIdx].fullName, user);
 
   res.json({ 
     success: true, 

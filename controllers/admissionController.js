@@ -107,7 +107,47 @@ async function submitAdmission(req, res) {
 
             // Optional
             comment: req.body.comment || '',
-            feeInfo: (() => { try { return JSON.parse(req.body.feeInfo || 'null'); } catch(_) { return null; } })(),
+            feeInfo: await (async () => { 
+                try { 
+                    let feeInfo = JSON.parse(req.body.feeInfo || 'null');
+                    if (feeInfo) {
+                        const courses = await fbDb.readData('courses') || [];
+                        const courseData = courses.find(c => c.title === req.body.course || c.level === (req.body.courseLevel || ''));
+                        
+                        if (courseData) {
+                            if (feeInfo.billingPlan === 'monthly_pay') {
+                                const courseAdmFee = courseData.monthlyEvent?.admissionFee ?? courseData.admissionFee ?? 0;
+                                const courseMFee = courseData.monthlyEvent?.monthlyFee ?? courseData.monthlyFee ?? 1000;
+                                const expectedFinal = courseAdmFee + courseMFee;
+                                
+                                if (Number(feeInfo.finalFee) < expectedFinal) {
+                                    console.warn(`[Security Warning] Tampered fee detected. Adjusted to expected: ${expectedFinal}`);
+                                    feeInfo.finalFee = expectedFinal;
+                                    feeInfo.admissionFee = courseAdmFee;
+                                    feeInfo.monthlyFee = courseMFee;
+                                    feeInfo.tampered = true;
+                                }
+                            } else {
+                                let expectedRegular = Number(courseData.regularFee) || parseInt(String(courseData.fee || 0).replace(/[^\d]/g, ''), 10) || 15000;
+                                let expectedFinal = expectedRegular;
+                                
+                                if (courseData.discountType === 'percentage') {
+                                    expectedFinal = expectedRegular - Math.floor(expectedRegular * (Number(courseData.discountValue) / 100));
+                                } else if (courseData.discountType === 'fixed') {
+                                    expectedFinal = expectedRegular - Number(courseData.discountValue);
+                                }
+                                
+                                if (Number(feeInfo.finalFee) < expectedFinal) {
+                                    console.warn(`[Security Warning] Tampered course fee detected. Adjusted to expected: ${expectedFinal}`);
+                                    feeInfo.finalFee = expectedFinal;
+                                    feeInfo.tampered = true;
+                                }
+                            }
+                        }
+                    }
+                    return feeInfo; 
+                } catch(_) { return null; } 
+            })(),
 
             // Uploads
             photoUrl,

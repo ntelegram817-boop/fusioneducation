@@ -1118,8 +1118,24 @@
 
         const appNumEl   = document.getElementById('success-app-number');
         const appNameEl  = document.getElementById('success-name');
+        const appPassEl  = document.getElementById('success-password');
+        const appCourseEl = document.getElementById('success-course');
+        
         if (appNumEl)  appNumEl.textContent  = appNumber;
         if (appNameEl) appNameEl.textContent = name || val('fullName');
+        
+        if (appPassEl) {
+            const phone = val('phone');
+            appPassEl.textContent = phone ? phone : 'FEBD2026';
+        }
+        
+        if (appCourseEl) {
+            const courseSelect = document.getElementById('course');
+            const courseName = courseSelect && courseSelect.options[courseSelect.selectedIndex] 
+                               ? courseSelect.options[courseSelect.selectedIndex].text 
+                               : val('course');
+            appCourseEl.textContent = courseName || 'Japanese Language Course';
+        }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }

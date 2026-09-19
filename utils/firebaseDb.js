@@ -56,23 +56,34 @@ async function readData(collectionName) {
     }
 }
 
-// Write/Overwrite a collection (not recommended for large datasets, but keeping interface similar for now)
-// A better way is to update specific documents.
+// Write/Overwrite a collection safely (Handles array replacements properly by deleting removed items)
 async function writeData(collectionName, dataArray) {
     try {
         const batch = db.batch();
         const collectionRef = db.collection(collectionName);
         
-        // Caution: To truly mimic writeData (which overwrites everything), we would need to delete all existing docs first.
-        // For efficiency, we assume dataArray items have an 'id' property.
+        // 1. Fetch existing documents
+        const snapshot = await collectionRef.get();
+        
+        // 2. Track which IDs are in the new array
+        const newIds = new Set();
+        
         dataArray.forEach(item => {
-            // Ensure the item has the id set
-            const docId = item.id || item.identifier || db.collection(collectionName).doc().id;
+            const docId = item.id || item.identifier || collectionRef.doc().id;
             if (!item.id && !item.identifier) {
                 item.id = docId;
             }
+            newIds.add(String(docId));
+            
             const docRef = collectionRef.doc(String(docId));
-            batch.set(docRef, item, { merge: true });
+            batch.set(docRef, item, { merge: false }); // Overwrite completely
+        });
+        
+        // 3. Delete documents that are no longer in the new array
+        snapshot.docs.forEach(doc => {
+            if (!newIds.has(doc.id)) {
+                batch.delete(doc.ref);
+            }
         });
         
         await batch.commit();

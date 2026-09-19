@@ -187,9 +187,9 @@
                                 <select id="religion" name="religion">
                                     <option value="">Select religion</option>
                                     <option value="Islam">Islam</option>
-                                    <option value="Hinduism">Hinduism</option>
-                                    <option value="Buddhism">Buddhism</option>
-                                    <option value="Christianity">Christianity</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Buddhist">Buddhist</option>
+                                    <option value="Christian">Christian</option>
                                     <option value="Other">Other</option>
                                 </select>
                                 <span class="field-error-msg" id="err-religion"></span>
@@ -598,40 +598,46 @@
                             Congratulations, <strong id="success-name"></strong>! Your admission application has been received.
                         </p>
 
-                        <div style="margin: 1.25rem 0;">
-                            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.4rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Your Application Number</p>
-                            <div class="app-number-badge">
-                                <i class="fas fa-id-badge"></i>
-                                <span id="success-app-number">FEBD-2026-000</span>
+                        <div style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; text-align: left;">
+                            <h3 style="color: var(--accent); margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid rgba(37, 99, 235, 0.1); padding-bottom: 0.5rem;">
+                                <i class="fas fa-key"></i> Student Portal Login Details
+                            </h3>
+                            <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                                <div>
+                                    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.3rem;">Login ID (App Number)</p>
+                                    <div style="font-weight:700; font-size:1.2rem; color:var(--text-primary);" id="success-app-number">FEBD-2026-000</div>
+                                </div>
+                                <div>
+                                    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.3rem;">Default Password</p>
+                                    <div style="font-weight:700; font-size:1.1rem; color:var(--text-primary); letter-spacing: 1px;" id="success-password">*******</div>
+                                </div>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 1rem;">
+                                <em>Tip: You can login to the <a href="student-login.html" style="color:var(--accent); text-decoration:none; font-weight:600;">Student Portal</a> to track your admission status.</em>
+                            </p>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; text-align: left;">
+                            <div style="background: rgba(15, 23, 42, 0.03); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 1.25rem;">
+                                <h4 style="margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--text-primary);"><i class="fas fa-graduation-cap" style="color:var(--accent);"></i> Selected Course</h4>
+                                <p id="success-course" style="font-weight: 600; color: var(--text-primary); margin: 0;">Loading...</p>
+                            </div>
+                            <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 1.25rem;">
+                                <h4 style="margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--text-primary);"><i class="fas fa-info-circle" style="color:var(--success);"></i> Next Steps</h4>
+                                <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.85rem; color: var(--text-secondary);">
+                                    <li>Bring your NID/Birth Certificate & 2 photos to the office.</li>
+                                    <li>Pay the registration fee via cash or bKash.</li>
+                                </ul>
                             </div>
                         </div>
 
                         <p style="color:var(--text-secondary); font-size:0.9rem; max-width:440px; margin:0 auto 1.5rem;">
-                            Please save your application number. Our team will contact you within <strong>24–48 hours</strong> to confirm your enrollment.
+                            Our team will contact you within <strong>24–48 hours</strong> to confirm your enrollment. Call <strong style="color:var(--primary);">+880 1302 090286</strong> for emergencies.
                         </p>
-
-                        <!-- Info cards -->
-                        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin:1.5rem 0; text-align:left;">
-                            <div style="background:rgba(37,99,235,0.06); border-radius:12px; padding:1rem; border:1px solid rgba(37,99,235,0.15);">
-                                <i class="fas fa-clock" style="color:var(--accent); font-size:1.3rem; margin-bottom:0.5rem;"></i>
-                                <p style="font-size:0.8rem; color:var(--text-secondary); margin:0; font-weight:600;">Response Time</p>
-                                <p style="font-size:0.9rem; color:var(--text-primary); margin:0; font-weight:700;">24–48 hrs</p>
-                            </div>
-                            <div style="background:rgba(16,185,129,0.06); border-radius:12px; padding:1rem; border:1px solid rgba(16,185,129,0.15);">
-                                <i class="fas fa-envelope" style="color:var(--success); font-size:1.3rem; margin-bottom:0.5rem;"></i>
-                                <p style="font-size:0.8rem; color:var(--text-secondary); margin:0; font-weight:600;">Confirmation</p>
-                                <p style="font-size:0.9rem; color:var(--text-primary); margin:0; font-weight:700;">Via Email</p>
-                            </div>
-                            <div style="background:rgba(230,0,18,0.06); border-radius:12px; padding:1rem; border:1px solid rgba(230,0,18,0.12);">
-                                <i class="fas fa-phone" style="color:var(--primary); font-size:1.3rem; margin-bottom:0.5rem;"></i>
-                                <p style="font-size:0.8rem; color:var(--text-secondary); margin:0; font-weight:600;">Helpline</p>
-                                <p style="font-size:0.9rem; color:var(--text-primary); margin:0; font-weight:700;">+880 1302 090286</p>
-                            </div>
-                        </div>
 
                         <div class="success-actions">
                             <button id="btn-print" class="btn btn-outline" onclick="window.print()">
-                                <i class="fas fa-print"></i> Print Application
+                                <i class="fas fa-file-pdf"></i> Download Admission Copy
                             </button>
                             <a href="../index.html" class="btn btn-secondary">
                                 <i class="fas fa-home"></i> Back to Home

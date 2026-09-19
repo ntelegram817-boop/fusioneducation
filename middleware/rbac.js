@@ -1,41 +1,33 @@
-// ============================================================
-// FUSION EDUCATION BD — RBAC & FEE ENGINE MIDDLEWARE
-// ============================================================
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
+const fbDb = require('../utils/firebaseDb');
 
-const dataDir = path.join(__dirname, '..', 'data');
+const dataDir = path.join(__dirname, '../data');
 
-const readJson = (filename, defaultVal = []) => {
-  try {
-    const file = path.join(dataDir, filename);
-    if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, 'utf8'));
-  } catch (e) {
-    console.error(`[RBAC] Error reading ${filename}:`, e.message);
-  }
-  return defaultVal;
-};
-
-const writeJson = (filename, data) => {
-  try {
-    const file = path.join(dataDir, filename);
-    fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
-    // Also sync to dist/data if exists
-    const distFile = path.join(__dirname, '..', 'dist', 'data', filename);
-    if (fs.existsSync(path.dirname(distFile))) {
-      fs.writeFileSync(distFile, JSON.stringify(data, null, 2), 'utf8');
+const readJson = async (filename, defaultVal = []) => {
+    try {
+        const collectionName = filename.replace('.json', '');
+        const data = await fbDb.readData(collectionName);
+        return data && data.length ? data : defaultVal;
+    } catch (e) {
+        return defaultVal;
     }
-    return true;
-  } catch (e) {
-    console.error(`[RBAC] Error writing ${filename}:`, e.message);
-    return false;
-  }
 };
+
+const writeJson = async (filename, data) => {
+    try {
+        const collectionName = filename.replace('.json', '');
+        return await fbDb.writeData(collectionName, data);
+    } catch (e) {
+        return false;
+    }
+};
+
 
 /**
  * Identify the current authenticated user from request cookies or session headers
  */
-function getAuthenticatedUser(req) {
+async function getAuthenticatedUser(req) {
   // 1. Admin Session Check
   const adminCookie = req.cookies?.fusion_admin_session;
   const authHeader = req.headers['authorization'] || '';
@@ -58,7 +50,7 @@ function getAuthenticatedUser(req) {
   const staffBranch = req.headers['x-staff-branch'] || req.cookies?.fusion_staff_branch;
 
   if (staffEmail) {
-    const users = readJson('users.json', []);
+    const users = await readJson('users.json', []);
     const found = users.find(u => u.email && u.email.toLowerCase() === staffEmail.toLowerCase());
     if (found && found.status !== 'inactive') {
       return {
@@ -67,7 +59,7 @@ function getAuthenticatedUser(req) {
       };
     }
     // Fallback if user in staff.json
-    const staffList = readJson('staff.json', []);
+    const staffList = await readJson('staff.json', []);
     const staffFound = staffList.find(s => s.email && s.email.toLowerCase() === staffEmail.toLowerCase());
     if (staffFound) {
       return {
@@ -88,7 +80,7 @@ function getAuthenticatedUser(req) {
   // 3. Student Session Check
   const studentId = req.headers['x-student-id'] || req.cookies?.fusion_student_id;
   if (studentId) {
-    const students = readJson('students.json', []);
+    const students = await readJson('students.json', []);
     const cleanId = String(studentId).toLowerCase();
     const st = students.find(s =>
       (s.identifier && s.identifier.toLowerCase() === cleanId) ||
@@ -113,7 +105,7 @@ function getAuthenticatedUser(req) {
 /**
  * Check if user possesses given permission
  */
-function hasPermission(user, permissionKey) {
+async function hasPermission(user, permissionKey) {
   if (!user) return false;
   if (user.role === 'admin' || (user.permissions && user.permissions.includes('*'))) return true;
   return Array.isArray(user.permissions) && user.permissions.includes(permissionKey);
@@ -149,8 +141,8 @@ function calculateActiveMonths(enrollmentDate, targetDate = new Date()) {
 /**
  * Real-time Student Fee Calculator supporting recurring monthly billing & custom rates
  */
-function calculateStudentFees(student, course = null, targetDate = new Date()) {
-  const courses = readJson('courses.json', []);
+async function calculateStudentFees(student, course = null, targetDate = new Date()) {
+  const courses = await readJson('courses.json', []);
   const associatedCourse = course || courses.find(c =>
     (student.courseId && c.id === student.courseId) ||
     (c.title && student.currentCourse && c.title.toLowerCase() === student.currentCourse.toLowerCase()) ||
@@ -264,9 +256,9 @@ function calculateStudentFees(student, course = null, targetDate = new Date()) {
 /**
  * Record an audit log entry
  */
-function recordAuditLog(action, details, targetType, targetId, targetName, performedBy) {
+async function recordAuditLog(action, details, targetType, targetId, targetName, performedBy) {
   try {
-    const logs = readJson('auditLogs.json', []);
+    const logs = await readJson('auditLogs.json', []);
     // Strip password from performedBy if it exists
     let cleanPerformedBy = performedBy;
     if (performedBy && performedBy.password) {
@@ -292,7 +284,7 @@ function recordAuditLog(action, details, targetType, targetId, targetName, perfo
     logs.unshift(newEntry);
     // Keep last 1000 logs
     if (logs.length > 1000) logs.length = 1000;
-    writeJson('auditLogs.json', logs);
+    await writeJson('auditLogs.json', logs);
     return newEntry;
   } catch (err) {
     console.error('[AuditLog] Error recording log:', err.message);

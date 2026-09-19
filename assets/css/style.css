@@ -2070,3 +2070,94 @@ footer {
   .desktop-view-wrapper .grid-3 { grid-template-columns: repeat(3, 1fr) !important; }
   .desktop-view-wrapper .grid-4 { grid-template-columns: repeat(4, 1fr) !important; }
 }
+
+/* ==========================================================================
+   PREMIUM DESIGN UPGRADES
+   ========================================================================== */
+
+/* --- 1. Custom Sleek Scrollbar --- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0B1020; 
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); 
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(230, 0, 18, 0.6); /* Red accent on hover */
+}
+
+/* --- 2. Page Fade-In Transition --- */
+@keyframes pageFadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+body {
+  animation: pageFadeIn 0.5s ease-out forwards;
+}
+
+/* --- 3. Enhanced Navbar Glassmorphism --- */
+.navbar {
+  background: rgba(11, 16, 32, 0.75) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.3s ease;
+}
+
+/* --- 4. 3D Micro-Animations for Cards --- */
+/* Target all relevant modern cards */
+.feature-card-modern, .course-card-modern, .stat-card-modern, .card, .glass-dark {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
+  will-change: transform, box-shadow;
+}
+
+/* Ensure we don't accidentally hover entire sections if they have these classes */
+.feature-card-modern:hover, .course-card-modern:hover, .stat-card-modern:hover {
+  transform: translateY(-8px) scale(1.01) !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 20px rgba(37, 99, 235, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  z-index: 10;
+}
+
+/* --- 5. Glow/Lift Effects for Buttons --- */
+.btn-primary {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 25px rgba(230, 0, 18, 0.4), 0 4px 10px rgba(230, 0, 18, 0.2) !important;
+  background: linear-gradient(135deg, #FF1A2D 0%, #D40011 100%) !important;
+}
+
+/* Button ripple/shine overlay effect */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: rotate(45deg) translate(-100%, 0);
+  transition: transform 0.6s ease-out;
+}
+.btn-primary:hover::after {
+  transform: rotate(45deg) translate(100%, 0);
+}
+
+.btn-outline-glass {
+  transition: all 0.3s ease !important;
+}
+.btn-outline-glass:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+}
