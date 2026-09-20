@@ -581,7 +581,7 @@ app.post('/api/student/login', async (req, res) => {
   // Set session cookie
   res.cookie('fusion_student_id', student.identifier, { 
     httpOnly: true, 
-    sameSite: 'lax',
+    sameSite: 'none', secure: true,
     maxAge: 86400000 
   });
 
@@ -785,9 +785,9 @@ app.post('/api/staff/login', async (req, res) => {
   const settings = await readData('settings.json', {});
   if (settings.adminUser && cleanEmail === settings.adminUser.email.toLowerCase()) {
     if (password === settings.adminUser.password) {
-      res.cookie('fusion_admin_session', 'true', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
-      res.cookie('fusion_admin_email', settings.adminUser.email, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
-      res.cookie('fusion_staff_role', 'admin', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
+      res.cookie('fusion_admin_session', 'true', { httpOnly: false, sameSite: 'none', secure: true, maxAge: 86400000 });
+      res.cookie('fusion_admin_email', settings.adminUser.email, { httpOnly: false, sameSite: 'none', secure: true, maxAge: 86400000 });
+      res.cookie('fusion_staff_role', 'admin', { httpOnly: false, sameSite: 'none', secure: true, maxAge: 86400000 });
       await recordAuditLog('user_login', 'Logged in via Admin portal (Super Admin)', 'user', 'usr_main_admin', 'Main Administrator', { email });
       return res.json({ success: true, redirect: loginType === 'staff' ? 'dashboard.html' : 'admin/dashboard.html' });
     } else {
@@ -835,9 +835,9 @@ app.post('/api/staff/login', async (req, res) => {
   const userBranch = branch || userRecord.branch || 'Dinajpur';
 
   // Staff cookies need httpOnly:false so client JS (dashboard) can read them for UI
-  res.cookie('fusion_staff_email', userRecord.email, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
-  res.cookie('fusion_staff_branch', userBranch, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
-  res.cookie('fusion_staff_role', userRecord.role || 'staff', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
+  res.cookie('fusion_staff_email', userRecord.email, { httpOnly: false, sameSite: 'none', secure: true, maxAge: 86400000 });
+  res.cookie('fusion_staff_branch', userBranch, { httpOnly: false, sameSite: 'none', secure: true, maxAge: 86400000 });
+  res.cookie('fusion_staff_role', userRecord.role || 'staff', { httpOnly: false, sameSite: 'none', secure: true, maxAge: 86400000 });
 
   await recordAuditLog('user_login', `Logged in via Staff/Instructor portal (${userRecord.role})`, 'user', userRecord.id, userRecord.name, {
     name: userRecord.name,
@@ -2229,5 +2229,6 @@ if (require.main === module) {
 }
 
 module.exports = app;
+
 
 
