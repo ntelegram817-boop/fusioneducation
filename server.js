@@ -789,7 +789,7 @@ app.post('/api/staff/login', async (req, res) => {
       res.cookie('fusion_admin_email', settings.adminUser.email, { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
       res.cookie('fusion_staff_role', 'admin', { httpOnly: false, sameSite: 'lax', maxAge: 86400000 });
       await recordAuditLog('user_login', 'Logged in via Admin portal (Super Admin)', 'user', 'usr_main_admin', 'Main Administrator', { email });
-      return res.json({ success: true, redirect: 'dashboard.html' });
+      return res.json({ success: true, redirect: 'admin/dashboard.html' });
     } else {
       return res.status(401).json({ success: false, error: 'Invalid password. Please check your credentials.' });
     }
@@ -2223,3 +2223,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+
