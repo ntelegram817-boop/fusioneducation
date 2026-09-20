@@ -826,6 +826,12 @@ app.post('/api/staff/login', async (req, res) => {
   }
 
   const userRecord = activeUser;
+  
+  // Validate Branch Access
+  if (userRecord.branch && userRecord.branch !== 'All Branches' && branch && userRecord.branch !== branch) {
+    return res.status(403).json({ success: false, error: `Access denied. You are assigned to the ${userRecord.branch} branch.` });
+  }
+
   const userBranch = branch || userRecord.branch || 'Dinajpur';
 
   // Staff cookies need httpOnly:false so client JS (dashboard) can read them for UI
