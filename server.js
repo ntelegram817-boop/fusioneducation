@@ -856,7 +856,7 @@ app.post('/api/staff/login', async (req, res) => {
       role: userRecord.role || 'staff',
       permissions: userRecord.permissions || []
     },
-    redirect: '/pages/staff-dashboard.html' 
+    redirect: 'dashboard.html' 
   });
 });
 
